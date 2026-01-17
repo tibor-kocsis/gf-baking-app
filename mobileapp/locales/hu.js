@@ -7,8 +7,6 @@ export default {
     recipes: 'Receptek',
     ingredients: 'Hozzávalók',
     instructions: 'Elkészítés',
-    calculator: 'Kalkulátor',
-    recipe: 'Recept',
     glutenFreeRecipe: 'Gluténmentes recept',
     requiredIngredients: 'Szükséges hozzávalók',
     flour: 'Liszt',

@@ -7,8 +7,6 @@ export default {
     recipes: 'Recipes',
     ingredients: 'Ingredients',
     instructions: 'Instructions',
-    calculator: 'Calculator',
-    recipe: 'Recipe',
     glutenFreeRecipe: 'Gluten-free recipe',
     requiredIngredients: 'Required Ingredients',
     flour: 'Flour',

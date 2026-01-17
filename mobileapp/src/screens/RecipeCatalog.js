@@ -34,14 +34,6 @@ export function RecipeCatalog({ onSelectRecipe }) {
                   <Text style={styles.recipeName}>{t(recipe.nameKey)}</Text>
                   <Text style={styles.recipeDescription}>{t(recipe.descriptionKey)}</Text>
                 </View>
-                <View style={[
-                  styles.typeBadge,
-                  recipe.type === 'dynamic' ? styles.typeBadgeDynamic : styles.typeBadgeStatic
-                ]}>
-                  <Text style={styles.typeBadgeText}>
-                    {recipe.type === 'dynamic' ? t('common.calculator') : t('common.recipe')}
-                  </Text>
-                </View>
               </View>
             </TouchableOpacity>
           ))}
@@ -117,21 +109,5 @@ const styles = StyleSheet.create({
   recipeDescription: {
     fontSize: 14,
     color: colors.textSecondary,
-  },
-  typeBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-  },
-  typeBadgeDynamic: {
-    backgroundColor: colors.secondary + '20',
-  },
-  typeBadgeStatic: {
-    backgroundColor: colors.accent + '30',
-  },
-  typeBadgeText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: colors.text,
   },
 });

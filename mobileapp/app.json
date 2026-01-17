@@ -1,0 +1,37 @@
+{
+  "expo": {
+    "name": "Gluten Free Baking",
+    "slug": "mobileapp",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#8B7355"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.glutenfreebaking.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#8B7355"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.glutenfreebaking.app",
+      "versionCode": 1
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "e68d1c94-183d-463c-937b-045c581df0e2"
+      }
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(npx create-expo-app@latest . --template blank)",
+      "Bash(npx expo install react-dom react-native-web)",
+      "Bash(node generate-icons.js:*)",
+      "Bash(openspec list:*)",
+      "Bash(openspec validate:*)",
+      "Bash(npx expo export:*)",
+      "Bash(openspec archive extend-recipe-catalog:*)",
+      "Bash(find:*)",
+      "Bash(npm install:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

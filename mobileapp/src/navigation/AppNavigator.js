@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { BackHandler } from 'react-native';
 import { recipes } from '../data/recipes';
 import { RecipeCatalog } from '../screens/RecipeCatalog';
 import { DynamicRecipeView } from '../screens/DynamicRecipeView';
@@ -13,6 +14,19 @@ export function AppNavigator() {
   const navigateToCatalog = () => {
     setScreen({ type: 'catalog' });
   };
+
+  // Handle hardware back button on Android
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+      if (screen.type !== 'catalog') {
+        navigateToCatalog();
+        return true; // Handled - don't exit app
+      }
+      return false; // Not handled - let system handle (exit app)
+    });
+
+    return () => backHandler.remove();
+  }, [screen.type]);
 
   if (screen.type === 'catalog') {
     return <RecipeCatalog onSelectRecipe={navigateToRecipe} />;

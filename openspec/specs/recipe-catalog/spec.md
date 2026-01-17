@@ -16,25 +16,11 @@ The app SHALL display a recipe catalog as the main home screen, showing all avai
 - **THEN** the card shows the recipe name
 - **AND** the card shows an icon/emoji representing the recipe
 - **AND** the card shows a short description
-- **AND** the card shows a type badge indicating "Calculator" or "Recipe"
 
 #### Scenario: Language selector at bottom
 - **WHEN** viewing the recipe catalog
 - **THEN** a language selector is displayed at the bottom of the screen
 - **AND** users can switch between English and Hungarian
-
-### Requirement: Recipe Types
-The app SHALL support two types of recipes: dynamic (calculators) and static (fixed recipes).
-
-#### Scenario: Dynamic recipe type
-- **WHEN** a recipe has type "dynamic"
-- **THEN** it represents a scalable calculator
-- **AND** users can adjust the quantity to recalculate ingredients
-
-#### Scenario: Static recipe type
-- **WHEN** a recipe has type "static"
-- **THEN** it represents a fixed ingredient list
-- **AND** ingredient amounts are not adjustable
 
 ### Requirement: Recipe Navigation
 The app SHALL allow users to navigate from the catalog to individual recipe views.
@@ -42,12 +28,22 @@ The app SHALL allow users to navigate from the catalog to individual recipe view
 #### Scenario: Opening a recipe
 - **WHEN** the user taps on a recipe card in the catalog
 - **THEN** the app navigates to the recipe detail view
-- **AND** the appropriate view type is shown based on recipe type
 
-#### Scenario: Returning to catalog
+#### Scenario: Returning to catalog via UI
 - **WHEN** the user is viewing a recipe detail
-- **THEN** a back button or gesture is available
-- **AND** tapping back returns to the recipe catalog
+- **THEN** a back button is available in the header
+- **AND** tapping the back button returns to the recipe catalog
+
+#### Scenario: Returning to catalog via hardware back button
+- **WHEN** the user is viewing a recipe detail on Android
+- **AND** the user presses the hardware back button
+- **THEN** the app navigates back to the recipe catalog
+- **AND** the app does not exit or go to background
+
+#### Scenario: Exiting app from catalog
+- **WHEN** the user is on the recipe catalog home screen
+- **AND** the user presses the hardware back button
+- **THEN** the app exits or goes to background (default system behavior)
 
 ### Requirement: Dynamic Recipe View (Calculator)
 The app SHALL display dynamic recipes with an interactive calculator interface.
@@ -88,15 +84,12 @@ The app SHALL include pizza dough, sandwich bread, and waffles as the initial re
 #### Scenario: Pizza dough recipe available
 - **WHEN** the user views the recipe catalog
 - **THEN** "Pizza Dough" is listed as an available recipe
-- **AND** it is marked as a calculator/dynamic recipe
 
 #### Scenario: Sandwich bread recipe available
 - **WHEN** the user views the recipe catalog
 - **THEN** "Sandwich Bread" is listed as an available recipe
-- **AND** it is marked as a calculator/dynamic recipe
 
 #### Scenario: Waffle recipe available
 - **WHEN** the user views the recipe catalog
 - **THEN** "Waffles" is listed as an available recipe
-- **AND** it is marked as a calculator/dynamic recipe
 

@@ -26,7 +26,9 @@ export default {
     },
     sandwichBread: {
       name: 'Szendvics Kenyér',
-      description: 'Gluténmentes szendvics kenyér recept',
+      description: 'Gluténmentes szendvics kenyér kalkulátor',
+      unitLabel: 'gramm liszt',
+      howMany: 'Összes liszt mennyiség (g)',
     },
     waffles: {
       name: 'Gofri',

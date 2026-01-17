@@ -26,7 +26,9 @@ export default {
     },
     sandwichBread: {
       name: 'Sandwich Bread',
-      description: 'Gluten-free sandwich bread recipe',
+      description: 'Gluten-free sandwich bread calculator',
+      unitLabel: 'grams flour',
+      howMany: 'Total flour amount (g)',
     },
     waffles: {
       name: 'Waffles',

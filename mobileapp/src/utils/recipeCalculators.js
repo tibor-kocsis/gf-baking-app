@@ -57,3 +57,45 @@ export function calculateWaffleIngredients(multiplier) {
     multiplier: mult,
   };
 }
+
+// Sandwich bread calculation logic
+// Base recipe: 300g flour total
+// Water = flour (100% hydration) + psyllium × 6 (600% hydration)
+export function calculateSandwichBreadIngredients(flourAmount) {
+  const totalFlour = parseInt(flourAmount) || 0;
+  if (totalFlour <= 0) return null;
+
+  const ratio = totalFlour / 300; // Scale factor based on 300g base
+
+  // Flour split (56.67% sorghum, 43.33% universal GF)
+  const sorghumFlour = Math.round(totalFlour * 0.5667);
+  const universalGfFlour = totalFlour - sorghumFlour; // Remainder to ensure exact total
+
+  // Other dry ingredients (scaled by ratio)
+  const psylliumHusk = Math.round(5 * ratio);
+  const activeYeast = Math.round(8 * ratio);
+  const salt = Math.round(5 * ratio);
+
+  // Wet ingredients (scaled by ratio)
+  const oil = Math.round(20 * ratio);
+  const honey = Math.round(20 * ratio);
+  const egg = Math.round(ratio); // 1 egg per 300g, rounded
+  const lemonJuice = Math.round(ratio); // 1 tbsp per 300g, rounded
+
+  // Water calculation: 100% flour hydration + 600% psyllium hydration
+  const water = totalFlour + (psylliumHusk * 6);
+
+  return {
+    sorghumFlour,
+    universalGfFlour,
+    psylliumHusk,
+    activeYeast,
+    salt,
+    oil,
+    honey,
+    egg,
+    lemonJuice,
+    water,
+    totalFlour,
+  };
+}

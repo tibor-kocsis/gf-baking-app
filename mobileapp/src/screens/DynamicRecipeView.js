@@ -3,13 +3,20 @@ import { useState, useEffect, useRef } from 'react';
 import { View, Text, TextInput, ScrollView, TouchableOpacity, Animated, StyleSheet } from 'react-native';
 import { colors } from '../constants/colors';
 import { useI18n } from '../context/I18nContext';
-import { calculatePizzaIngredients, calculateWaffleIngredients } from '../utils/recipeCalculators';
+import { calculatePizzaIngredients, calculateWaffleIngredients, calculateSandwichBreadIngredients } from '../utils/recipeCalculators';
 import { Header } from '../components/Header';
 import { IngredientRow } from '../components/IngredientRow';
 
 export function DynamicRecipeView({ recipe, onBack }) {
   const { t } = useI18n();
-  const [count, setCount] = useState('1');
+
+  // Determine initial value and step size based on recipe type
+  const isSandwichBread = recipe.id === 'sandwich-bread';
+  const initialValue = isSandwichBread ? String(recipe.defaultFlour || 300) : '1';
+  const stepSize = recipe.stepSize || 1;
+  const minValue = isSandwichBread ? stepSize : 1;
+
+  const [count, setCount] = useState(initialValue);
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
@@ -45,13 +52,13 @@ export function DynamicRecipeView({ recipe, onBack }) {
 
   const handleIncrement = () => {
     const current = parseInt(count) || 0;
-    setCount(String(current + 1));
+    setCount(String(current + stepSize));
   };
 
   const handleDecrement = () => {
     const current = parseInt(count) || 0;
-    if (current > 1) {
-      setCount(String(current - 1));
+    if (current > minValue) {
+      setCount(String(current - stepSize));
     }
   };
 
@@ -62,6 +69,8 @@ export function DynamicRecipeView({ recipe, onBack }) {
     ? calculatePizzaIngredients(count)
     : isWaffle
     ? calculateWaffleIngredients(count)
+    : isSandwichBread
+    ? calculateSandwichBreadIngredients(count)
     : null;
 
   return (
@@ -265,6 +274,110 @@ export function DynamicRecipeView({ recipe, onBack }) {
 
         {/* Waffle instructions */}
         {isWaffle && ingredients && recipe.instructionsKey && (
+          <View style={styles.instructionsContainer}>
+            <Text style={styles.sectionTitle}>{t('common.instructions')}</Text>
+            <View style={styles.instructionCard}>
+              {t(recipe.instructionsKey).map((instruction, index) => (
+                <View key={index} style={styles.instructionRow}>
+                  <View style={styles.instructionNumber}>
+                    <Text style={styles.instructionNumberText}>{index + 1}</Text>
+                  </View>
+                  <Text style={styles.instructionText}>{instruction}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        )}
+
+        {/* Sandwich bread ingredients */}
+        {isSandwichBread && ingredients && (
+          <Animated.View
+            style={[
+              styles.ingredientsContainer,
+              {
+                opacity: fadeAnim,
+                transform: [{ scale: scaleAnim }],
+              },
+            ]}
+          >
+            <Text style={styles.sectionTitle}>{t('common.requiredIngredients')}</Text>
+
+            <View style={styles.ingredientCard}>
+              <Text style={styles.categoryTitle}>{t('common.flour')}</Text>
+              <IngredientRow
+                name={t('ingredients.sorghumFlour')}
+                amount={ingredients.sorghumFlour}
+                unit="g"
+                emoji="🌿"
+              />
+              <IngredientRow
+                name={t('ingredients.universalGfFlour')}
+                amount={ingredients.universalGfFlour}
+                unit="g"
+                emoji="🌱"
+              />
+            </View>
+
+            <View style={styles.ingredientCard}>
+              <Text style={styles.categoryTitle}>{t('common.dryIngredients')}</Text>
+              <IngredientRow
+                name={t('ingredients.psylliumHusk')}
+                amount={ingredients.psylliumHusk}
+                unit="g"
+                emoji="🌾"
+              />
+              <IngredientRow
+                name={t('ingredients.activeYeast')}
+                amount={ingredients.activeYeast}
+                unit="g"
+                emoji="🦠"
+              />
+              <IngredientRow
+                name={t('ingredients.salt')}
+                amount={ingredients.salt}
+                unit="g"
+                emoji="🧂"
+              />
+            </View>
+
+            <View style={styles.ingredientCard}>
+              <Text style={styles.categoryTitle}>{t('common.wetIngredients')}</Text>
+              <IngredientRow
+                name={t('ingredients.water')}
+                amount={ingredients.water}
+                unit="g"
+                emoji="💧"
+              />
+              <IngredientRow
+                name={t('ingredients.oil')}
+                amount={ingredients.oil}
+                unit="g"
+                emoji="🫒"
+              />
+              <IngredientRow
+                name={t('ingredients.honey')}
+                amount={ingredients.honey}
+                unit="g"
+                emoji="🍯"
+              />
+              <IngredientRow
+                name={t('ingredients.egg')}
+                amount={ingredients.egg}
+                unit=""
+                emoji="🥚"
+              />
+              <IngredientRow
+                name={t('ingredients.lemonJuice')}
+                amount={ingredients.lemonJuice}
+                unit=" tbsp"
+                emoji="🍋"
+              />
+            </View>
+          </Animated.View>
+        )}
+
+        {/* Sandwich bread instructions */}
+        {isSandwichBread && ingredients && recipe.instructionsKey && (
           <View style={styles.instructionsContainer}>
             <Text style={styles.sectionTitle}>{t('common.instructions')}</Text>
             <View style={styles.instructionCard}>

@@ -1,53 +1,4 @@
-# recipe-catalog Specification
-
-## Purpose
-TBD - created by archiving change extend-recipe-catalog. Update Purpose after archive.
-## Requirements
-### Requirement: Recipe Catalog Home Screen
-The app SHALL display a recipe catalog as the main home screen, showing all available recipes in a scrollable list and providing access to language selection.
-
-#### Scenario: User opens the app
-- **WHEN** the user launches the app
-- **THEN** the recipe catalog screen is displayed
-- **AND** all available recipes are shown as cards in a list
-
-#### Scenario: Recipe card display
-- **WHEN** a recipe is displayed in the catalog
-- **THEN** the card shows the recipe name
-- **AND** the card shows an icon/emoji representing the recipe
-- **AND** the card shows a short description
-- **AND** the card shows a type badge indicating "Calculator" or "Recipe"
-
-#### Scenario: Language selector at bottom
-- **WHEN** viewing the recipe catalog
-- **THEN** a language selector is displayed at the bottom of the screen
-- **AND** users can switch between English and Hungarian
-
-### Requirement: Recipe Types
-The app SHALL support two types of recipes: dynamic (calculators) and static (fixed recipes).
-
-#### Scenario: Dynamic recipe type
-- **WHEN** a recipe has type "dynamic"
-- **THEN** it represents a scalable calculator
-- **AND** users can adjust the quantity to recalculate ingredients
-
-#### Scenario: Static recipe type
-- **WHEN** a recipe has type "static"
-- **THEN** it represents a fixed ingredient list
-- **AND** ingredient amounts are not adjustable
-
-### Requirement: Recipe Navigation
-The app SHALL allow users to navigate from the catalog to individual recipe views.
-
-#### Scenario: Opening a recipe
-- **WHEN** the user taps on a recipe card in the catalog
-- **THEN** the app navigates to the recipe detail view
-- **AND** the appropriate view type is shown based on recipe type
-
-#### Scenario: Returning to catalog
-- **WHEN** the user is viewing a recipe detail
-- **THEN** a back button or gesture is available
-- **AND** tapping back returns to the recipe catalog
+## MODIFIED Requirements
 
 ### Requirement: Dynamic Recipe View (Calculator)
 The app SHALL display dynamic recipes with an interactive calculator interface.
@@ -100,3 +51,8 @@ The app SHALL include pizza dough, sandwich bread, and waffles as the initial re
 - **THEN** "Waffles" is listed as an available recipe
 - **AND** it is marked as a calculator/dynamic recipe
 
+## REMOVED Requirements
+
+### Requirement: Static Recipe View
+**Reason**: All recipes are now dynamic calculators. The static recipe view is no longer needed as sandwich bread has been converted to a calculator.
+**Migration**: Sandwich bread now uses the dynamic recipe view with flour-based scaling.

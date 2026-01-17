@@ -28,7 +28,7 @@
     },
 
     // Use 'postCreateCommand' to run commands after the container is created.
-    "postCreateCommand": "npm install -g @anthropic-ai/claude-code"
+    "postCreateCommand": "npm install -g @anthropic-ai/claude-code @fission-ai/openspec@latest"
 
     // Configure tool-specific properties.
     // "customizations": {},

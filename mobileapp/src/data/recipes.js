@@ -1,0 +1,43 @@
+// Recipe definitions with translation keys
+export const recipes = [
+  {
+    id: 'pizza',
+    type: 'dynamic',
+    nameKey: 'recipes.pizza.name',
+    icon: '🍕',
+    descriptionKey: 'recipes.pizza.description',
+    unitLabelKey: 'recipes.pizza.unitLabel',
+    howManyKey: 'recipes.pizza.howMany',
+    baseWeight: 300,
+  },
+  {
+    id: 'sandwich-bread',
+    type: 'static',
+    nameKey: 'recipes.sandwichBread.name',
+    icon: '🍞',
+    descriptionKey: 'recipes.sandwichBread.description',
+    ingredients: [
+      { nameKey: 'ingredients.sorghumFlour', amount: 170, unit: 'g', emoji: '🌿', category: 'dry' },
+      { nameKey: 'ingredients.universalGfFlour', amount: 130, unit: 'g', emoji: '🌱', category: 'dry' },
+      { nameKey: 'ingredients.psylliumHusk', amount: 5, unit: 'g', emoji: '🌾', category: 'dry' },
+      { nameKey: 'ingredients.activeYeast', amount: 8, unit: 'g', emoji: '🦠', category: 'dry' },
+      { nameKey: 'ingredients.salt', amount: 5, unit: 'g', emoji: '🧂', category: 'dry' },
+      { nameKey: 'ingredients.oil', amount: 20, unit: 'g', emoji: '🫒', category: 'wet' },
+      { nameKey: 'ingredients.honey', amount: 20, unit: 'g', emoji: '🍯', category: 'wet' },
+      { nameKey: 'ingredients.egg', amount: 1, unit: '', emoji: '🥚', category: 'wet' },
+      { nameKey: 'ingredients.lemonJuice', amount: 1, unit: 'tbsp', emoji: '🍋', category: 'wet' },
+      { nameKey: 'ingredients.water', amount: 330, unit: 'g', emoji: '💧', category: 'wet' },
+    ],
+    instructionsKey: 'instructions.sandwichBread',
+  },
+  {
+    id: 'waffles',
+    type: 'dynamic',
+    nameKey: 'recipes.waffles.name',
+    icon: '🧇',
+    descriptionKey: 'recipes.waffles.description',
+    unitLabelKey: 'recipes.waffles.unitLabel',
+    howManyKey: 'recipes.waffles.howMany',
+    instructionsKey: 'instructions.waffles',
+  },
+];

@@ -51,14 +51,70 @@ Gluten Free Baking is a mobile app that serves as a comprehensive gluten-free re
 - Inline styles avoided in favor of StyleSheet references
 
 ### Architecture Patterns
-- Recipe data stored as structured objects with type field
-- Navigation between catalog and detail views
-- Calculation logic separated for dynamic recipes
-- Animations use React Native Animated API with native driver
+
+The app follows a modular architecture organized by technical layer:
+
+```
+mobileapp/
+├── App.js                     # Entry point (thin wrapper)
+├── src/
+│   ├── constants/             # Static configuration values
+│   │   ├── colors.js          # Color palette
+│   │   └── storage.js         # AsyncStorage keys
+│   ├── context/               # React Context providers
+│   │   └── I18nContext.js     # i18n provider and useI18n hook
+│   ├── data/                  # Data definitions
+│   │   └── recipes.js         # Recipe catalog data
+│   ├── utils/                 # Pure functions and helpers
+│   │   └── recipeCalculators.js  # Pizza/waffle calculation logic
+│   ├── components/            # Reusable UI components
+│   │   ├── Header.js          # Back button + title
+│   │   ├── IngredientRow.js   # Ingredient display row
+│   │   └── LanguageSelector.js # EN/HU toggle
+│   ├── screens/               # Full-page views
+│   │   ├── RecipeCatalog.js   # Home screen
+│   │   ├── DynamicRecipeView.js  # Calculator recipes
+│   │   └── StaticRecipeView.js   # Fixed recipes
+│   └── navigation/            # Navigation state
+│       └── AppNavigator.js    # Screen routing
+└── locales/                   # Translation files
+    ├── en.js
+    └── hu.js
+```
+
+**Key Principles:**
+- **Single Responsibility**: Each module has one clear purpose
+- **No External State Library**: React Context is sufficient for i18n and navigation
+- **Pure Calculation Functions**: Business logic in utils/ is testable without UI
+- **Colocated Styles**: StyleSheet defined at bottom of each component file
+- **Animations**: Use React Native Animated API with native driver
 
 ### Testing Strategy
 - Jest + React Native Testing Library for unit and component tests
-- Test calculation logic separately from UI components
+- Test calculation logic separately from UI components (import from `src/utils/recipeCalculators.js`)
+
+### How to Add a New Recipe
+
+1. **Add recipe data** to `src/data/recipes.js`:
+   - For **dynamic** recipes: include `type: 'dynamic'`, `howManyKey`, and optionally `instructionsKey`
+   - For **static** recipes: include `type: 'static'`, `ingredients` array, and `instructionsKey`
+
+2. **Add translations** to `locales/en.js` and `locales/hu.js`:
+   - Recipe name and description under `recipes.<id>`
+   - Ingredient names under `ingredients`
+   - Instructions array under `instructions.<id>`
+
+3. **For dynamic recipes**, add a calculation function to `src/utils/recipeCalculators.js`:
+   - Export a pure function like `calculateNewRecipeIngredients(count)`
+   - Update `DynamicRecipeView.js` to call the new calculator
+
+4. **No changes needed** to navigation or catalog - they automatically display new recipes
+
+### How to Add a New Language
+
+1. Create `locales/<code>.js` with all translation keys (copy structure from `en.js`)
+2. Import in `src/context/I18nContext.js` and add to `translations` object
+3. Add a button to `src/components/LanguageSelector.js`
 
 ### Git Workflow
 - Trunk-based development: commit directly to main with small, frequent changes

@@ -21,6 +21,19 @@ export const recipes = [
     instructionsKey: 'instructions.sandwichBread',
     defaultFlour: 300,
     stepSize: 10,
+    cookingSteps: [
+      { instructionIndex: 0, ingredients: ['activeYeast', 'lemonJuice', 'honey', 'water'] },
+      { instructionIndex: 1, ingredients: ['sorghumFlour', 'universalGfFlour', 'psylliumHusk', 'salt'] },
+      { instructionIndex: 2, ingredients: ['egg'] },
+      { instructionIndex: 3, ingredients: ['oil'] },
+      { instructionIndex: 4, ingredients: [] },
+      { instructionIndex: 5, ingredients: [] },
+      { instructionIndex: 6, ingredients: [] },
+      { instructionIndex: 7, ingredients: [] },
+      { instructionIndex: 8, ingredients: [] },
+      { instructionIndex: 9, ingredients: [] },
+      { instructionIndex: 10, ingredients: [] },
+    ],
   },
   {
     id: 'waffles',
@@ -31,5 +44,13 @@ export const recipes = [
     unitLabelKey: 'recipes.waffles.unitLabel',
     howManyKey: 'recipes.waffles.howMany',
     instructionsKey: 'instructions.waffles',
+    cookingSteps: [
+      { instructionIndex: 0, ingredients: ['egg'] },
+      { instructionIndex: 1, ingredients: ['butter'] },
+      { instructionIndex: 2, ingredients: ['flour', 'milk', 'sugar', 'vanilla', 'bakingPowder'] },
+      { instructionIndex: 3, ingredients: [] },
+      { instructionIndex: 4, ingredients: [] },
+      { instructionIndex: 5, ingredients: [] },
+    ],
   },
 ];

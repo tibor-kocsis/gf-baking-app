@@ -7,7 +7,7 @@ import { calculatePizzaIngredients, calculateWaffleIngredients, calculateSandwic
 import { Header } from '../components/Header';
 import { IngredientRow } from '../components/IngredientRow';
 
-export function DynamicRecipeView({ recipe, onBack }) {
+export function DynamicRecipeView({ recipe, onBack, onStartCooking }) {
   const { t } = useI18n();
 
   // Determine initial value and step size based on recipe type
@@ -265,7 +265,7 @@ export function DynamicRecipeView({ recipe, onBack }) {
               <IngredientRow
                 name={t('ingredients.vanilla')}
                 amount={ingredients.vanilla}
-                unit=" tsp"
+                unit={` ${t('common.unitTsp')}`}
                 emoji="🌿"
               />
             </View>
@@ -369,7 +369,7 @@ export function DynamicRecipeView({ recipe, onBack }) {
               <IngredientRow
                 name={t('ingredients.lemonJuice')}
                 amount={ingredients.lemonJuice}
-                unit=" tbsp"
+                unit={` ${t('common.unitTbsp')}`}
                 emoji="🍋"
               />
             </View>
@@ -391,6 +391,17 @@ export function DynamicRecipeView({ recipe, onBack }) {
               ))}
             </View>
           </View>
+        )}
+
+        {/* Start Cooking button - only for recipes with instructions */}
+        {recipe.instructionsKey && recipe.cookingSteps && ingredients && (
+          <TouchableOpacity
+            style={styles.startCookingButton}
+            onPress={() => onStartCooking(ingredients)}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.startCookingButtonText}>{t('common.startCooking')}</Text>
+          </TouchableOpacity>
         )}
       </View>
     </ScrollView>
@@ -579,5 +590,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.text,
     lineHeight: 24,
+  },
+  startCookingButton: {
+    backgroundColor: colors.secondary,
+    borderRadius: 16,
+    padding: 18,
+    marginTop: 24,
+    alignItems: 'center',
+    shadowColor: colors.secondary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  startCookingButtonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#fff',
   },
 });

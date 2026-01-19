@@ -14,6 +14,12 @@ export default {
     dryIngredients: 'Száraz hozzávalók',
     totalDough: 'Összes tészta',
     perPizza: 'Pizzánként',
+    startCooking: 'Elkészítem',
+    stepsCompleted: '{completed}/{total} lépés kész',
+    step: 'Lépés',
+    ingredientsForStep: 'Hozzávalók',
+    unitTsp: 'teáskanál',
+    unitTbsp: 'evőkanál',
   },
   recipes: {
     pizza: {

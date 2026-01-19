@@ -14,6 +14,12 @@ export default {
     dryIngredients: 'Dry Ingredients',
     totalDough: 'Total Dough',
     perPizza: 'Per Pizza',
+    startCooking: 'Start Cooking',
+    stepsCompleted: '{completed}/{total} steps completed',
+    step: 'Step',
+    ingredientsForStep: 'Ingredients',
+    unitTsp: 'tsp',
+    unitTbsp: 'tbsp',
   },
   recipes: {
     pizza: {

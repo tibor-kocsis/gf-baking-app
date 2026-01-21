@@ -9,7 +9,10 @@
     "features": {
         "ghcr.io/devcontainers/features/node:1": {}
     },
-    "mounts": ["source=mevo-bashhistory,target=/commandhistory,type=volume"],
+    "mounts": [
+        "source=mevo-bashhistory,target=/commandhistory,type=volume",
+        "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached"
+    ],
 
     // Features to add to the dev container. More info: https://containers.dev/features.
     // "features": {},

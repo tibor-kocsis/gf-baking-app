@@ -1,7 +1,7 @@
 # Project Context
 
 ## Purpose
-Gluten Free Baking is a mobile app that serves as a comprehensive gluten-free recipe companion. It features a recipe catalog with both interactive calculators (for scalable recipes like pizza dough) and static recipes (with fixed ingredient lists and instructions).
+Gluten Free Baking is a mobile app that serves as a comprehensive gluten-free recipe companion. It features a recipe catalog of interactive calculators (scalable recipes like pizza dough, sandwich bread, and baguette) that recalculate ingredient amounts as the user adjusts a quantity, flour amount, or batch multiplier.
 
 ## Tech Stack
 - **Framework**: React Native with Expo SDK 54
@@ -14,16 +14,18 @@ Gluten Free Baking is a mobile app that serves as a comprehensive gluten-free re
 
 ### Recipe Catalog (Home Screen)
 - Scrollable list of recipe cards
-- Each card displays: name, icon/emoji, short description, type badge
-- Two recipe types: "Calculator" (dynamic) and "Recipe" (static)
+- Each card displays: name, icon/emoji, short description
 
 ### Recipe Types
-- **Dynamic (Calculator)**: Scalable recipes where users adjust quantity to recalculate ingredients (e.g., pizza dough)
-- **Static**: Fixed ingredient lists with preparation instructions (e.g., sandwich bread)
+- **Dynamic (Calculator)**: Every recipe is a scalable calculator where users adjust a quantity, total flour amount, or batch multiplier to recalculate ingredients (e.g., pizza dough, sandwich bread, baguette). There is no static/fixed recipe type.
 
 ### Initial Recipe Set
-- Pizza Dough (dynamic calculator)
-- Sandwich Bread (static recipe)
+- Pizza Dough (quantity calculator)
+- Sandwich Bread (flour amount calculator, 10g steps)
+- Waffles (batch calculator)
+- Baguette (ready dough weight calculator, 50g steps)
+- American Pancakes (pancake-count calculator, 1 pancake steps)
+- Cheese Sticks (stick-count calculator, 1 stick steps)
 
 ## UI Design
 
@@ -73,8 +75,7 @@ mobileapp/
 │   │   └── LanguageSelector.js # EN/HU toggle
 │   ├── screens/               # Full-page views
 │   │   ├── RecipeCatalog.js   # Home screen
-│   │   ├── DynamicRecipeView.js  # Calculator recipes
-│   │   └── StaticRecipeView.js   # Fixed recipes
+│   │   └── DynamicRecipeView.js  # Calculator recipes
 │   └── navigation/            # Navigation state
 │       └── AppNavigator.js    # Screen routing
 └── locales/                   # Translation files
@@ -96,17 +97,17 @@ mobileapp/
 ### How to Add a New Recipe
 
 1. **Add recipe data** to `src/data/recipes.js`:
-   - For **dynamic** recipes: include `type: 'dynamic'`, `howManyKey`, and optionally `instructionsKey`
-   - For **static** recipes: include `type: 'static'`, `ingredients` array, and `instructionsKey`
+   - Include `type: 'dynamic'`, `howManyKey`, and optionally `instructionsKey`
+   - Set `initialValue` to the selector's starting number (whatever unit the recipe scales by: grams, pancakes, sticks...) and `stepSize` to its increment. Both default to `1` if omitted (e.g. pizza/waffles' plain quantity/batch multiplier)
 
 2. **Add translations** to `locales/en.js` and `locales/hu.js`:
    - Recipe name and description under `recipes.<id>`
    - Ingredient names under `ingredients`
    - Instructions array under `instructions.<id>`
 
-3. **For dynamic recipes**, add a calculation function to `src/utils/recipeCalculators.js`:
+3. **Add a calculation function** to `src/utils/recipeCalculators.js`:
    - Export a pure function like `calculateNewRecipeIngredients(count)`
-   - Update `DynamicRecipeView.js` to call the new calculator
+   - Update `DynamicRecipeView.js` to add an `isXxx` check, a branch in the ingredient-calculation dispatch, and JSX ingredient/instruction cards for the new recipe (this file is not data-driven — each recipe currently needs its own rendering branch)
 
 4. **No changes needed** to navigation or catalog - they automatically display new recipes
 
@@ -134,10 +135,29 @@ mobileapp/
   - Honey: 5%
 - Flour amounts rounded to nearest 25g
 
-### Sandwich Bread Recipe (Static)
-- Fixed ingredient list with amounts
+### Sandwich Bread Recipe (Dynamic, flour-based)
+- Base recipe: 300g total flour, adjustable in 10g steps
+- Water = flour (100% hydration) + psyllium × 6 (600% hydration)
+- Ingredients grouped by category (flour, dry, wet)
 - Step-by-step preparation instructions
-- Ingredients grouped by category (dry, wet, etc.)
+
+### Baguette Recipe (Dynamic, dough-weight-based)
+- Base recipe: 390g total flour (sorghum flour mix, brown rice flour, tapioca starch) + other ingredients = 800g total ready dough weight (rounded to the nearest 50g), adjustable in 50g steps
+- The selector scales the whole recipe by total dough weight (not just flour), since every ingredient is proportional to the same base ratio
+- Flour amounts (sorghum flour mix, brown rice flour, tapioca starch) round to the nearest 5g; other ingredients round to the nearest 1g since 5g would be too coarse relative to their size
+- A portion of the tapioca starch and water (already counted in those totals, not extra) is used for a tangzhong (cooked paste) step, called out in the instructions with the exact gram amounts
+- Ingredients grouped by category (flour, dry, wet)
+- Step-by-step preparation instructions
+
+### American Pancakes Recipe (Dynamic, pancake-count-based)
+- Base recipe (1x): 250g rice flour, 3g baking powder, 1g salt, 50g sugar, 3 eggs (~50g each), 80g butter, 100g milk = 634g total batter
+- One 6cm-diameter pancake is estimated at ~28g (3cm-radius, ~1cm-thick portion of batter at ~1g/cm³), so the base recipe yields ~22 pancakes
+- The selector scales the whole recipe against that base pancake count, in steps of 1 pancake
+
+### Cheese Sticks Recipe (Dynamic, stick-count-based)
+- Base recipe (1x): 150g bread flour mix, 250g cottage cheese, 250g grated cheese, 85g butter, 5g salt, 3g baking powder
+- One stick requires 50g of the flour blend, so the base recipe yields 150 / 50 = 3 sticks
+- The selector scales the whole recipe against that base stick count, in steps of 1 stick
 
 ## Internationalization (i18n)
 - **Supported Languages**: English (en), Hungarian (hu)

@@ -1,49 +1,4 @@
-# recipe-catalog Specification
-
-## Purpose
-TBD - created by archiving change extend-recipe-catalog. Update Purpose after archive.
-## Requirements
-### Requirement: Recipe Catalog Home Screen
-The app SHALL display a recipe catalog as the main home screen, showing all available recipes in a scrollable list and providing access to language selection.
-
-#### Scenario: User opens the app
-- **WHEN** the user launches the app
-- **THEN** the recipe catalog screen is displayed
-- **AND** all available recipes are shown as cards in a list
-
-#### Scenario: Recipe card display
-- **WHEN** a recipe is displayed in the catalog
-- **THEN** the card shows the recipe name
-- **AND** the card shows an icon/emoji representing the recipe
-- **AND** the card shows a short description
-
-#### Scenario: Language selector at bottom
-- **WHEN** viewing the recipe catalog
-- **THEN** a language selector is displayed at the bottom of the screen
-- **AND** users can switch between English and Hungarian
-
-### Requirement: Recipe Navigation
-The app SHALL allow users to navigate from the catalog to individual recipe views.
-
-#### Scenario: Opening a recipe
-- **WHEN** the user taps on a recipe card in the catalog
-- **THEN** the app navigates to the recipe detail view
-
-#### Scenario: Returning to catalog via UI
-- **WHEN** the user is viewing a recipe detail
-- **THEN** a back button is available in the header
-- **AND** tapping the back button returns to the recipe catalog
-
-#### Scenario: Returning to catalog via hardware back button
-- **WHEN** the user is viewing a recipe detail on Android
-- **AND** the user presses the hardware back button
-- **THEN** the app navigates back to the recipe catalog
-- **AND** the app does not exit or go to background
-
-#### Scenario: Exiting app from catalog
-- **WHEN** the user is on the recipe catalog home screen
-- **AND** the user presses the hardware back button
-- **THEN** the app exits or goes to background (default system behavior)
+## MODIFIED Requirements
 
 ### Requirement: Dynamic Recipe View (Calculator)
 The app SHALL display dynamic recipes with an interactive calculator interface.
@@ -75,24 +30,23 @@ The app SHALL display dynamic recipes with an interactive calculator interface.
 
 #### Scenario: Viewing baguette calculator
 - **WHEN** the user opens the baguette recipe
-- **THEN** a total ready dough weight selector is displayed (default 800g)
-- **AND** calculated ingredients are shown based on selected dough weight
-- **AND** the user can adjust dough weight in 50g increments
-- **AND** flour amounts round to the nearest 5g while other ingredients round to the nearest 1g
-- **AND** preparation instructions are displayed below the ingredients, including the tangzhong step with its gram amounts drawn from (not added to) the totals above
+- **THEN** a flour amount selector is displayed (default 390g)
+- **AND** calculated ingredients are shown based on selected flour amount
+- **AND** the user can adjust flour amount in 10g increments
+- **AND** preparation instructions are displayed below the ingredients, including the tangzhong step
 
 #### Scenario: Viewing American pancakes calculator
 - **WHEN** the user opens the American pancakes recipe
-- **THEN** a pancake-count selector is displayed (default 22, one 6cm pancake ≈ 28g)
-- **AND** calculated ingredients are shown based on the selected pancake count
-- **AND** the user can increment or decrement the count in steps of 1 pancake
+- **THEN** a batch multiplier selector is displayed (1x, 2x, 3x, etc.)
+- **AND** calculated ingredients are shown based on selected multiplier
+- **AND** the user can increment or decrement the multiplier
 - **AND** preparation instructions are displayed below the ingredients
 
 #### Scenario: Viewing cheese sticks calculator
 - **WHEN** the user opens the cheese sticks recipe
-- **THEN** a stick-count selector is displayed (default 3, one stick = 50g of the flour blend)
-- **AND** calculated ingredients are shown based on the selected stick count
-- **AND** the user can increment or decrement the count in steps of 1 stick
+- **THEN** a batch multiplier selector is displayed (1x, 2x, 3x, etc.)
+- **AND** calculated ingredients are shown based on selected multiplier
+- **AND** the user can increment or decrement the multiplier
 - **AND** preparation instructions are displayed below the ingredients
 
 #### Scenario: Ingredient calculation
@@ -126,4 +80,3 @@ The app SHALL include pizza dough, sandwich bread, waffles, baguette, American p
 #### Scenario: Cheese sticks recipe available
 - **WHEN** the user views the recipe catalog
 - **THEN** "Cheese Sticks" is listed as an available recipe
-

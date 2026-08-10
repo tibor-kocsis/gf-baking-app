@@ -13,8 +13,11 @@ import {
 } from '../utils/recipeCalculators';
 import { Header } from '../components/Header';
 import { IngredientRow } from '../components/IngredientRow';
+import { NotesList } from '../components/NotesList';
+import { NoteEditor } from '../components/NoteEditor';
+import { PhotoPreview } from '../components/PhotoPreview';
 
-export function DynamicRecipeView({ recipe, onBack }) {
+export function DynamicRecipeView({ recipe, onBack, onStartCooking }) {
   const { t } = useI18n();
 
   // Determine initial value and step size based on recipe type
@@ -27,6 +30,27 @@ export function DynamicRecipeView({ recipe, onBack }) {
   const [count, setCount] = useState(initialValue);
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  // Notes state
+  const [notesExpanded, setNotesExpanded] = useState(false);
+  const [noteEditorVisible, setNoteEditorVisible] = useState(false);
+  const [editingNote, setEditingNote] = useState(null);
+  const [notesRefreshTrigger, setNotesRefreshTrigger] = useState(0);
+  const [previewPhoto, setPreviewPhoto] = useState(null);
+
+  const handleAddNote = () => {
+    setEditingNote(null);
+    setNoteEditorVisible(true);
+  };
+
+  const handleEditNote = (note) => {
+    setEditingNote(note);
+    setNoteEditorVisible(true);
+  };
+
+  const handleNoteSaved = () => {
+    setNotesRefreshTrigger(prev => prev + 1);
+  };
 
   useEffect(() => {
     Animated.parallel([
@@ -281,7 +305,7 @@ export function DynamicRecipeView({ recipe, onBack }) {
               <IngredientRow
                 name={t('ingredients.vanilla')}
                 amount={ingredients.vanilla}
-                unit=" tsp"
+                unit={` ${t('common.unitTsp')}`}
                 emoji="🌿"
               />
             </View>
@@ -385,7 +409,7 @@ export function DynamicRecipeView({ recipe, onBack }) {
               <IngredientRow
                 name={t('ingredients.lemonJuice')}
                 amount={ingredients.lemonJuice}
-                unit=" tbsp"
+                unit={` ${t('common.unitTbsp')}`}
                 emoji="🍋"
               />
             </View>
@@ -669,6 +693,55 @@ export function DynamicRecipeView({ recipe, onBack }) {
             </View>
           </View>
         )}
+
+        {/* Start Cooking button - only for recipes with instructions */}
+        {recipe.instructionsKey && recipe.cookingSteps && ingredients && (
+          <TouchableOpacity
+            style={styles.startCookingButton}
+            onPress={() => onStartCooking(ingredients)}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.startCookingButtonText}>{t('common.startCooking')}</Text>
+          </TouchableOpacity>
+        )}
+
+        {/* My Notes Section */}
+        <View style={styles.notesSection}>
+          <TouchableOpacity
+            style={styles.notesSectionHeader}
+            onPress={() => setNotesExpanded(!notesExpanded)}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.sectionTitle}>{t('notes.title')}</Text>
+            <Text style={styles.expandIcon}>{notesExpanded ? '▼' : '▶'}</Text>
+          </TouchableOpacity>
+          
+          {notesExpanded && (
+            <NotesList
+              recipeId={recipe.id}
+              onEditNote={handleEditNote}
+              onAddNote={handleAddNote}
+              onPhotoPress={setPreviewPhoto}
+              refreshTrigger={notesRefreshTrigger}
+            />
+          )}
+        </View>
+
+        {/* Note Editor Modal */}
+        <NoteEditor
+          visible={noteEditorVisible}
+          note={editingNote}
+          recipeId={recipe.id}
+          onClose={() => setNoteEditorVisible(false)}
+          onSaved={handleNoteSaved}
+        />
+
+        {/* Photo Preview Modal */}
+        <PhotoPreview
+          visible={!!previewPhoto}
+          photoUri={previewPhoto}
+          onClose={() => setPreviewPhoto(null)}
+        />
       </View>
     </ScrollView>
   );
@@ -856,5 +929,42 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.text,
     lineHeight: 24,
+  },
+  startCookingButton: {
+    backgroundColor: colors.secondary,
+    borderRadius: 16,
+    padding: 18,
+    marginTop: 24,
+    alignItems: 'center',
+    shadowColor: colors.secondary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  startCookingButtonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  notesSection: {
+    marginTop: 32,
+    backgroundColor: colors.surface,
+    borderRadius: 16,
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 3,
+  },
+  notesSectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  expandIcon: {
+    fontSize: 12,
+    color: colors.textSecondary,
   },
 });

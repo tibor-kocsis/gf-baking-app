@@ -3,6 +3,7 @@ import { BackHandler } from 'react-native';
 import { recipes } from '../data/recipes';
 import { RecipeCatalog } from '../screens/RecipeCatalog';
 import { DynamicRecipeView } from '../screens/DynamicRecipeView';
+import { CookingModeView } from '../screens/CookingModeView';
 
 export function AppNavigator() {
   const [screen, setScreen] = useState({ type: 'catalog' });
@@ -15,18 +16,30 @@ export function AppNavigator() {
     setScreen({ type: 'catalog' });
   };
 
+  const navigateToCooking = (recipeId, ingredients) => {
+    setScreen({ type: 'cooking', recipeId, ingredients });
+  };
+
+  const navigateBackFromCooking = () => {
+    setScreen({ type: 'recipe', recipeId: screen.recipeId });
+  };
+
   // Handle hardware back button on Android
   useEffect(() => {
     const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
-      if (screen.type !== 'catalog') {
+      if (screen.type === 'cooking') {
+        navigateBackFromCooking();
+        return true;
+      }
+      if (screen.type === 'recipe') {
         navigateToCatalog();
-        return true; // Handled - don't exit app
+        return true;
       }
       return false; // Not handled - let system handle (exit app)
     });
 
     return () => backHandler.remove();
-  }, [screen.type]);
+  }, [screen.type, screen.recipeId]);
 
   if (screen.type === 'catalog') {
     return <RecipeCatalog onSelectRecipe={navigateToRecipe} />;
@@ -37,5 +50,21 @@ export function AppNavigator() {
     return <RecipeCatalog onSelectRecipe={navigateToRecipe} />;
   }
 
-  return <DynamicRecipeView recipe={recipe} onBack={navigateToCatalog} />;
+  if (screen.type === 'cooking') {
+    return (
+      <CookingModeView
+        recipe={recipe}
+        ingredients={screen.ingredients}
+        onBack={navigateBackFromCooking}
+      />
+    );
+  }
+
+  return (
+    <DynamicRecipeView
+      recipe={recipe}
+      onBack={navigateToCatalog}
+      onStartCooking={(ingredients) => navigateToCooking(recipe.id, ingredients)}
+    />
+  );
 }

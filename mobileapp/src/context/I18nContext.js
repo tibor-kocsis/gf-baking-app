@@ -4,9 +4,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import en from '../../locales/en';
 import hu from '../../locales/hu';
+import de from '../../locales/de';
 import { LANGUAGE_STORAGE_KEY } from '../constants/storage';
 
-const translations = { en, hu };
+const translations = { en, hu, de };
 
 const I18nContext = createContext();
 

@@ -1,8 +1,7 @@
-# i18n Specification
+# i18n Specification Updates
 
-## Purpose
-Provides internationalization (i18n) support for the app, allowing users to view all content in their preferred language. The system handles language detection, user preferences, and translated content for all user-facing text.
-## Requirements
+## MODIFIED Requirements
+
 ### Requirement: Supported Languages
 The app SHALL support English, Hungarian, and German languages for all user-facing content.
 
@@ -61,19 +60,6 @@ The app SHALL default to the device's system language when supported, otherwise 
 - **AND** the device system language is not English, Hungarian, or German
 - **THEN** the app defaults to English
 
-### Requirement: Language Preference Persistence
-The app SHALL persist the user's language preference and restore it on subsequent app launches.
-
-#### Scenario: Language preference saved
-- **WHEN** the user changes the language
-- **THEN** the preference is stored locally on the device
-
-#### Scenario: Language preference restored
-- **WHEN** the app launches
-- **AND** the user has previously selected a language
-- **THEN** the app uses the saved language preference
-- **AND** device locale is not re-detected
-
 ### Requirement: Translated Recipe Content
 The app SHALL provide translations for all recipe content including names, descriptions, ingredient names, and instructions in English, Hungarian, and German.
 
@@ -88,4 +74,3 @@ The app SHALL provide translations for all recipe content including names, descr
 #### Scenario: Instruction translation in German
 - **WHEN** viewing a static recipe in German
 - **THEN** all preparation instructions are displayed in German
-

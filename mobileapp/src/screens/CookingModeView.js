@@ -1,4 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
+import { useKeepAwake } from 'expo-keep-awake';
 import { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import { colors } from '../constants/colors';
@@ -6,6 +7,7 @@ import { useI18n } from '../context/I18nContext';
 import { Header } from '../components/Header';
 
 export function CookingModeView({ recipe, ingredients, onBack }) {
+  useKeepAwake();
   const { t } = useI18n();
   const [checkedIngredients, setCheckedIngredients] = useState({});
   const [completedSteps, setCompletedSteps] = useState({});

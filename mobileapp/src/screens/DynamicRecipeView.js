@@ -1,4 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
+import { useKeepAwake } from 'expo-keep-awake';
 import { useState, useEffect, useRef } from 'react';
 import { View, Text, TextInput, ScrollView, TouchableOpacity, Animated, StyleSheet } from 'react-native';
 import { colors } from '../constants/colors';
@@ -18,6 +19,7 @@ import { NoteEditor } from '../components/NoteEditor';
 import { PhotoPreview } from '../components/PhotoPreview';
 
 export function DynamicRecipeView({ recipe, onBack, onStartCooking }) {
+  useKeepAwake();
   const { t } = useI18n();
 
   // Determine initial value and step size based on recipe type

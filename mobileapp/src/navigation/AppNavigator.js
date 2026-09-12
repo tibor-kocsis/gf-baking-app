@@ -3,6 +3,7 @@ import { BackHandler } from 'react-native';
 import { recipes } from '../data/recipes';
 import { RecipeCatalog } from '../screens/RecipeCatalog';
 import { DynamicRecipeView } from '../screens/DynamicRecipeView';
+import { FlourMixCalculatorView } from '../screens/FlourMixCalculatorView';
 import { CookingModeView } from '../screens/CookingModeView';
 
 export function AppNavigator() {
@@ -27,7 +28,11 @@ export function AppNavigator() {
   // Handle hardware back button on Android
   useEffect(() => {
     const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
-      if (screen.type === 'cooking') {
+      if (recipe.type === 'flour-mix') {
+    return <FlourMixCalculatorView recipe={recipe} onBack={navigateToCatalog} />;
+  }
+
+  if (screen.type === 'cooking') {
         navigateBackFromCooking();
         return true;
       }
@@ -48,6 +53,10 @@ export function AppNavigator() {
   const recipe = recipes.find(r => r.id === screen.recipeId);
   if (!recipe) {
     return <RecipeCatalog onSelectRecipe={navigateToRecipe} />;
+  }
+
+  if (recipe.type === 'flour-mix') {
+    return <FlourMixCalculatorView recipe={recipe} onBack={navigateToCatalog} />;
   }
 
   if (screen.type === 'cooking') {

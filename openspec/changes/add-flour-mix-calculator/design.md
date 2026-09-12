@@ -73,20 +73,39 @@ available, then tapioca, then potato.
 Pure greedy fill was rejected: with all three flours on hand it would give sorghum 60%,
 brown rice 40% and millet nothing, which ignores "distribute proportionally".
 
-### 5. The tangzhong is drawn from starch first, and the unimix is allowed
+### 5. The tangzhong is drawn from flour first, and the unimix is allowed
 
-Order: tapioca, corn, potato, brown rice, sorghum, millet, then the unimix.
+Order: brown rice, sorghum, millet, the unimix, then tapioca, corn, potato.
 
-A tangzhong works only through the starch it gelatinises, and a flour is only about
-three quarters starch — brown rice measures 68-79%, sorghum 70-80% — with the bran and
-protein diluting rather than contributing. Per gram, a plain starch therefore delivers
-roughly 25-40% more of the substance that does the work. Tapioca leads because it
-retrogrades least and keeps the paste soft for days, which is also why scalded tapioca
-is the whole structural basis of pão de queijo. Corn sets firm and forgiving. Potato is
-last of the three despite the highest peak viscosity, and because of it: it over-swells
-and then collapses under shear, leaving a thin stringy cooled paste, and it retrogrades
-worst of the three (12.4% crystallinity at 28 days against corn's 7.3%). Chickpea is not
-a tangzhong ingredient at all.
+This was briefly changed to starch-first and then changed back. The record matters more
+than the outcome, so: the starch-first case rested on the mechanism — a tangzhong works
+only through the starch it gelatinises, a flour is only about three quarters starch, so
+per gram a plain starch delivers 25-40% more of the substance doing the work. That
+reasoning is still sound as far as it goes. What it lacked was any practice or trial
+behind it. Every source that describes a tangzhong describes **flour** and water at 1:5;
+none discusses substituting a pure starch, neither for nor against. One citation offered
+in support of starch turned out, on checking, not to make the argument attributed to it.
+
+The reason usually given for flour — that cooking it denatures gluten, so only about 10%
+of the flour may be gelatinised before the crumb loses its structure — plainly does not
+apply without gluten. But that makes the reason irrelevant here, not the practice wrong,
+and those are different things. Absent a controlled comparison in gluten-free bread, and
+none appears to exist, the default follows what is actually done.
+
+One reason for flour does carry over intact: pre-cooking a whole-grain flour softens its
+bran and takes the grittiness out. Brown rice is the grittiest of the three and leads for
+that reason, which is also the first written justification this ordering has had — the
+original brown-rice-first rule recorded none.
+
+Starches remain as a fallback, so a cupboard with no flour can still build a tangzhong,
+and so the baker's own baguette, whose tangzhong has always been tapioca, stays
+expressible. Chickpea is excluded: raw legume flour carries its flavour through a boil,
+and its protein is wanted set in the crumb rather than denatured in a paste.
+
+The 1:5 ratio is a flour ratio, and is kept for every source. A pure starch at 1:5 is
+about a third more concentrated in the substance that gels, so it gives a stiffer paste
+than the recipes describe; correcting it to roughly 1:6.7 would be defensible arithmetic,
+but starch is only a fallback now and the extra branch is not worth it.
 
 An earlier version of this document forbade the unimix outright, on the grounds that
 boiling its psyllium gives a stiff, non-yielding gel. **That was folklore.** Psyllium is

@@ -54,21 +54,29 @@ const PSYLLIUM_MAX = 0.0525;
 const BASE_HYDRATION = 0.85;
 const TANGZHONG_WATER_RATIO = 5;
 
-// A tangzhong works only through the starch it gelatinises, so it is drawn from a
-// plain starch first: flour is roughly 75% starch and the bran and protein dilute
-// rather than contribute. Tapioca leads because it retrogrades least and stays
-// soft for days, corn sets firm and forgiving, potato is last - it over-swells
-// then collapses under shear, leaving a thin paste, and retrogrades worst of the
-// three. Chickpea is left out entirely. The unimix is the final fallback, which
-// is what makes a tangzhong possible for a cupboard holding no plain ingredient.
+// Flour first, which is what the published practice actually does: every source
+// that describes a tangzhong describes flour and water, and none discusses a pure
+// starch. The usual reason given - that cooking flour denatures the gluten, so
+// only ~10% may be gelatinised - does not apply without gluten, but that only
+// makes the reason irrelevant here, not the practice wrong. One reason for flour
+// does carry over: pre-cooking a whole-grain flour softens its bran and takes the
+// grittiness out, which is why brown rice leads. Starches stay available as a
+// fallback so a cupboard holding no flour can still build one.
+//
+// Chickpea is excluded: raw legume flour carries its flavour through a boil, and
+// its protein is wanted set in the crumb rather than denatured in a paste.
+//
+// The 1:5 ratio below is a flour ratio. Flour is only ~75% starch, so a pure
+// starch at 1:5 is about a third more concentrated and gives a stiffer paste;
+// it is kept at 1:5 anyway, since starch is now only a fallback.
 const TANGZHONG_SOURCES = [
-  'tapioca',
-  'corn',
-  'potato',
   'brownRice',
   'sorghum',
   'millet',
   'unimix',
+  'tapioca',
+  'corn',
+  'potato',
 ];
 
 // The share is the baker's to set: one trial of pre-gelatinised flour put the

@@ -114,7 +114,7 @@ export default {
     psylliumLabel: 'Psylliumschalen',
     psylliumHint: 'Der Strukturgeber. Ohne ihn hält die Krume nicht.',
     tangzhongLabel: 'Tangzhong',
-    tangzhongHint: 'Gekochte Paste, die einen Teil der Mischung vorverkleistert. Aus einer reinen Stärke, wenn vorhanden — zuerst Tapioka, dann Mais, dann Kartoffel.',
+    tangzhongHint: 'Gekochte Paste, die einen Teil der Mischung vorverkleistert. Aus einem reinen Mehl, wenn vorhanden — zuerst brauner Reis, dessen Kleie durch das Kochen weich wird.',
     tangzhongShareLabel: 'Anteil an der Basis',
     tangzhongShareHint: 'Wie viel der Mischung zur Paste gekocht wird. Weniger lässt mehr Stärke erst im Ofen verkleistern.',
     short: {

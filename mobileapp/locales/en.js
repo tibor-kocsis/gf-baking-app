@@ -114,7 +114,7 @@ export default {
     psylliumLabel: 'Psyllium husk',
     psylliumHint: 'The structure builder. Without it the loaf will not hold its crumb.',
     tangzhongLabel: 'Tangzhong',
-    tangzhongHint: 'Cooked paste that pre-gelatinises part of the blend. Taken from a plain starch where there is one — tapioca first, then corn, then potato.',
+    tangzhongHint: 'Cooked paste that pre-gelatinises part of the blend. Taken from a plain flour where there is one — brown rice first, since cooking softens its bran.',
     tangzhongShareLabel: 'Share of the base',
     tangzhongShareHint: 'How much of the blend is cooked into the paste. Lower leaves more of the starch to gelatinise in the oven.',
     short: {

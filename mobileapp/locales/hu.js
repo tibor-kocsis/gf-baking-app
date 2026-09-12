@@ -114,7 +114,7 @@ export default {
     psylliumLabel: 'Útifűmaghéj',
     psylliumHint: 'Ez adja a szerkezetet. Nélküle a bél nem tartja magát.',
     tangzhongLabel: 'Tangzhong',
-    tangzhongHint: 'Főzött paszta, ami előre elcsirizesíti a keverék egy részét. Sima keményítőből megy, ha van — tapióka, majd kukorica, majd burgonya.',
+    tangzhongHint: 'Főzött paszta, ami előre elcsirizesíti a keverék egy részét. Sima lisztből megy, ha van — elsőként barnarizsból, mert a főzés megpuhítja a korpáját.',
     tangzhongShareLabel: 'Az alap hány százaléka',
     tangzhongShareHint: 'Mennyi megy a keverékből a pasztába. Kevesebb annyit jelent, hogy több keményítő a sütőben csirizesedik el.',
     short: {

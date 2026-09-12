@@ -117,17 +117,17 @@ psyllium dose and the hydration.
 - **THEN** each is a whole number
 - **AND** the lines sum exactly to the stated flour, starch and water totals
 
-### Requirement: Tangzhong Drawn From Starch First
-The app SHALL source the tangzhong from a plain starch where the cupboard holds one,
-because a tangzhong works only through the starch it gelatinises and a flour is roughly
-three quarters starch, and SHALL fall back through the plain flours to the sorghum
-unimix rather than refusing to build one.
+### Requirement: Tangzhong Drawn From Flour First
+The app SHALL source the tangzhong from a plain flour where the cupboard holds one,
+following the published practice, and SHALL fall back through the sorghum unimix to the
+plain starches rather than refusing to build one.
 
 #### Scenario: Tangzhong sourced in preference order
 - **WHEN** the tangzhong is switched on
-- **THEN** the source is taken in the order tapioca, corn, potato, brown rice, sorghum,
-  millet, then the unimix, using the first the cupboard holds
+- **THEN** the source is taken in the order brown rice, sorghum, millet, the unimix,
+  tapioca, corn, potato, using the first the cupboard holds
 - **AND** the tangzhong is not counted as extra on top of the flour and starch fractions
+- **AND** the ratio is 1 part source to 5 parts water whichever source is used
 
 #### Scenario: Tangzhong share is the baker's to set
 - **WHEN** the tangzhong is switched on

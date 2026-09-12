@@ -62,8 +62,9 @@ of thumb that *lowering* the unimix makes potato worse, not better.
 ### 4. Remaining flour and starch are distributed by preference weight, then clipped
 
 The remaining flour is split across the available plain flours by weight
-(sorghum 3, brown rice 2, millet 1 — "proportionally, favouring sorghum, then brown
-rice, then millet"), then clipped to each cap (millet 35% of flour, any single flour
+(sorghum 3, brown rice 2, millet 1, chickpea 1 — "proportionally, favouring sorghum,
+then brown rice, then millet"), then clipped to each cap (millet 35% of flour, chickpea
+15%, any single flour
 60% when two or more are in the mix) with the clipped excess redistributed among the
 flours that still have headroom. The remaining starch uses the same water-filling
 algorithm with corn weighted highest so it takes the largest single share when
@@ -155,3 +156,41 @@ operates, so the adjustment would guard against a failure the formula does not r
 A dough from this engine that will not hold its shape is therefore a binder, blend or
 proofing problem rather than a water problem — a starch-heavy blend, an underdosed or
 under-rested psyllium gel, or an over-proof — and those are where a fix belongs.
+
+### 11. Chickpea flour is capped for flavour, and the roast matters more than the cap
+
+Chickpea (besan) is in the flour list for its protein — 21-23% against sorghum's ~10%
+and rice's ~8%. Protein coagulates on heating and sets permanently, which is the one
+thing the starches in a unimix-built blend cannot do: tapioca is ~17% amylose and
+retrogrades weakly, so a crumb built on it softens and compacts as it cools.
+
+The 15% cap is the baker's own choice, and it is deliberately tighter than the evidence
+requires. Published sensory work finds no rejection threshold below 30% — a wheat
+sandwich bread at 7.5/15/30% showed no significant difference on any attribute, and a
+gluten-free loaf at 40% of the flour blend still cleared 70% acceptability. 15% is
+therefore comfortably in the background, with room to spare if it is ever raised.
+
+What the trials show is that the **treatment matters far more than the dose**. At 25% of
+the flour, raw chickpea gave a lower specific volume than the control (2.51 vs 2.63
+cm³/g) and a much firmer crumb (13.4 vs 8.4 N) — worse on both counts. The same flour
+roasted gave the highest volume of the trial (2.89), the softest crumb (5.5 N), the
+highest porosity and the slowest staling. Raw chickpea is the wrong ingredient, not a
+smaller version of the right one, so a note fires whenever chickpea is in the formula.
+
+Hydration rises 2 points above a 10% share. Chickpea holds roughly twice the water of
+rice flour (206 vs 115 g/100 g) and a farinograph puts the effect near +1.2 points at
+this share, but one trial held water constant all the way to 30% with no loss of
+quality, so this sits at the low end of the 1-3 point range the data supports.
+
+Two things were deliberately not encoded. Chickpea is only ~40-48% starch against
+sorghum's ~72%, so substituting it quietly removes about 2.7 points of total starch from
+the base; widening the starch fraction to compensate is defensible arithmetic but no
+trial isolates the effect, so the engine leaves it alone. And the crust browns markedly
+harder (L* 72.5 to 52.9) from the extra protein, which is a baking-time adjustment
+rather than a formula one.
+
+Unlike every other flour, chickpea's cap is reported even when it is the only flour in
+the cupboard. The general rule — caps apply once a fraction has two or more sources —
+exists because a lone flour has no alternative. That reasoning holds for the neutral
+flours, where a single-flour blend is merely plain; it does not hold for the one flour
+whose cap is about taste.

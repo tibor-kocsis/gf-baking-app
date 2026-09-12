@@ -12,7 +12,7 @@
 // must give. The solver therefore picks the least-bad blend and reports every
 // cap it had to relax, rather than silently exceeding one.
 
-export const FLOUR_KEYS = ['sorghum', 'millet', 'brownRice'];
+export const FLOUR_KEYS = ['sorghum', 'millet', 'brownRice', 'chickpea'];
 export const STARCH_KEYS = ['potato', 'tapioca', 'corn'];
 export const STYLE_KEYS = ['sandwich', 'rustic', 'softRoll'];
 
@@ -26,17 +26,22 @@ const FLOUR_SHARE_MIN = 0.6;
 const FLOUR_SHARE_MAX = 0.7;
 
 // Share of its own fraction one ingredient may hold. Only applied when the
-// fraction has two or more sources, unimix-derived ones included.
-const FLOUR_CAPS = { sorghum: 0.6, brownRice: 0.6, millet: 0.35 };
+// fraction has two or more sources, unimix-derived ones included — chickpea is
+// the exception, and is reported even when it is the only flour.
+// Chickpea is held at 15% by choice rather than by the published sensory data,
+// which finds no rejection threshold below 30%: it is here for the protein, not
+// for its flavour, so it stays in the background.
+const FLOUR_CAPS = { sorghum: 0.6, brownRice: 0.6, millet: 0.35, chickpea: 0.15 };
 const STARCH_CAPS = { potato: 0.45, tapioca: 0.5, corn: 0.5 };
 
 // Preference weights for filling what is left of a fraction. Sorghum is the
 // neutral workhorse; corn is the late-gelatinising starch worth the most room.
-const FLOUR_WEIGHTS = { sorghum: 3, brownRice: 2, millet: 1 };
+const FLOUR_WEIGHTS = { sorghum: 3, brownRice: 2, millet: 1, chickpea: 1 };
 const STARCH_WEIGHTS = { corn: 3, tapioca: 2, potato: 1 };
 
-// Who absorbs grams no cap could take. Potato is last on purpose.
-const FLOUR_ABSORB_ORDER = ['sorghum', 'brownRice', 'millet'];
+// Who absorbs grams no cap could take. Potato is last on purpose, and chickpea
+// only absorbs when it is the one flour in the cupboard.
+const FLOUR_ABSORB_ORDER = ['sorghum', 'brownRice', 'millet', 'chickpea'];
 const STARCH_ABSORB_ORDER = ['tapioca', 'corn', 'potato'];
 
 // Whole psyllium husk, not powder: the husk hydrates more slowly and builds less
@@ -220,7 +225,12 @@ function buildCandidate(ctx, flourShare, unimixWeight) {
     }
   };
   FLOUR_KEYS.forEach((key) => {
-    if (flourFill.amounts[key] > EPS) checkCap(key, FLOUR_CAPS[key], flourCapsActive, 'flour');
+    // Chickpea's cap is about flavour rather than structure, so it is reported
+    // even when chickpea is the only flour and nothing else could have filled
+    // the fraction. The other caps stay off in that case: a blend of one neutral
+    // flour is not a fault, a blend of one assertive one is worth saying out loud.
+    const capsActive = flourCapsActive || key === 'chickpea';
+    if (flourFill.amounts[key] > EPS) checkCap(key, FLOUR_CAPS[key], capsActive, 'flour');
   });
   STARCH_KEYS.forEach((key) => {
     if (starchFill.amounts[key] > EPS) checkCap(key, STARCH_CAPS[key], starchCapsActive, 'starch');
@@ -464,6 +474,7 @@ export function calculateFlourMix(options) {
   const starchShareOf = (key) => (starchTotal > EPS ? amountOf(starchParts, key) / starchTotal : 0);
   const brownRiceShare = flourShareOf('brownRice');
   const milletShare = flourShareOf('millet');
+  const chickpeaShare = flourShareOf('chickpea');
   const potatoShare = starchShareOf('potato');
   const sorghumShare =
     flourTotal > EPS
@@ -479,6 +490,10 @@ export function calculateFlourMix(options) {
   let hydration = BASE_HYDRATION;
   if (brownRiceShare > 0.4) hydration += 0.03;
   if (milletShare > 0.25) hydration -= 0.02;
+  // Chickpea holds about twice the water of rice flour (206 vs 115 g/100 g), but
+  // the trials disagree on whether a share this small needs any correction at
+  // all, so this stays at the low end of the 1-3 point range the data supports.
+  if (chickpeaShare > 0.1) hydration += 0.02;
   if (potatoShare > 0.4) hydration -= 0.03;
   if (tangzhongActive) hydration += 0.03;
   if (psylliumShare > PSYLLIUM_TARGET) {
@@ -568,6 +583,17 @@ export function calculateFlourMix(options) {
     });
   });
 
+  // Raw chickpea flour is the wrong ingredient: at 25% of the flour it lowered
+  // loaf volume and left the crumb far firmer than the control, while the same
+  // flour roasted gave the highest volume, the softest crumb and the slowest
+  // staling of the trial. The dose is not what decides this, the treatment is.
+  if (amountOf(flourParts, 'chickpea') > 0) {
+    notes.push({
+      key: 'chickpeaRoast',
+      params: { amount: amountOf(flourParts, 'chickpea') },
+    });
+  }
+
   const flourSharePct = Math.round((flourTotal / baseTotal) * 100);
   if (starchTotal > 0 && (flourSharePct < 60 || flourSharePct > 70)) {
     notes.push({
@@ -607,7 +633,7 @@ export function calculateFlourMix(options) {
       percent: pct(amountOf(flourParts, 'unimixSorghum') + amountOf(flourParts, 'sorghum'), flourTotal),
     });
   }
-  ['brownRice', 'millet'].forEach((key) => {
+  ['brownRice', 'millet', 'chickpea'].forEach((key) => {
     const amount = amountOf(flourParts, key);
     if (amount > 0) {
       flourBreakdown.push({ key, amount, fromMix: 0, percent: pct(amount, flourTotal) });
@@ -714,6 +740,7 @@ const FLOUR_INGREDIENT_KEYS = {
   sorghum: 'ingredients.sorghumFlour',
   brownRice: 'ingredients.brownRiceFlour',
   millet: 'ingredients.milletFlour',
+  chickpea: 'ingredients.chickpeaFlour',
 };
 
 const STARCH_INGREDIENT_KEYS = {
@@ -727,6 +754,7 @@ export const FLOUR_MIX_INGREDIENT_KEYS = {
   sorghum: FLOUR_INGREDIENT_KEYS.sorghum,
   brownRice: FLOUR_INGREDIENT_KEYS.brownRice,
   millet: FLOUR_INGREDIENT_KEYS.millet,
+  chickpea: FLOUR_INGREDIENT_KEYS.chickpea,
   potato: STARCH_INGREDIENT_KEYS.potato,
   tapioca: STARCH_INGREDIENT_KEYS.tapioca,
   corn: STARCH_INGREDIENT_KEYS.corn,

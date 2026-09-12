@@ -16,7 +16,7 @@ view.
 - **THEN** a batch size selector is displayed, defaulting to 500 g of flour plus starch
 - **AND** a target style selector offers sandwich, rustic and soft roll
 - **AND** the sorghum unimix, psyllium husk and tangzhong can each be switched on or off
-- **AND** sorghum, millet and brown rice can each be marked as available
+- **AND** sorghum, millet, brown rice and chickpea can each be marked as available
 - **AND** potato, tapioca and corn starch can each be marked as available
 
 #### Scenario: Recalculating on any input change
@@ -52,6 +52,14 @@ psyllium dose and the hydration.
 - **THEN** potato is kept at or below 45% of the starch fraction where any solution allows it
 - **AND** another starch cap is relaxed in preference to exceeding the potato cap
 
+#### Scenario: Chickpea flour stays in the background
+- **WHEN** chickpea flour is in the formula alongside another flour
+- **THEN** chickpea is kept at or below 15% of the flour fraction
+- **WHEN** chickpea is the only flour on hand and has to fill the fraction alone
+- **THEN** its share over the cap is still reported, unlike the other flours, whose caps
+  are only checked once a fraction has two or more sources
+- **AND** whenever chickpea is in the formula a note tells the baker to roast it first
+
 #### Scenario: Single starch overrides
 - **WHEN** potato is the only starch in the formula
 - **THEN** the total starch drops to 30% and the flour rises to 70%
@@ -83,6 +91,7 @@ psyllium dose and the hydration.
 - **THEN** hydration starts at 85% of the base
 - **AND** it rises 3% when brown rice exceeds 40% of the flour fraction
 - **AND** it falls 2% when millet exceeds 25% of the flour fraction
+- **AND** it rises 2% when chickpea exceeds 10% of the flour fraction
 - **AND** it falls 3% when potato exceeds 40% of the starch fraction
 - **AND** it rises 3% when the tangzhong is switched on
 - **AND** it rises 5% for each 0.5% of psyllium above 4.5%

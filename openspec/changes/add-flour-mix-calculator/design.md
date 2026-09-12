@@ -132,3 +132,26 @@ equivalents. Hardcoding Hungarian would break the app's language selection.
 Notes are returned from the calculator as `{ key, params }` pairs, not as formatted
 sentences, so they stay translatable; the screen interpolates them the same way
 `DynamicRecipeView` interpolates the baguette tangzhong amounts.
+
+### 10. Hydration stays style-independent — considered and rejected
+
+The styles change the flour:starch ratio only. Cutting hydration for the free-standing
+`rustic` style, on the theory that a slack dough spreads without a tin to hold it, was
+proposed and checked against published recipes. Rejected.
+
+The direction is real: across every developer who publishes the same dough in both
+shapes, free-standing is never wetter than tin-baked. But the gap is small and the
+magnitude barely constrained — within-author pairs give 0 to 7 points (median ~5), and
+Loopy Whisk publishes one dough at 122% for both shapes, a gap of zero. Cross-author
+comparison is worthless here: the tin cluster alone spans 67% to 157%.
+
+What settles it is the level, not the gap. Published free-standing gluten-free loaves
+run 90-123% hydration; Goyoaga free-forms a boule at 123% on 5% psyllium powder, a
+banneton and a 500 °F Dutch oven. This engine's 85% base would put rustic at 78%, below
+every free-standing psyllium recipe surveyed. The spreading those bakers manage by
+cutting water bites somewhere above 100%, which is 20-40 points above where this engine
+operates, so the adjustment would guard against a failure the formula does not reach.
+
+A dough from this engine that will not hold its shape is therefore a binder, blend or
+proofing problem rather than a water problem — a starch-heavy blend, an underdosed or
+under-rested psyllium gel, or an over-proof — and those are where a fix belongs.

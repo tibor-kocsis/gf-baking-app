@@ -184,7 +184,7 @@ export default {
       tangzhongNoPlainFlour: 'The tangzhong needs plain flour and cannot be taken from the mix, so it was left out.',
       tangzhongScaledDown: 'Only {amount} g of plain flour was free for the tangzhong, so it was scaled down.',
       tangzhongSource: 'The tangzhong takes {amount} g of {ingredient} and {water} ml of the water listed above — not extra.',
-      gelRatioReduced: 'The psyllium gel drops to 1:10 so there is enough free water left to bring the dough together.',
+      gelRatioReduced: 'The psyllium gel drops to 1:8 so there is enough free water left to bring the dough together.',
       gelRatioCapped: 'The psyllium gel is capped to leave 10% of the base as free mixing water.',
     },
   },

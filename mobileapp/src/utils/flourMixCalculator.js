@@ -39,17 +39,20 @@ const STARCH_WEIGHTS = { corn: 3, tapioca: 2, potato: 1 };
 const FLOUR_ABSORB_ORDER = ['sorghum', 'brownRice', 'millet'];
 const STARCH_ABSORB_ORDER = ['tapioca', 'corn', 'potato'];
 
-const PSYLLIUM_TARGET = 0.03;
-const PSYLLIUM_MIN = 0.025;
-const PSYLLIUM_MAX = 0.035;
+// Whole psyllium husk, not powder: the husk hydrates more slowly and builds less
+// structure per gram, so the dose runs about 1.5x the figure usually quoted for
+// powder (3% target, 2.5-3.5% band).
+const PSYLLIUM_TARGET = 0.045;
+const PSYLLIUM_MIN = 0.0375;
+const PSYLLIUM_MAX = 0.0525;
 
 const BASE_HYDRATION = 0.85;
 const TANGZHONG_FLOUR_SHARE = 0.07;
 const TANGZHONG_WATER_RATIO = 5;
-const PSYLLIUM_GEL_RATIO = 12;
-const PSYLLIUM_GEL_RATIO_REDUCED = 10;
+const PSYLLIUM_GEL_RATIO = 10;
+const PSYLLIUM_GEL_RATIO_REDUCED = 8;
 const MIN_REMAINDER_SHARE = 0.1;
-const MAX_PSYLLIUM_HYDRATION_BUMP = 0.05;
+const MAX_PSYLLIUM_HYDRATION_BUMP = 0.075;
 
 // How far ahead of the other starches corn has to sit to count as the largest
 // share once everything is rounded to whole grams.
@@ -480,7 +483,7 @@ export function calculateFlourMix(options) {
   if (tangzhongActive) hydration += 0.03;
   if (psylliumShare > PSYLLIUM_TARGET) {
     // +5% for each 0.5% above target, capped at the band's own headroom: past
-    // 3.5% the psyllium is already flagged and more water stops helping.
+    // 5.25% the psyllium is already flagged and more water stops helping.
     hydration += Math.min(
       MAX_PSYLLIUM_HYDRATION_BUMP,
       0.05 * ((psylliumShare - PSYLLIUM_TARGET) / 0.005)
@@ -493,15 +496,18 @@ export function calculateFlourMix(options) {
   const waterTotal = Math.round(hydration * baseTotal);
   const tangzhongWater = Math.round(tangzhongFlourTotal * TANGZHONG_WATER_RATIO);
 
-  // Psyllium gel at 1:12, dropping to 1:10 when the remainder would leave too
+  // Psyllium gel at 1:10, dropping to 1:8 when the remainder would leave too
   // little free water to slurry the yeast and bring the dough together.
+  // Only the husk weighed out separately can be gelled: the unimix's psyllium is
+  // already dispersed through its flour and starch, so it hydrates from the
+  // mixing water instead and must not be counted into the gel.
   let gelRatio = PSYLLIUM_GEL_RATIO;
-  let psylliumGel = Math.round(psylliumTotal * gelRatio);
+  let psylliumGel = Math.round(psylliumAdded * gelRatio);
   let remainder = waterTotal - tangzhongWater - psylliumGel;
   const minRemainder = baseTotal * MIN_REMAINDER_SHARE;
   if (remainder < minRemainder) {
     gelRatio = PSYLLIUM_GEL_RATIO_REDUCED;
-    psylliumGel = Math.round(psylliumTotal * gelRatio);
+    psylliumGel = Math.round(psylliumAdded * gelRatio);
     remainder = waterTotal - tangzhongWater - psylliumGel;
     notes.push({ key: 'gelRatioReduced' });
     if (remainder < minRemainder) {

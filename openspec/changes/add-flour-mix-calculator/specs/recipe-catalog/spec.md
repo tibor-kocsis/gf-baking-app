@@ -71,7 +71,7 @@ psyllium dose and the hydration.
 
 #### Scenario: Psyllium dosed to target
 - **WHEN** the formula is computed
-- **THEN** total psyllium targets 3% of the base
+- **THEN** total psyllium targets 4.5% of the base, dosed as whole husk rather than powder
 - **AND** the unimix contribution is subtracted before any psyllium is added
 - **AND** the breakdown splits total psyllium into the part from the mix and the part added
 - **WHEN** psyllium husk is not available and the mix falls short of the band
@@ -85,16 +85,18 @@ psyllium dose and the hydration.
 - **AND** it falls 2% when millet exceeds 25% of the flour fraction
 - **AND** it falls 3% when potato exceeds 40% of the starch fraction
 - **AND** it rises 3% when the tangzhong is switched on
-- **AND** it rises 5% for each 0.5% of psyllium above 3.0%
+- **AND** it rises 5% for each 0.5% of psyllium above 4.5%
 
 #### Scenario: Water split into three streams
 - **WHEN** the formula is computed
 - **THEN** the water is shown as tangzhong water, psyllium gel and remainder
 - **AND** the tangzhong water is 5 times the tangzhong flour weight
-- **AND** the psyllium gel is 12 times the total psyllium weight
+- **AND** the psyllium gel is 10 times the psyllium weighed out separately, excluding the
+  unimix's own psyllium, which is already dispersed through its flour and starch and so
+  hydrates from the mixing water instead
 - **AND** the remainder is the mixing and yeast slurry water
 - **WHEN** the remainder falls below 10% of the base
-- **THEN** the psyllium gel ratio drops to 1:10 and the split is recomputed
+- **THEN** the psyllium gel ratio drops to 1:8 and the split is recomputed
 
 #### Scenario: Additions scaled to the base
 - **WHEN** the formula is computed

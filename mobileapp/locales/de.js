@@ -184,7 +184,7 @@ export default {
       tangzhongNoPlainFlour: 'Das Tangzhong braucht reines Mehl und darf nicht aus der Mischung kommen, daher entfällt es.',
       tangzhongScaledDown: 'Nur {amount} g reines Mehl waren für das Tangzhong frei, daher wurde es verkleinert.',
       tangzhongSource: 'Das Tangzhong nimmt {amount} g {ingredient} und {water} ml des oben genannten Wassers — nicht zusätzlich.',
-      gelRatioReduced: 'Das Psyllium-Gel sinkt auf 1:10, damit genug freies Wasser für den Teig bleibt.',
+      gelRatioReduced: 'Das Psyllium-Gel sinkt auf 1:8, damit genug freies Wasser für den Teig bleibt.',
       gelRatioCapped: 'Das Psyllium-Gel ist begrenzt, damit 10% der Basis als freies Wasser bleiben.',
     },
   },

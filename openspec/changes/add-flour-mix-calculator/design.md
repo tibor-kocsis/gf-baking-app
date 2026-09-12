@@ -87,14 +87,21 @@ the base, the tangzhong is scaled down to what there is.
 
 Hydration starts at 85% and takes the documented adjustments (brown rice > 40% of
 flour +3, millet > 25% −2, potato > 40% of starch −3, tangzhong +3, psyllium above
-3.0% +5 per 0.5%, missing psyllium −5). The psyllium adjustment is applied
+4.5% +5 per 0.5%, missing psyllium −5). The psyllium adjustment is applied
 proportionally rather than in steps so the stepper does not jump at a threshold.
 
-The total then splits into tangzhong water (5x its flour), psyllium gel (12x the total
-psyllium) and the remainder. If the remainder falls below 10% of the base there is not
-enough free water left to slurry the yeast, so the gel ratio drops to 1:10 and the
-split is recomputed — and if it is still short, the gel is capped at whatever leaves
-10% free and a note says so.
+The psyllium dose is 4.5% of the base, band 3.75–5.25%. These are whole-husk figures,
+about 1.5x the 3% usually quoted, because the husk hydrates more slowly and builds less
+structure per gram than the powder does. Both of the baker's own working recipes land at
+4.3% and 4.7% of the base, which the powder figure does not explain.
+
+The total then splits into tangzhong water (5x its flour), psyllium gel (10x the husk
+weighed out separately) and the remainder. Only that husk is gelled: the unimix's
+psyllium is already dispersed through its flour and starch, so it cannot be pre-hydrated
+and takes its water from the mixing stream instead. If the remainder falls below 10% of
+the base there is not enough free water left to slurry the yeast, so the gel ratio drops
+to 1:8 and the split is recomputed — and if it is still short, the gel is capped at
+whatever leaves 10% free and a note says so.
 
 ### 7. Relation to the worked reference case
 

@@ -184,7 +184,7 @@ export default {
       tangzhongNoPlainFlour: 'A tangzhonghoz sima liszt kell, a keverékből nem vehető el, ezért kimaradt.',
       tangzhongScaledDown: 'Csak {amount} g sima liszt volt szabad a tangzhonghoz, ezért kisebb lett.',
       tangzhongSource: 'A tangzhonghoz {amount} g liszt ({ingredient}) és {water} ml víz megy el a fentiekből — nem plusz.',
-      gelRatioReduced: 'A psyllium gél 1:10-re csökken, hogy maradjon elég szabad víz a tészta összeállításához.',
+      gelRatioReduced: 'A psyllium gél 1:8-ra csökken, hogy maradjon elég szabad víz a tészta összeállításához.',
       gelRatioCapped: 'A psyllium gél korlátozva van, hogy az alap 10%-a szabad bedolgozó víz maradjon.',
     },
   },

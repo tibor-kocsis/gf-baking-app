@@ -119,4 +119,15 @@ export const recipes = [
       { instructionIndex: 6, ingredients: [] },
     ],
   },
+  {
+    // A calculator rather than a recipe: it solves a flour blend from whatever
+    // flours and starches the baker has, so it gets its own screen.
+    id: 'flour-mix',
+    type: 'flour-mix',
+    nameKey: 'recipes.flourMix.name',
+    icon: '⚖️',
+    descriptionKey: 'recipes.flourMix.description',
+    initialValue: 500,
+    stepSize: 50,
+  },
 ];

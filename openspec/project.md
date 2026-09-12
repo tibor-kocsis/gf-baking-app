@@ -26,6 +26,7 @@ Gluten Free Baking is a mobile app that serves as a comprehensive gluten-free re
 - Baguette (ready dough weight calculator, 50g steps)
 - American Pancakes (pancake-count calculator, 1 pancake steps)
 - Cheese Sticks (stick-count calculator, 1 stick steps)
+- Flour Mix (blend solver driven by available ingredients, 50g steps)
 
 ## UI Design
 
@@ -158,6 +159,17 @@ mobileapp/
 - Base recipe (1x): 150g bread flour mix, 250g cottage cheese, 250g grated cheese, 85g butter, 5g salt, 3g baking powder
 - One stick requires 50g of the flour blend, so the base recipe yields 150 / 50 = 3 sticks
 - The selector scales the whole recipe against that base stick count, in steps of 1 stick
+
+### Flour Mix Calculator (blend solver)
+- The selector is the batch size: total flour + starch weight, which is the 100% reference for every baker's percentage shown (default 500g, 50g steps)
+- Inputs are the cupboard: sorghum unimix on/off, which of sorghum/millet/brown rice, which of potato/tapioca/corn, psyllium on/off, tangzhong on/off, and a target style (sandwich 65:35, rustic 70:30, soft roll 60:40)
+- The sorghum unimix is **not a flour**: every gram is decomposed into 48% sorghum flour, 47% tapioca starch and 5% psyllium husk, and only the 95% flour+starch part counts toward the batch base
+- Per-fraction caps (share of that fraction, applied when the cupboard holds two or more sources of it): potato 45%, tapioca 50%, corn 50%, sorghum 60%, brown rice 60%, millet 35%. Corn takes the largest starch share when available
+- Caps can contradict each other (potato 45% + tapioca 50% cannot both hold when those are the only two starches). The solver then relaxes the least harmful one and **always reports which cap it exceeded and by how much** — potato is protected hardest, because it gelatinises at 58-65°C and sets the crumb before the oven spring window closes
+- Psyllium targets 3% of the base, with the unimix contribution subtracted before anything is added
+- Hydration starts at 85% and adjusts for brown rice above 40% of the flour (+3), millet above 25% (-2), potato above 40% of the starch (-3), tangzhong (+3), psyllium above 3.0% (+5 per 0.5%, capped at the band's headroom) and missing psyllium (-5)
+- Water splits into three streams: tangzhong (5x its flour), psyllium gel (12x the total psyllium, dropping to 10x when too little mixing water would be left) and the remainder
+- **Tangzhong flour comes from the plain flour fraction only** — brown rice first, then plain sorghum, never from the unimix, because boiling the mix's psyllium gives a stiff, non-yielding gel. With no plain flour on hand the tangzhong is dropped and a note says why
 
 ## Internationalization (i18n)
 - **Supported Languages**: English (en), Hungarian (hu)

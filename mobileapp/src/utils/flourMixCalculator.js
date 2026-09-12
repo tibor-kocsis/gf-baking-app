@@ -52,8 +52,31 @@ const PSYLLIUM_MIN = 0.0375;
 const PSYLLIUM_MAX = 0.0525;
 
 const BASE_HYDRATION = 0.85;
-const TANGZHONG_FLOUR_SHARE = 0.07;
 const TANGZHONG_WATER_RATIO = 5;
+
+// A tangzhong works only through the starch it gelatinises, so it is drawn from a
+// plain starch first: flour is roughly 75% starch and the bran and protein dilute
+// rather than contribute. Tapioca leads because it retrogrades least and stays
+// soft for days, corn sets firm and forgiving, potato is last - it over-swells
+// then collapses under shear, leaving a thin paste, and retrogrades worst of the
+// three. Chickpea is left out entirely. The unimix is the final fallback, which
+// is what makes a tangzhong possible for a cupboard holding no plain ingredient.
+const TANGZHONG_SOURCES = [
+  'tapioca',
+  'corn',
+  'potato',
+  'brownRice',
+  'sorghum',
+  'millet',
+  'unimix',
+];
+
+// The share is the baker's to set: one trial of pre-gelatinised flour put the
+// optimum near 1% and found 3-10% cut loaf volume, but it dosed a dry flour
+// rather than a cooked paste, so the range stays open and the default sits low.
+export const TANGZHONG_PERCENT_MIN = 3;
+export const TANGZHONG_PERCENT_MAX = 7;
+export const TANGZHONG_PERCENT_DEFAULT = 5;
 const PSYLLIUM_GEL_RATIO = 10;
 const PSYLLIUM_GEL_RATIO_REDUCED = 8;
 const MIN_REMAINDER_SHARE = 0.1;
@@ -356,6 +379,13 @@ export function calculateFlourMix(options) {
   const unimixAvailable = !!settings.unimixAvailable;
   const psylliumAvailable = !!settings.psylliumAvailable;
   const wantsTangzhong = !!settings.tangzhong;
+  const tangzhongPercent = Math.min(
+    TANGZHONG_PERCENT_MAX,
+    Math.max(
+      TANGZHONG_PERCENT_MIN,
+      parseInt(settings.tangzhongPercent, 10) || TANGZHONG_PERCENT_DEFAULT
+    )
+  );
   const flours = FLOUR_KEYS.filter((key) => (settings.floursAvailable || []).indexOf(key) !== -1);
   const starches = STARCH_KEYS.filter(
     (key) => (settings.starchesAvailable || []).indexOf(key) !== -1
@@ -444,17 +474,20 @@ export function calculateFlourMix(options) {
   const psylliumTotal = psylliumFromMix + psylliumAdded;
   const psylliumShare = psylliumTotal / baseTotal;
 
-  // The tangzhong flour comes out of the plain flour fraction - brown rice
-  // first, then plain sorghum. Never from the unimix: forcing the mix's
-  // psyllium through a boil gives a stiff, non-yielding gel, which is a common
-  // cause of a loaf that neither rises nor collapses in the oven.
+  // Drawn in TANGZHONG_SOURCES order, taking whatever the cupboard has most
+  // readily. The unimix sits last rather than being excluded: its psyllium was
+  // once thought to set into a stiff, non-yielding gel when boiled, but psyllium
+  // is a mucilage rather than a starch and its gel does not melt below 80 C, with
+  // heating and cooling curves that superimpose - the change is reversible, so a
+  // boil neither ruins it nor locks it.
   const tangzhongFlour = [];
   let tangzhongFlourTotal = 0;
   if (wantsTangzhong) {
-    let wanted = Math.round(base * TANGZHONG_FLOUR_SHARE);
-    ['brownRice', 'sorghum'].forEach((key) => {
+    let wanted = Math.round((base * tangzhongPercent) / 100);
+    TANGZHONG_SOURCES.forEach((key) => {
       if (wanted <= 0) return;
-      const available = amountOf(flourParts, key);
+      const available =
+        key === 'unimix' ? unimixWeight : amountOf(flourParts, key) + amountOf(starchParts, key);
       const take = Math.min(wanted, available);
       if (take > 0) {
         tangzhongFlour.push({ key, amount: take });
@@ -463,7 +496,9 @@ export function calculateFlourMix(options) {
       }
     });
     if (tangzhongFlourTotal === 0) {
-      notes.push({ key: 'tangzhongNoPlainFlour' });
+      // Only reachable for a chickpea-only cupboard: every other ingredient, the
+      // unimix included, can carry a tangzhong.
+      notes.push({ key: 'tangzhongNoSource' });
     } else if (wanted > 0) {
       notes.push({ key: 'tangzhongScaledDown', params: { amount: tangzhongFlourTotal } });
     }
@@ -619,7 +654,7 @@ export function calculateFlourMix(options) {
   if (tangzhongActive) {
     notes.push({
       key: 'tangzhongSource',
-      ingredientKey: FLOUR_INGREDIENT_KEYS[tangzhongFlour[0].key],
+      ingredientKey: FLOUR_MIX_INGREDIENT_KEYS[tangzhongFlour[0].key],
       params: { amount: tangzhongFlourTotal, water: amountOf(waterStreams, 'tangzhong') },
     });
   }
@@ -722,7 +757,12 @@ export function calculateFlourMix(options) {
       gelRatio,
     },
     tangzhong: tangzhongActive
-      ? { flour: tangzhongFlour, flourTotal: tangzhongFlourTotal, water: amountOf(waterStreams, 'tangzhong') }
+      ? {
+          flour: tangzhongFlour,
+          flourTotal: tangzhongFlourTotal,
+          water: amountOf(waterStreams, 'tangzhong'),
+          percent: tangzhongPercent,
+        }
       : null,
     additions,
     relaxedCaps,

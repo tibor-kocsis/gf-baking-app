@@ -117,22 +117,27 @@ psyllium dose and the hydration.
 - **THEN** each is a whole number
 - **AND** the lines sum exactly to the stated flour, starch and water totals
 
-### Requirement: Tangzhong From Plain Flour Only
-The app SHALL source the tangzhong flour from the plain flour fraction and never from
-the sorghum unimix, because boiling the mix's psyllium produces a stiff, non-yielding
-gel.
+### Requirement: Tangzhong Drawn From Starch First
+The app SHALL source the tangzhong from a plain starch where the cupboard holds one,
+because a tangzhong works only through the starch it gelatinises and a flour is roughly
+three quarters starch, and SHALL fall back through the plain flours to the sorghum
+unimix rather than refusing to build one.
 
-#### Scenario: Tangzhong sourced from brown rice first
-- **WHEN** the tangzhong is switched on and brown rice is available
-- **THEN** the tangzhong flour is taken from the brown rice
-- **AND** the amount is 7% of the base
-- **AND** the tangzhong flour is not counted as extra flour on top of the flour fraction
+#### Scenario: Tangzhong sourced in preference order
+- **WHEN** the tangzhong is switched on
+- **THEN** the source is taken in the order tapioca, corn, potato, brown rice, sorghum,
+  millet, then the unimix, using the first the cupboard holds
+- **AND** the tangzhong is not counted as extra on top of the flour and starch fractions
 
-#### Scenario: Tangzhong falls back to plain sorghum
-- **WHEN** the tangzhong is switched on and brown rice is not available but plain sorghum is
-- **THEN** the tangzhong flour is taken from the plain sorghum
+#### Scenario: Tangzhong share is the baker's to set
+- **WHEN** the tangzhong is switched on
+- **THEN** its share of the base can be set anywhere from 3% to 7%
+- **AND** the share defaults to 5%
+- **AND** a share outside that range is clamped to it
 
-#### Scenario: Tangzhong not possible without plain flour
-- **WHEN** the tangzhong is switched on and no brown rice or plain sorghum is available
-- **THEN** no tangzhong is produced
-- **AND** a note states that the tangzhong needs plain flour and cannot be taken from the mix
+#### Scenario: Tangzhong scaled down or dropped
+- **WHEN** the chosen source holds less than the requested share
+- **THEN** the tangzhong draws the remainder from the next source in the order
+- **WHEN** chickpea flour is the only thing in the cupboard
+- **THEN** no tangzhong is produced, because chickpea is not a tangzhong ingredient
+- **AND** a note says so

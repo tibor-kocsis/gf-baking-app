@@ -19,6 +19,9 @@ import {
   STARCH_KEYS,
   STYLE_KEYS,
   FLOUR_MIX_INGREDIENT_KEYS,
+  TANGZHONG_PERCENT_MIN,
+  TANGZHONG_PERCENT_MAX,
+  TANGZHONG_PERCENT_DEFAULT,
 } from '../utils/flourMixCalculator';
 import { Header } from '../components/Header';
 import { FormulaRow } from '../components/FormulaRow';
@@ -26,11 +29,17 @@ import { FormulaRow } from '../components/FormulaRow';
 const STYLE_RATIOS = { sandwich: '65 : 35', rustic: '70 : 30', softRoll: '60 : 40' };
 const GROUP_ORDER = ['flour', 'starch', 'psyllium', 'liquid', 'addition'];
 
+const TANGZHONG_PERCENT_CHOICES = Array.from(
+  { length: TANGZHONG_PERCENT_MAX - TANGZHONG_PERCENT_MIN + 1 },
+  (_, index) => TANGZHONG_PERCENT_MIN + index
+);
+
 const EMOJI = {
   unimix: '🌿',
   sorghum: '🌿',
   brownRice: '🌾',
   millet: '🌱',
+  chickpea: '🫘',
   potato: '🥔',
   tapioca: '🥔',
   corn: '🌽',
@@ -55,6 +64,7 @@ export function FlourMixCalculatorView({ recipe, onBack }) {
   const [starches, setStarches] = useState(['potato', 'tapioca']);
   const [psyllium, setPsyllium] = useState(true);
   const [tangzhong, setTangzhong] = useState(true);
+  const [tangzhongPercent, setTangzhongPercent] = useState(TANGZHONG_PERCENT_DEFAULT);
 
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
@@ -68,9 +78,10 @@ export function FlourMixCalculatorView({ recipe, onBack }) {
         starchesAvailable: starches,
         psylliumAvailable: psyllium,
         tangzhong,
+        tangzhongPercent,
         targetStyle: style,
       }),
-    [batchSize, unimix, flours, starches, psyllium, tangzhong, style]
+    [batchSize, unimix, flours, starches, psyllium, tangzhong, tangzhongPercent, style]
   );
 
   useEffect(() => {
@@ -314,7 +325,20 @@ export function FlourMixCalculatorView({ recipe, onBack }) {
             t('flourMix.tangzhongHint'),
             tangzhong,
             setTangzhong,
-            true
+            !tangzhong
+          )}
+          {tangzhong && (
+            <View style={styles.tangzhongShareRow}>
+              <Text style={styles.switchHint}>{t('flourMix.tangzhongShareLabel')}</Text>
+              <View style={styles.chipRow}>
+                {TANGZHONG_PERCENT_CHOICES.map((value) =>
+                  renderChip(`${value}%`, tangzhongPercent === value, () =>
+                    setTangzhongPercent(value)
+                  )
+                )}
+              </View>
+              <Text style={styles.cardHint}>{t('flourMix.tangzhongShareHint')}</Text>
+            </View>
           )}
         </View>
 
@@ -408,7 +432,7 @@ export function FlourMixCalculatorView({ recipe, onBack }) {
                       .split('{ratio}')
                       .join(formula.water.gelRatio)
                       .split('{amount}')
-                      .join(formula.psyllium.total)}
+                      .join(formula.psyllium.added)}
                     amount={formula.water.psylliumGel}
                     unit="ml"
                     emoji="🌾"
@@ -680,6 +704,10 @@ const styles = StyleSheet.create({
   switchRowLast: {
     borderBottomWidth: 0,
     paddingBottom: 0,
+  },
+  tangzhongShareRow: {
+    gap: 8,
+    paddingTop: 14,
   },
   switchLabels: {
     flex: 1,

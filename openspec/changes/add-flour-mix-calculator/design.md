@@ -73,16 +73,41 @@ available, then tapioca, then potato.
 Pure greedy fill was rejected: with all three flours on hand it would give sorghum 60%,
 brown rice 40% and millet nothing, which ignores "distribute proportionally".
 
-### 5. Tangzhong flour never comes from the unimix
+### 5. The tangzhong is drawn from starch first, and the unimix is allowed
 
-7% of the base, taken from the plain flour fraction: brown rice first, then plain
-sorghum. Forcing the mix's psyllium through a boil makes the gel stiff and
-non-yielding, which is a common cause of a loaf that neither rises nor collapses.
+Order: tapioca, corn, potato, brown rice, sorghum, millet, then the unimix.
 
-If neither brown rice nor plain sorghum is on hand (a unimix-only cupboard, or millet
-only), the tangzhong cannot be built and the engine drops it and says so, rather than
-quietly taking the flour from the mix. If the plain flour available is less than 7% of
-the base, the tangzhong is scaled down to what there is.
+A tangzhong works only through the starch it gelatinises, and a flour is only about
+three quarters starch — brown rice measures 68-79%, sorghum 70-80% — with the bran and
+protein diluting rather than contributing. Per gram, a plain starch therefore delivers
+roughly 25-40% more of the substance that does the work. Tapioca leads because it
+retrogrades least and keeps the paste soft for days, which is also why scalded tapioca
+is the whole structural basis of pão de queijo. Corn sets firm and forgiving. Potato is
+last of the three despite the highest peak viscosity, and because of it: it over-swells
+and then collapses under shear, leaving a thin stringy cooled paste, and it retrogrades
+worst of the three (12.4% crystallinity at 28 days against corn's 7.3%). Chickpea is not
+a tangzhong ingredient at all.
+
+An earlier version of this document forbade the unimix outright, on the grounds that
+boiling its psyllium gives a stiff, non-yielding gel. **That was folklore.** Psyllium is
+an arabinoxylan mucilage rather than a starch; its gel does not melt below 80 °C and its
+heating and cooling curves superimpose, so the change is reversible — a boil neither
+ruins it nor locks it, and practitioners pour boiling water straight onto psyllium as a
+matter of routine. The rule also contradicted the baker's own long-standing baguette,
+whose tangzhong is tapioca, and a recent loaf that took its tangzhong from the combined
+dry blend — roughly 0.6 g of psyllium through the boil — and came out excellent.
+
+Allowing the unimix as the final fallback also removes the case where a cupboard holding
+no plain ingredient got no tangzhong at all.
+
+**Not settled: the share.** It is now the baker's to set, 3-7%, defaulting to 5% rather
+than the original 7%. One trial of pre-gelatinised rice flour put the optimum near 1% and
+found 3-10% *reduced* loaf volume — which would make the original 7% actively harmful,
+and matches a reported bake that came out dense with little oven spring. But that trial
+dosed a dry pre-gelatinised flour rather than a cooked paste, so it is a proxy rather
+than a measurement of this, and no controlled comparison of starch-tangzhong against
+flour-tangzhong in gluten-free bread appears to exist at all. The range is exposed so the
+question can be settled by baking rather than by argument.
 
 ### 6. Water is partitioned after hydration, and the gel ratio is the release valve
 

@@ -26,8 +26,16 @@ import {
 import { Header } from '../components/Header';
 import { FormulaRow } from '../components/FormulaRow';
 
-const STYLE_RATIOS = { sandwich: '65 : 35', rustic: '70 : 30', softRoll: '60 : 40' };
+const STYLE_RATIOS = {
+  sandwich: '65 : 35',
+  rustic: '70 : 30',
+  softRoll: '60 : 40',
+  enrichedBun: '60 : 40',
+};
 const GROUP_ORDER = ['flour', 'starch', 'psyllium', 'liquid', 'addition'];
+
+// A large egg without its shell, for turning grams into a count.
+const EGG_GRAMS = 50;
 
 const TANGZHONG_PERCENT_CHOICES = Array.from(
   { length: TANGZHONG_PERCENT_MAX - TANGZHONG_PERCENT_MIN + 1 },
@@ -45,9 +53,12 @@ const EMOJI = {
   corn: '🌽',
   psylliumHusk: '🌾',
   water: '💧',
+  milk: '🥛',
+  egg: '🥚',
   oil: '🫒',
   salt: '🧂',
   honey: '🍯',
+  sugar: '🍬',
   freshYeast: '🦠',
   vinegar: '🍶',
 };
@@ -234,6 +245,7 @@ export function FlourMixCalculatorView({ recipe, onBack }) {
   };
 
   const capInfo = formula && !formula.error ? capInfoFor(formula) : {};
+  const milkLiquid = !!formula && !formula.error && formula.water.liquid === 'milk';
 
   return (
     <ScrollView style={styles.scrollView}>
@@ -279,6 +291,9 @@ export function FlourMixCalculatorView({ recipe, onBack }) {
           <Text style={styles.cardHint}>
             {t('flourMix.styleHint').split('{ratio}').join(STYLE_RATIOS[style])}
           </Text>
+          {style === 'enrichedBun' && (
+            <Text style={styles.cardHint}>{t('flourMix.enrichedBunHint')}</Text>
+          )}
         </View>
 
         {/* Cupboard */}
@@ -391,6 +406,13 @@ export function FlourMixCalculatorView({ recipe, onBack }) {
                         emoji={EMOJI[row.key]}
                       />
                     ))}
+                    {group === 'liquid' && formula.water.egg > 0 && (
+                      <Text style={styles.cardHint}>
+                        {t('flourMix.eggHint')
+                          .split('{count}')
+                          .join(Math.round((formula.water.egg / EGG_GRAMS) * 10) / 10)}
+                      </Text>
+                    )}
                     {group === 'addition' && (
                       <Text style={styles.cardHint}>
                         {t('flourMix.dryYeastHint').split('{amount}').join(formula.dryYeast)}
@@ -412,17 +434,29 @@ export function FlourMixCalculatorView({ recipe, onBack }) {
                     <Text style={styles.waterTotalValue}>{formula.water.total}ml</Text>
                   </View>
                 </View>
+                {formula.water.liquid === 'milk' && (
+                  <Text style={styles.cardHint}>{t('flourMix.waterEquivalentHint')}</Text>
+                )}
                 {formula.water.tangzhong > 0 && (
                   <FormulaRow
                     name={t('flourMix.streamTangzhong')}
-                    hint={t('flourMix.streamTangzhongHint')
+                    hint={t(milkLiquid ? 'flourMix.streamTangzhongMilkHint' : 'flourMix.streamTangzhongHint')
                       .split('{amount}')
                       .join(formula.tangzhong.flourTotal)
                       .split('{ingredient}')
                       .join(nameOf(formula.tangzhong.flour[0].key))}
                     amount={formula.water.tangzhong}
-                    unit="ml"
+                    unit={milkLiquid ? 'g' : 'ml'}
                     emoji="🍜"
+                  />
+                )}
+                {formula.water.egg > 0 && (
+                  <FormulaRow
+                    name={t('flourMix.streamEgg')}
+                    hint={t('flourMix.streamEggHint')}
+                    amount={formula.water.egg}
+                    unit="g"
+                    emoji="🥚"
                   />
                 )}
                 {formula.water.psylliumGel > 0 && (
@@ -439,11 +473,11 @@ export function FlourMixCalculatorView({ recipe, onBack }) {
                   />
                 )}
                 <FormulaRow
-                  name={t('flourMix.streamRemainder')}
+                  name={t(milkLiquid ? 'flourMix.streamRemainderMilk' : 'flourMix.streamRemainder')}
                   hint={t('flourMix.streamRemainderHint')}
                   amount={formula.water.remainder}
-                  unit="ml"
-                  emoji="💧"
+                  unit={milkLiquid ? 'g' : 'ml'}
+                  emoji={milkLiquid ? '🥛' : '💧'}
                 />
               </View>
             </Animated.View>

@@ -238,3 +238,43 @@ the cupboard. The general rule — caps apply once a fraction has two or more so
 exists because a lone flour has no alternative. That reasoning holds for the neutral
 flours, where a single-flour blend is merely plain; it does not hold for the one flour
 whose cap is about taste.
+
+### 12. The enriched bun changes the enrichment, not the blend
+
+Hot dog and hamburger buns get their own style rather than a reworked `softRoll`,
+which stays a lean roll. The solver, caps, psyllium dose and hydration rules are shared;
+what changes is what rides on the base: 25% whole egg, milk as the liquid, 6% sugar,
+9% oil, 3% fresh yeast and 1.8% salt. The baker chose fresh egg and milk over powders,
+and oil only.
+
+- **Egg.** Egg white proteins foam, film around the gas cells and set on heating, which
+  is the job gluten would do. Breads weighted to egg white reached 2.60 cm³/g against
+  2.07 for all-yolk, with a finer, softer, springier crumb (Ahlborn et al. 2022); a
+  review puts the useful range for dry egg white at 5-10% of the dry weight, and warns
+  of a rubbery crumb above it. 25% whole egg carries ~3% egg protein on the base, below
+  that range, so the egg can be raised if the crumb asks for it but not much further.
+- **Milk.** Dairy proteins at 12% raised volume and softened the crumb, and more than
+  that reversed it (Krupa-Kozak et al. 2013). All-milk liquid supplies only ~1.5% milk
+  protein on the base, far below that ceiling; it is here for softness, flavour and
+  crust colour.
+- **Sugar.** A whole-sorghum optimisation (Rodríguez-España et al. 2025) landed near
+  5 g per 100 g of flour, and high sugar with high yeast over-proofed and collapsed, so
+  sugar stops at 6% and yeast rises only half a point.
+- **Oil.** In rice bread, oil up to 20% raised volume and cut hardness, while a solid
+  shortening did nothing or reduced volume (Mancebo et al. 2017). 9% is well inside that.
+
+Egg and milk are counted by their water (75% and 88%), so the hydration stays one
+water-equivalent figure and every existing hydration rule still applies. The milk line
+is derived from the water-equivalent remainder, which is why the poured lines add up to
+more than the stated total.
+
+Psyllium drops to 4% for this style, at the baker's request. The mechanism is that the
+egg white sets into a protein film that carries part of the structure, and the sorghum
+optimisation found a volume peak in psyllium rather than a plateau — but no trial used
+whole husk alongside egg, so 4% is a setting to bake against, not a measured optimum.
+The hydration is left alone: its psyllium bump stays keyed to 4.5%, where the base
+was calibrated, so the half point less husk simply moves ~50 g of gel water into the
+milk. If the buns spread, that softer dough is the first suspect.
+
+The bake temperature is guidance in a hint rather than a formula output, since it
+depends on the piece size and the oven.

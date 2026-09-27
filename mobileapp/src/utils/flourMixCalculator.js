@@ -14,14 +14,14 @@
 
 export const FLOUR_KEYS = ['sorghum', 'millet', 'brownRice', 'chickpea'];
 export const STARCH_KEYS = ['potato', 'tapioca', 'corn'];
-export const STYLE_KEYS = ['sandwich', 'rustic', 'softRoll'];
+export const STYLE_KEYS = ['sandwich', 'rustic', 'softRoll', 'enrichedBun'];
 
 // Magura sorghum "unimix", back-calculated from the label. This is NOT a flour:
 // every gram is decomposed into the flour, starch and psyllium totals, and only
 // the flour + starch part (95%) counts toward the batch base.
 const UNIMIX = { sorghum: 0.48, tapioca: 0.47, psyllium: 0.05 };
 
-const STYLE_FLOUR_SHARE = { sandwich: 0.65, rustic: 0.7, softRoll: 0.6 };
+const STYLE_FLOUR_SHARE = { sandwich: 0.65, rustic: 0.7, softRoll: 0.6, enrichedBun: 0.6 };
 const FLOUR_SHARE_MIN = 0.6;
 const FLOUR_SHARE_MAX = 0.7;
 
@@ -48,6 +48,12 @@ const STARCH_ABSORB_ORDER = ['tapioca', 'corn', 'potato'];
 // structure per gram, so the dose runs about 1.5x the figure usually quoted for
 // powder (3% target, 2.5-3.5% band).
 const PSYLLIUM_TARGET = 0.045;
+
+// The enriched bun doses a little less: its egg white sets into a protein film
+// that carries part of the structure, and in a whole-sorghum trial volume peaked
+// and then fell as psyllium rose. This is the baker's call to trial, not a
+// measured optimum. The hydration still keys off the 4.5% it was calibrated at.
+const STYLE_PSYLLIUM_TARGET = { enrichedBun: 0.04 };
 const PSYLLIUM_MIN = 0.0375;
 const PSYLLIUM_MAX = 0.0525;
 
@@ -97,6 +103,22 @@ const CORN_LEAD_MARGIN = 0.01;
 // Percent of the base, all of them outside the flour + starch reference.
 const ADDITIONS = { salt: 0.02, honey: 0.02, oil: 0.04, freshYeast: 0.025, vinegar: 0.01 };
 const DRY_YEAST_DIVISOR = 3;
+
+// The enriched bun (hot dog, hamburger) takes egg, milk, more sugar and more oil
+// on the same blend. Egg white and milk protein both form films around the gas
+// cells that the psyllium alone does not, which is where the softer, lighter
+// crumb comes from. Sugar stops at 6%: in a whole-sorghum trial the optimum sat
+// near 5 g per 100 g of flour, and high sugar with high yeast over-proofed and
+// collapsed. Oil rather than butter: liquid oil raised volume and softened rice
+// bread up to 20%, where a solid fat did nothing or cut the volume.
+const ENRICHED_ADDITIONS = { salt: 0.018, sugar: 0.06, oil: 0.09, freshYeast: 0.03, vinegar: 0.01 };
+const WHOLE_EGG = 0.25;
+
+// Egg and milk are counted by the water they carry, so hydration stays one
+// water-equivalent figure whichever liquid delivers it. The psyllium gel stays
+// water; the tangzhong and the mixing liquid become milk.
+const EGG_WATER = 0.75;
+const MILK_WATER = 0.88;
 
 const EPS = 1e-9;
 
@@ -225,7 +247,7 @@ function buildCandidate(ctx, flourShare, unimixWeight) {
   if (flourTotal <= EPS) return null;
 
   // Psyllium: 3% target, minus whatever the mix already brought.
-  const psylliumTargetG = base * PSYLLIUM_TARGET;
+  const psylliumTargetG = base * ctx.psylliumTarget;
   const psylliumOverBand = unimixPsyllium > base * PSYLLIUM_MAX + EPS;
   const psylliumAdded =
     psylliumAvailable && !psylliumOverBand ? Math.max(0, psylliumTargetG - unimixPsyllium) : 0;
@@ -436,6 +458,7 @@ export function calculateFlourMix(options) {
     starches,
     psylliumAvailable,
     styleFlourShare,
+    psylliumTarget: STYLE_PSYLLIUM_TARGET[style] || PSYLLIUM_TARGET,
     flourCapsActive: distinctCount(flours, unimixAvailable ? 'sorghum' : null) >= 2,
     starchCapsActive: distinctCount(starches, unimixAvailable ? 'tapioca' : null) >= 2,
     // Enough unimix to build the whole base out of the mix alone, which a
@@ -552,7 +575,15 @@ export function calculateFlourMix(options) {
   if (psylliumWeak) hydration -= 0.05;
 
   const waterTotal = Math.round(hydration * baseTotal);
-  const tangzhongWater = Math.round(tangzhongFlourTotal * TANGZHONG_WATER_RATIO);
+
+  // The 1:5 tangzhong ratio is a liquid ratio, so a milk tangzhong keeps it and
+  // simply brings less water than a water one.
+  const enriched = style === 'enrichedBun';
+  const egg = enriched ? Math.round(baseTotal * WHOLE_EGG) : 0;
+  const eggWater = Math.round(egg * EGG_WATER);
+  const tangzhongLiquid = Math.round(tangzhongFlourTotal * TANGZHONG_WATER_RATIO);
+  const tangzhongWater = enriched ? Math.round(tangzhongLiquid * MILK_WATER) : tangzhongLiquid;
+  const fixedWater = tangzhongWater + eggWater;
 
   // Psyllium gel at 1:10, dropping to 1:8 when the remainder would leave too
   // little free water to slurry the yeast and bring the dough together.
@@ -561,27 +592,37 @@ export function calculateFlourMix(options) {
   // mixing water instead and must not be counted into the gel.
   let gelRatio = PSYLLIUM_GEL_RATIO;
   let psylliumGel = Math.round(psylliumAdded * gelRatio);
-  let remainder = waterTotal - tangzhongWater - psylliumGel;
+  let remainder = waterTotal - fixedWater - psylliumGel;
   const minRemainder = baseTotal * MIN_REMAINDER_SHARE;
   if (remainder < minRemainder) {
     gelRatio = PSYLLIUM_GEL_RATIO_REDUCED;
     psylliumGel = Math.round(psylliumAdded * gelRatio);
-    remainder = waterTotal - tangzhongWater - psylliumGel;
+    remainder = waterTotal - fixedWater - psylliumGel;
     notes.push({ key: 'gelRatioReduced' });
     if (remainder < minRemainder) {
-      psylliumGel = Math.max(0, Math.round(waterTotal - tangzhongWater - minRemainder));
-      remainder = waterTotal - tangzhongWater - psylliumGel;
+      psylliumGel = Math.max(0, Math.round(waterTotal - fixedWater - minRemainder));
+      remainder = waterTotal - fixedWater - psylliumGel;
       notes.push({ key: 'gelRatioCapped' });
     }
   }
+  // In water equivalents, so the streams still sum exactly to the hydration.
   const waterStreams = roundParts(
     [
       { key: 'tangzhong', amount: tangzhongWater, adjustable: false },
+      { key: 'egg', amount: eggWater, adjustable: false },
       { key: 'psylliumGel', amount: psylliumGel, adjustable: false },
       { key: 'remainder', amount: remainder, adjustable: true },
     ],
     waterTotal
   );
+
+  // What actually goes into the bowl. For the enriched bun the tangzhong and the
+  // mixing liquid are milk, weighed rather than measured.
+  const pouredTangzhong = enriched ? tangzhongLiquid : amountOf(waterStreams, 'tangzhong');
+  const pouredRemainder = enriched
+    ? Math.round(amountOf(waterStreams, 'remainder') / MILK_WATER)
+    : amountOf(waterStreams, 'remainder');
+  const milk = enriched ? pouredTangzhong + pouredRemainder : 0;
 
   // Notes, most consequential first, trimmed to the four the output allows.
   const shareOfFraction = (entry) => {
@@ -661,9 +702,9 @@ export function calculateFlourMix(options) {
   if (milletShare >= FLOUR_CAPS.millet - 0.005) notes.push({ key: 'milletCapped' });
   if (tangzhongActive) {
     notes.push({
-      key: 'tangzhongSource',
+      key: enriched ? 'tangzhongSourceMilk' : 'tangzhongSource',
       ingredientKey: FLOUR_MIX_INGREDIENT_KEYS[tangzhongFlour[0].key],
-      params: { amount: tangzhongFlourTotal, water: amountOf(waterStreams, 'tangzhong') },
+      params: { amount: tangzhongFlourTotal, water: pouredTangzhong },
     });
   }
 
@@ -722,17 +763,29 @@ export function calculateFlourMix(options) {
       percent: pct(psylliumAdded, baseTotal),
     });
   }
-  weighed.push({ key: 'water', group: 'liquid', amount: waterTotal, percent: pct(waterTotal, baseTotal), unit: 'ml' });
+  if (enriched) {
+    const gelWater = amountOf(waterStreams, 'psylliumGel');
+    weighed.push({ key: 'milk', group: 'liquid', amount: milk, percent: pct(milk, baseTotal) });
+    weighed.push({ key: 'egg', group: 'liquid', amount: egg, percent: pct(egg, baseTotal) });
+    if (gelWater > 0) {
+      weighed.push({ key: 'water', group: 'liquid', amount: gelWater, percent: pct(gelWater, baseTotal), unit: 'ml' });
+    }
+  } else {
+    weighed.push({ key: 'water', group: 'liquid', amount: waterTotal, percent: pct(waterTotal, baseTotal), unit: 'ml' });
+  }
 
+  const additionRates = enriched ? ENRICHED_ADDITIONS : ADDITIONS;
   const additions = {};
-  Object.keys(ADDITIONS).forEach((key) => {
-    const raw = ADDITIONS[key] * baseTotal;
+  Object.keys(additionRates).forEach((key) => {
+    const raw = additionRates[key] * baseTotal;
     additions[key] = raw < 20 ? Math.round(raw * 10) / 10 : Math.round(raw);
   });
-  weighed.push({ key: 'oil', group: 'liquid', amount: additions.oil, percent: ADDITIONS.oil * 100 });
-  ['salt', 'honey', 'freshYeast', 'vinegar'].forEach((key) => {
-    weighed.push({ key, group: 'addition', amount: additions[key], percent: ADDITIONS[key] * 100 });
-  });
+  weighed.push({ key: 'oil', group: 'liquid', amount: additions.oil, percent: Math.round(additionRates.oil * 1000) / 10 });
+  Object.keys(additionRates)
+    .filter((key) => key !== 'oil')
+    .forEach((key) => {
+      weighed.push({ key, group: 'addition', amount: additions[key], percent: Math.round(additionRates[key] * 1000) / 10 });
+    });
 
   return {
     base: baseTotal,
@@ -757,18 +810,23 @@ export function calculateFlourMix(options) {
       percent: Math.round(psylliumShare * 1000) / 10,
     },
     hydration: Math.round(hydration * 1000) / 10,
+    // `total` is in water equivalents; the streams are what gets poured, so for
+    // the enriched bun the tangzhong and remainder are grams of milk and `egg`
+    // is grams of whole egg.
     water: {
       total: waterTotal,
-      tangzhong: amountOf(waterStreams, 'tangzhong'),
+      liquid: enriched ? 'milk' : 'water',
+      tangzhong: pouredTangzhong,
+      egg,
       psylliumGel: amountOf(waterStreams, 'psylliumGel'),
-      remainder: amountOf(waterStreams, 'remainder'),
+      remainder: pouredRemainder,
       gelRatio,
     },
     tangzhong: tangzhongActive
       ? {
           flour: tangzhongFlour,
           flourTotal: tangzhongFlourTotal,
-          water: amountOf(waterStreams, 'tangzhong'),
+          water: pouredTangzhong,
           percent: tangzhongPercent,
         }
       : null,
@@ -808,9 +866,12 @@ export const FLOUR_MIX_INGREDIENT_KEYS = {
   corn: STARCH_INGREDIENT_KEYS.corn,
   psylliumHusk: 'ingredients.psylliumHusk',
   water: 'ingredients.water',
+  milk: 'ingredients.milk',
+  egg: 'ingredients.egg',
   oil: 'ingredients.oil',
   salt: 'ingredients.salt',
   honey: 'ingredients.honey',
+  sugar: 'ingredients.sugar',
   freshYeast: 'ingredients.freshYeast',
   vinegar: 'ingredients.ciderVinegar',
 };

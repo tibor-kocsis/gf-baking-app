@@ -14,7 +14,7 @@ view.
 #### Scenario: Selecting available ingredients
 - **WHEN** the user opens the flour mix calculator
 - **THEN** a batch size selector is displayed, defaulting to 500 g of flour plus starch
-- **AND** a target style selector offers sandwich, rustic and soft roll
+- **AND** a target style selector offers sandwich, rustic, soft roll and enriched bun
 - **AND** the sorghum unimix, psyllium husk and tangzhong can each be switched on or off
 - **AND** sorghum, millet, brown rice and chickpea can each be marked as available
 - **AND** potato, tapioca and corn starch can each be marked as available
@@ -42,8 +42,8 @@ psyllium dose and the hydration.
 - **AND** the breakdown shows its sorghum inside the flour fraction and its tapioca inside the starch fraction
 
 #### Scenario: Flour to starch ratio follows the target style
-- **WHEN** the target style is sandwich, rustic or soft roll
-- **THEN** the flour to starch ratio targets 65:35, 70:30 or 60:40 respectively
+- **WHEN** the target style is sandwich, rustic, soft roll or enriched bun
+- **THEN** the flour to starch ratio targets 65:35, 70:30, 60:40 or 60:40 respectively
 - **AND** the resulting ratio stays within the 60:40 to 70:30 band
 - **AND** the breakdown names the band the result landed in
 
@@ -79,7 +79,7 @@ psyllium dose and the hydration.
 
 #### Scenario: Psyllium dosed to target
 - **WHEN** the formula is computed
-- **THEN** total psyllium targets 4.5% of the base, dosed as whole husk rather than powder
+- **THEN** total psyllium targets 4.5% of the base, or 4% for the enriched bun, dosed as whole husk rather than powder
 - **AND** the unimix contribution is subtracted before any psyllium is added
 - **AND** the breakdown splits total psyllium into the part from the mix and the part added
 - **WHEN** psyllium husk is not available and the mix falls short of the band
@@ -108,7 +108,7 @@ psyllium dose and the hydration.
 - **THEN** the psyllium gel ratio drops to 1:8 and the split is recomputed
 
 #### Scenario: Additions scaled to the base
-- **WHEN** the formula is computed
+- **WHEN** the formula is computed for any style but the enriched bun
 - **THEN** salt is 2%, sugar or honey is 2%, oil is 4%, fresh yeast is 2.5% and apple cider vinegar is 1% of the base
 - **AND** no ingredient the user did not mark as available is introduced
 
@@ -116,6 +116,31 @@ psyllium dose and the hydration.
 - **WHEN** gram weights are displayed
 - **THEN** each is a whole number
 - **AND** the lines sum exactly to the stated flour, starch and water totals
+
+### Requirement: Enriched Bun Style
+The app SHALL offer an enriched bun style for hot dog and hamburger buns that keeps the
+blend solver unchanged and adds whole egg, milk, more sugar and more oil, counting the
+water the egg and milk carry toward the same hydration.
+
+#### Scenario: Enriched additions
+- **WHEN** the target style is enriched bun
+- **THEN** whole egg is 25% of the base, weighed out of the shell
+- **AND** salt is 1.8%, sugar is 6%, oil is 9%, fresh yeast is 3% and apple cider vinegar is 1% of the base
+- **AND** honey is replaced by sugar and no butter is used
+
+#### Scenario: Egg and milk counted as water
+- **WHEN** the target style is enriched bun
+- **THEN** the hydration rules are the same as for the other styles, the psyllium bump still keyed to 4.5%
+- **AND** egg counts as 75% water and milk as 88% water toward the hydration
+- **AND** the tangzhong is cooked in milk at 1 part source to 5 parts milk
+- **AND** the psyllium gel stays water
+- **AND** the mixing liquid is milk, sized so the water-equivalent streams sum to the stated total
+- **AND** the water card shows the egg as its own stream and explains the water-equivalent total
+
+#### Scenario: Shaping and baking guidance
+- **WHEN** the enriched bun style is selected
+- **THEN** a hint gives the piece weights, the need for a pan or rings, the egg wash and a 180-190 °C bake to 96-98 °C inside
+- **AND** the egg line states roughly how many large eggs it is
 
 ### Requirement: Tangzhong Drawn From Flour First
 The app SHALL source the tangzhong from a plain flour where the cupboard holds one,

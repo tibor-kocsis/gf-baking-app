@@ -28,11 +28,7 @@ export function AppNavigator() {
   // Handle hardware back button on Android
   useEffect(() => {
     const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
-      if (recipe.type === 'flour-mix') {
-    return <FlourMixCalculatorView recipe={recipe} onBack={navigateToCatalog} />;
-  }
-
-  if (screen.type === 'cooking') {
+      if (screen.type === 'cooking') {
         navigateBackFromCooking();
         return true;
       }

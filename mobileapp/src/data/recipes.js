@@ -56,6 +56,30 @@ export const recipes = [
     ],
   },
   {
+    // On the principle of Caputo Fioreglut: starch-led, heavy binder, stretched.
+    id: 'pizza-3',
+    type: 'dynamic',
+    nameKey: 'recipes.pizza3.name',
+    icon: '🍕',
+    descriptionKey: 'recipes.pizza3.description',
+    unitLabelKey: 'recipes.pizza3.unitLabel',
+    howManyKey: 'recipes.pizza3.howMany',
+    instructionsKey: 'instructions.pizza3',
+    notesKey: 'recipes.pizza3.notes',
+    cookingSteps: [
+      { instructionIndex: 0, ingredients: ['psylliumHusk', 'waterGel'] },
+      { instructionIndex: 1, ingredients: ['freshYeast', 'honey', 'waterYeast'] },
+      {
+        instructionIndex: 2,
+        ingredients: ['buckwheatFlour', 'sorghumFlour', 'cornStarch', 'potatoStarch', 'tapiocaStarch', 'salt', 'oil'],
+      },
+      { instructionIndex: 3, ingredients: [], timerSeconds: 1800 },
+      { instructionIndex: 4, ingredients: [] },
+      { instructionIndex: 5, ingredients: [] },
+      { instructionIndex: 6, ingredients: [] },
+    ],
+  },
+  {
     id: 'waffles',
     type: 'dynamic',
     nameKey: 'recipes.waffles.name',

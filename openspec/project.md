@@ -22,6 +22,7 @@ Gluten Free Baking is a mobile app that serves as a comprehensive gluten-free re
 ### Initial Recipe Set
 - Pizza Dough (quantity calculator)
 - Pizza Dough 2 (pizza-count calculator, no universal mix; see `recipes/pizza-2.md`)
+- Pizza Dough 3 (pizza-count calculator, on the Caputo Fioreglut principle; see `recipes/pizza-3.md`)
 - Waffles (batch calculator)
 - American Pancakes (pancake-count calculator, 1 pancake steps)
 - Cheese Sticks (stick-count calculator, 5 stick steps)

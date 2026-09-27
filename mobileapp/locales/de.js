@@ -43,6 +43,17 @@ export default {
         'Der luftige Rand kommt vom nassen Teig, dem nicht flach gedrückten Rand und dem heißen Ofen, nicht vom Mehl.',
       ],
     },
+    pizza3: {
+      name: 'Pizzateig 3',
+      description: 'Nach dem Caputo-Prinzip: Buchweizen, Sorghum, Maisstärke, ein dehnbarer Teig',
+      unitLabel: 'Pizzen',
+      howMany: 'Wie viele Pizzen?',
+      notes: [
+        'Nach dem Prinzip von Caputo Fioreglut: viel Stärke, viel Bindemittel, ausgezogen und in einem Durchgang gebacken — aber mit 20% Mehl für mehr Geschmack.',
+        'Die 6% Flohsamen sind die unsicherste Zahl. Ist der Teig gummiartig oder schwer auszuziehen, auf 5,5% gehen; reißt er beim Ausziehen, auf 6,5%. Nicht nach einem einzigen Backen entscheiden.',
+        'Bleibt der Boden blass oder weich, beim nächsten Mal 3–4 Minuten ohne Belag vorbacken.',
+      ],
+    },
     waffles: {
       name: 'Waffeln',
       description: 'Glutenfreier Waffel-Rechner',
@@ -101,6 +112,7 @@ export default {
     },
   },
   ingredients: {
+    buckwheatFlour: 'Buchweizenmehl',
     brownRiceFlourTangzhong: 'Naturreismehl – für das Tangzhong',
     waterTangzhong: 'Wasser – für das Tangzhong',
     waterGel: 'Wasser – für das Flohsamengel',
@@ -263,6 +275,15 @@ export default {
       'Abgedeckt an einem warmen Ort 60–90 Minuten gehen lassen. Inzwischen den Ofen mindestens 45 Minuten auf 250 °C vorheizen, mit Stein oder Stahl, falls vorhanden.',
       'Die Mitte mit einer Gabel einstechen, den Rand nicht, und ohne Belag 6–8 Minuten vorbacken.',
       'Belegen und auf höchster Stufe 8–10 Minuten fertig backen, bis der Rand goldbraun ist.',
+    ],
+    pizza3: [
+      'Die {psylliumHusk} g Flohsamenschalen in {waterGel} g Wasser rühren und 10 Minuten gelieren lassen.',
+      'Die {freshYeast} g Frischhefe und den {honey} g Honig in {waterYeast} g lauwarmem Wasser auflösen.',
+      'Buchweizenmehl, Sorghummehl, Mais-, Kartoffel- und Tapiokastärke und Salz mischen. Gel und Hefewasser zugeben, 3–5 Minuten kneten und zuletzt das Olivenöl einarbeiten.',
+      'Abgedeckt 30 Minuten ruhen lassen.',
+      'In Kugeln zu 280 g teilen, straff formen und abgedeckt in einer geölten Box an einem warmen Ort 60–90 Minuten gehen lassen. Inzwischen den Ofen mindestens 45 Minuten auf 250–275 °C vorheizen, mit Stein oder Stahl, falls vorhanden.',
+      'Auf einer mit Reismehl (Naturreismehl geht auch) bestäubten Fläche jede Kugel von der Mitte nach außen auf etwa 30 cm ausziehen, den Rand stehen lassen. Auf Backpapier oder einen Schieber legen.',
+      'Belegen und in einem Durchgang 7–10 Minuten backen, bis der Rand goldbraun ist.',
     ],
     waffles: [
       'Das Ei trennen',

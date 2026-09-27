@@ -43,6 +43,17 @@ export default {
         'A levegős peremet a nedves tészta, a lenyomatlanul hagyott szél és a forró sütő adja, nem a liszt.',
       ],
     },
+    pizza3: {
+      name: 'Pizza tészta 3',
+      description: 'Caputo-elven: hajdina, cirok, kukoricakeményítő, nyújtható tészta',
+      unitLabel: 'pizza',
+      howMany: 'Hány pizza?',
+      notes: [
+        'A Caputo Fioreglut elvére épül: sok keményítő, sok kötőanyag, nyújtás és egyben sütés — de 20% liszttel ízesebb.',
+        'A 6% útifű a legbizonytalanabb szám. Ha a tészta gumis vagy nehezen nyújtható, menj 5,5%-ra; ha nyújtáskor szakad, 6,5%-ra. Egy sütés után még ne dönts.',
+        'Ha az alja sápadt vagy puha marad, legközelebb süsd elő 3–4 percig feltét nélkül.',
+      ],
+    },
     waffles: {
       name: 'Gofri',
       description: 'Gluténmentes gofri kalkulátor',
@@ -101,6 +112,7 @@ export default {
     },
   },
   ingredients: {
+    buckwheatFlour: 'Hajdinaliszt',
     brownRiceFlourTangzhong: 'Barna rizsliszt – tangzhonghoz',
     waterTangzhong: 'Víz – tangzhonghoz',
     waterGel: 'Víz – útifűgélhez',
@@ -263,6 +275,15 @@ export default {
       'Letakarva, meleg helyen keleszd 60–90 percig. Közben legalább 45 percig melegítsd elő a sütőt 250 °C-ra, kővel vagy acéllappal, ha van.',
       'A közepét villával szurkáld meg, a peremet ne, és feltét nélkül süsd elő 6–8 percig.',
       'Tedd rá a feltétet, és a legmagasabb fokozaton süsd készre 8–10 perc alatt, amíg a perem aranybarna.',
+    ],
+    pizza3: [
+      'A {psylliumHusk} g útifű maghéjat keverd el {waterGel} g vízzel, és hagyd 10 percig gélesedni.',
+      'A {freshYeast} g friss élesztőt és a {honey} g mézet oldd fel {waterYeast} g langyos vízben.',
+      'Keverd össze a hajdinalisztet, a ciroklisztet, a kukorica-, burgonya- és tápiókakeményítőt és a sót. Add hozzá a gélt és az élesztős vizet, gyúrd 3–5 percig, a végén dolgozd bele az olívaolajat.',
+      'Letakarva pihentesd 30 percig.',
+      'Oszd 280 g-os golyókra, formázd őket szorosra, és olajozott dobozban, letakarva keleszd 60–90 percig meleg helyen. Közben legalább 45 percig melegítsd elő a sütőt 250–275 °C-ra, kővel vagy acéllappal, ha van.',
+      'Rizsliszttel (barna rizsliszt is jó) szórt pulton nyújtsd ki a golyót középről kifelé kb. 30 cm-esre, a peremet hagyd meg. Tedd sütőpapírra vagy lapátra.',
+      'Tedd rá a feltétet, és süsd egyben 7–10 percig, amíg a perem aranyszínű.',
     ],
     waffles: [
       'A tojást válaszd ketté',

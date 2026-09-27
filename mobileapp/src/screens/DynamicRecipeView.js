@@ -19,6 +19,7 @@ import {
   calculatePancakeIngredients,
   calculateCheeseStickIngredients,
   calculatePizza2Ingredients,
+  calculatePizza3Ingredients,
 } from '../utils/recipeCalculators';
 import { Header } from '../components/Header';
 import { IngredientRow } from '../components/IngredientRow';
@@ -85,6 +86,42 @@ const PIZZA2_GROUPS = [
     ],
   },
 ];
+
+const PIZZA3_GROUPS = [
+  {
+    key: 'flour',
+    titleKey: 'common.flour',
+    items: [
+      ['buckwheatFlour', '🌾'],
+      ['sorghumFlour', '🌿'],
+      ['cornStarch', '🌽'],
+      ['potatoStarch', '🥔'],
+      ['tapiocaStarch', '🥔'],
+      ['psylliumHusk', '🌾'],
+    ],
+  },
+  {
+    key: 'wet',
+    titleKey: 'common.wetIngredients',
+    items: [
+      ['waterGel', '💧'],
+      ['waterYeast', '💧'],
+      ['oil', '🫒'],
+      ['honey', '🍯'],
+    ],
+  },
+  {
+    key: 'dry',
+    titleKey: 'common.dryIngredients',
+    items: [
+      ['salt', '🧂'],
+      ['freshYeast', '🦠'],
+    ],
+  },
+];
+
+// Recipes whose ingredients render from a group list rather than their own block.
+const INGREDIENT_GROUPS = { 'pizza-2': PIZZA2_GROUPS, 'pizza-3': PIZZA3_GROUPS };
 
 export function DynamicRecipeView({ recipe, onBack, onStartCooking }) {
   useKeepAwake();
@@ -169,10 +206,14 @@ export function DynamicRecipeView({ recipe, onBack, onStartCooking }) {
   const isPancakes = recipe.id === 'pancakes';
   const isCheeseSticks = recipe.id === 'cheese-sticks';
   const isPizza2 = recipe.id === 'pizza-2';
+  const isPizza3 = recipe.id === 'pizza-3';
+  const ingredientGroups = INGREDIENT_GROUPS[recipe.id];
   const ingredients = isPizza
     ? calculatePizzaIngredients(count)
     : isPizza2
     ? calculatePizza2Ingredients(count, pizzaTangzhong)
+    : isPizza3
+    ? calculatePizza3Ingredients(count)
     : isWaffle
     ? calculateWaffleIngredients(count)
     : isPancakes
@@ -248,7 +289,7 @@ export function DynamicRecipeView({ recipe, onBack, onStartCooking }) {
         )}
 
         {/* Pizza-specific summary */}
-        {(isPizza || isPizza2) && ingredients && (
+        {(isPizza || isPizza2 || isPizza3) && ingredients && (
           <Animated.View
             style={[
               styles.summaryBox,
@@ -569,8 +610,8 @@ export function DynamicRecipeView({ recipe, onBack, onStartCooking }) {
           </View>
         )}
 
-        {/* Pizza dough 2 ingredients */}
-        {isPizza2 && ingredients && (
+        {/* Grouped ingredients (pizza dough 2 and 3) */}
+        {ingredientGroups && ingredients && (
           <Animated.View
             style={[
               styles.ingredientsContainer,
@@ -581,7 +622,7 @@ export function DynamicRecipeView({ recipe, onBack, onStartCooking }) {
             ]}
           >
             <Text style={styles.sectionTitle}>{t('common.requiredIngredients')}</Text>
-            {PIZZA2_GROUPS.map((group) => (
+            {ingredientGroups.map((group) => (
               <View key={group.key} style={styles.ingredientCard}>
                 <Text style={styles.categoryTitle}>{t(group.titleKey)}</Text>
                 {group.items.filter(([key]) => ingredients[key] > 0).map(([key, emoji]) => (
@@ -602,8 +643,8 @@ export function DynamicRecipeView({ recipe, onBack, onStartCooking }) {
           </Animated.View>
         )}
 
-        {/* Pizza dough 2 instructions */}
-        {isPizza2 && ingredients && recipe.instructionsKey && (
+        {/* Instructions for the grouped recipes, amounts filled in */}
+        {ingredientGroups && ingredients && recipe.instructionsKey && (
           <View style={styles.instructionsContainer}>
             <Text style={styles.sectionTitle}>{t('common.instructions')}</Text>
             <View style={styles.instructionCard}>

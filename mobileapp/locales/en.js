@@ -43,6 +43,17 @@ export default {
         'The airy rim comes from the wet dough, the rim left unpressed and the hot oven, not from the flour.',
       ],
     },
+    pizza3: {
+      name: 'Pizza dough 3',
+      description: 'On the Caputo principle: buckwheat, sorghum, corn starch, a dough you stretch',
+      unitLabel: 'pizzas',
+      howMany: 'How many pizzas?',
+      notes: [
+        'Built on the principle of Caputo Fioreglut: lots of starch, a heavy binder, stretched and baked in one go — but with 20% flour for more flavour.',
+        'The 6% psyllium is the least certain figure. If the dough is gummy or hard to stretch, go to 5.5%; if it tears when stretched, 6.5%. Do not decide on one bake.',
+        'If the base stays pale or soft, par-bake it for 3–4 minutes without toppings next time.',
+      ],
+    },
     waffles: {
       name: 'Waffles',
       description: 'Gluten-free waffle calculator',
@@ -101,6 +112,7 @@ export default {
     },
   },
   ingredients: {
+    buckwheatFlour: 'Buckwheat flour',
     brownRiceFlourTangzhong: 'Brown rice flour – for the tangzhong',
     waterTangzhong: 'Water – for the tangzhong',
     waterGel: 'Water – for the psyllium gel',
@@ -263,6 +275,15 @@ export default {
       'Cover and proof somewhere warm for 60–90 minutes. Meanwhile preheat the oven to 250 °C for at least 45 minutes, with a stone or steel if you have one.',
       'Dock the middle with a fork, not the rim, and par-bake without toppings for 6–8 minutes.',
       'Add the toppings and finish on the highest setting for 8–10 minutes, until the rim is golden.',
+    ],
+    pizza3: [
+      'Stir the {psylliumHusk} g of psyllium husk into {waterGel} g of water and leave it 10 minutes to gel.',
+      'Dissolve the {freshYeast} g of fresh yeast and the {honey} g of honey in {waterYeast} g of lukewarm water.',
+      'Mix the buckwheat flour, sorghum flour, corn, potato and tapioca starches and the salt. Add the gel and the yeast water, knead 3–5 minutes, and work in the olive oil last.',
+      'Cover and rest 30 minutes.',
+      'Divide into 280 g balls, shape them tight, and proof covered in an oiled box somewhere warm for 60–90 minutes. Meanwhile preheat the oven to 250–275 °C for at least 45 minutes, with a stone or steel if you have one.',
+      'On a counter dusted with rice flour (brown rice flour works), stretch each ball from the middle outwards to about 30 cm, keeping the rim. Move it onto baking paper or a peel.',
+      'Add the toppings and bake in one go for 7–10 minutes, until the rim is golden.',
     ],
     waffles: [
       'Separate the egg',

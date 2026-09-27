@@ -21,12 +21,11 @@ Gluten Free Baking is a mobile app that serves as a comprehensive gluten-free re
 
 ### Initial Recipe Set
 - Pizza Dough (quantity calculator)
-- Sandwich Bread (flour amount calculator, 10g steps)
+- Pizza Dough 2 (pizza-count calculator, no universal mix; see `recipes/pizza-2.md`)
 - Waffles (batch calculator)
-- Baguette (ready dough weight calculator, 50g steps)
 - American Pancakes (pancake-count calculator, 1 pancake steps)
 - Cheese Sticks (stick-count calculator, 5 stick steps)
-- Flour Mix (blend solver driven by available ingredients, 50g steps)
+- Bread, rolls — the flour mix calculator (blend solver driven by available ingredients, 50g steps)
 
 ## UI Design
 
@@ -135,20 +134,6 @@ mobileapp/
   - Oil: 5%
   - Honey: 5%
 - Flour amounts rounded to nearest 25g
-
-### Sandwich Bread Recipe (Dynamic, flour-based)
-- Base recipe: 300g total flour, adjustable in 10g steps
-- Water = flour (100% hydration) + psyllium × 6 (600% hydration)
-- Ingredients grouped by category (flour, dry, wet)
-- Step-by-step preparation instructions
-
-### Baguette Recipe (Dynamic, dough-weight-based)
-- Base recipe: 390g total flour (sorghum flour mix, brown rice flour, tapioca starch) + other ingredients = 800g total ready dough weight (rounded to the nearest 50g), adjustable in 50g steps
-- The selector scales the whole recipe by total dough weight (not just flour), since every ingredient is proportional to the same base ratio
-- Flour amounts (sorghum flour mix, brown rice flour, tapioca starch) round to the nearest 5g; other ingredients round to the nearest 1g since 5g would be too coarse relative to their size
-- A portion of the tapioca starch and water (already counted in those totals, not extra) is used for a tangzhong (cooked paste) step, called out in the instructions with the exact gram amounts
-- Ingredients grouped by category (flour, dry, wet)
-- Step-by-step preparation instructions
 
 ### American Pancakes Recipe (Dynamic, pancake-count-based)
 - Base recipe (1x): 250g rice flour, 3g baking powder, 1g salt, 50g sugar, 3 eggs (~50g each), 80g butter, 100g milk = 634g total batter

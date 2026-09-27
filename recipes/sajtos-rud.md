@@ -1,4 +1,4 @@
-# Gluténmentes túrós sajtos rúd barna rizs- és ciroklisztből
+# Túrós sajtos rúd
 
 Verzió 2.1 · 2026-09-27
 

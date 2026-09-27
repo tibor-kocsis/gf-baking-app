@@ -34,8 +34,6 @@ const STYLE_RATIOS = {
 };
 const GROUP_ORDER = ['flour', 'starch', 'psyllium', 'liquid', 'addition'];
 
-// A large egg without its shell, for turning grams into a count.
-const EGG_GRAMS = 50;
 
 const TANGZHONG_PERCENT_CHOICES = Array.from(
   { length: TANGZHONG_PERCENT_MAX - TANGZHONG_PERCENT_MIN + 1 },
@@ -402,15 +400,13 @@ export function FlourMixCalculatorView({ recipe, onBack }) {
                         name={nameOf(row.key)}
                         percent={row.percent}
                         amount={row.amount}
-                        unit={row.unit || 'g'}
+                        unit={row.unit === 'pcs' ? ` ${t('flourMix.eggUnit')}` : row.unit || 'g'}
                         emoji={EMOJI[row.key]}
                       />
                     ))}
                     {group === 'liquid' && formula.water.egg > 0 && (
                       <Text style={styles.cardHint}>
-                        {t('flourMix.eggHint')
-                          .split('{count}')
-                          .join(Math.round((formula.water.egg / EGG_GRAMS) * 10) / 10)}
+                        {t('flourMix.eggHint').split('{amount}').join(formula.water.egg)}
                       </Text>
                     )}
                     {group === 'addition' && (
@@ -454,8 +450,8 @@ export function FlourMixCalculatorView({ recipe, onBack }) {
                   <FormulaRow
                     name={t('flourMix.streamEgg')}
                     hint={t('flourMix.streamEggHint')}
-                    amount={formula.water.egg}
-                    unit="g"
+                    amount={formula.water.eggCount}
+                    unit={` ${t('flourMix.eggUnit')}`}
                     emoji="🥚"
                   />
                 )}

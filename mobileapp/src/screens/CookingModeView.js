@@ -6,9 +6,13 @@ import { colors } from '../constants/colors';
 import { useI18n } from '../context/I18nContext';
 import { Header } from '../components/Header';
 
-export function CookingModeView({ recipe, ingredients, onBack }) {
+export function CookingModeView({ recipe: baseRecipe, ingredients, onBack }) {
   useKeepAwake();
   const { t } = useI18n();
+  // A recipe can swap its steps for a variant chosen on the recipe screen.
+  const recipe = baseRecipe.variantFor
+    ? { ...baseRecipe, ...baseRecipe.variantFor(ingredients) }
+    : baseRecipe;
   const [checkedIngredients, setCheckedIngredients] = useState({});
   const [completedSteps, setCompletedSteps] = useState({});
 
@@ -119,7 +123,7 @@ export function CookingModeView({ recipe, ingredients, onBack }) {
                 </TouchableOpacity>
 
                 <Text style={[styles.instructionText, isCompleted && styles.textCompleted]}>
-                  {instruction}
+                  {fillAmounts(instruction, ingredients)}
                 </Text>
 
                 {!!step.timerSeconds && (
@@ -167,6 +171,15 @@ export function CookingModeView({ recipe, ingredients, onBack }) {
         </View>
       </View>
     </ScrollView>
+  );
+}
+
+// Steps can quote a scaled amount as {ingredientKey}; the recipe screen and the
+// cooking mode fill it from the calculated ingredients.
+export function fillAmounts(text, ingredients) {
+  if (!ingredients || typeof text !== 'string') return text;
+  return text.replace(/\{(\w+)\}/g, (match, key) =>
+    ingredients[key] !== undefined ? String(ingredients[key]) : match
   );
 }
 

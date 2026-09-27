@@ -1,7 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: Flour Mix Calculator Tile
-The app SHALL display a Flour Mix tile in the recipe catalog that opens an
+The app SHALL display a Flour Mix tile, labelled "Bread, rolls" ("Kenyér, zsemle"), in the recipe catalog that opens an
 ingredient-driven blend calculator, distinct from the single-selector dynamic recipe
 view.
 
@@ -14,7 +14,7 @@ view.
 #### Scenario: Selecting available ingredients
 - **WHEN** the user opens the flour mix calculator
 - **THEN** a batch size selector is displayed, defaulting to 500 g of flour plus starch
-- **AND** a target style selector offers sandwich, rustic, soft roll and enriched bun
+- **AND** a target style selector offers sandwich, rustic, soft roll and hot dog bun (the enriched style)
 - **AND** the sorghum unimix, psyllium husk and tangzhong can each be switched on or off
 - **AND** sorghum, millet, brown rice and chickpea can each be marked as available
 - **AND** potato, tapioca and corn starch can each be marked as available
@@ -124,7 +124,8 @@ water the egg and milk carry toward the same hydration.
 
 #### Scenario: Enriched additions
 - **WHEN** the target style is enriched bun
-- **THEN** whole egg is 25% of the base, weighed out of the shell
+- **THEN** whole egg is 25% of the base, given as a count of large eggs of about 50 g out of the shell, rounded to the nearest whole egg and at least one
+- **AND** the milk absorbs the water the rounding moves, so the hydration is unchanged
 - **AND** salt is 1.8%, sugar is 6%, oil is 9%, fresh yeast is 3% and apple cider vinegar is 1% of the base
 - **AND** honey is replaced by sugar and no butter is used
 
@@ -140,7 +141,7 @@ water the egg and milk carry toward the same hydration.
 #### Scenario: Shaping and baking guidance
 - **WHEN** the enriched bun style is selected
 - **THEN** a hint gives the piece weights, the need for a pan or rings, the egg wash and a 180-190 °C bake to 96-98 °C inside
-- **AND** the egg line states roughly how many large eggs it is
+- **AND** the egg line states the eggs' total weight out of the shell
 
 ### Requirement: Tangzhong Drawn From Flour First
 The app SHALL source the tangzhong from a plain flour where the cupboard holds one,

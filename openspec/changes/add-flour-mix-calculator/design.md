@@ -241,9 +241,10 @@ whose cap is about taste.
 
 ### 12. The enriched bun changes the enrichment, not the blend
 
-Hot dog and hamburger buns get their own style rather than a reworked `softRoll`,
+Hot dog and hamburger buns get their own style (labelled "hot dog bun") rather than a reworked `softRoll`,
 which stays a lean roll. The solver, caps, psyllium dose and hydration rules are shared;
-what changes is what rides on the base: 25% whole egg, milk as the liquid, 6% sugar,
+what changes is what rides on the base: 25% whole egg, counted as whole eggs of ~50 g
+out of the shell (so 20-33% in practice, the milk absorbing the difference), milk as the liquid, 6% sugar,
 9% oil, 3% fresh yeast and 1.8% salt. The baker chose fresh egg and milk over powders,
 and oil only.
 

@@ -113,6 +113,9 @@ const DRY_YEAST_DIVISOR = 3;
 // bread up to 20%, where a solid fat did nothing or cut the volume.
 const ENRICHED_ADDITIONS = { salt: 0.018, sugar: 0.06, oil: 0.09, freshYeast: 0.03, vinegar: 0.01 };
 const WHOLE_EGG = 0.25;
+// Eggs are counted, not weighed: 25% of the base rounded to whole large eggs of
+// about 50 g out of the shell, and the milk takes up whatever the rounding moved.
+const EGG_GRAMS = 50;
 
 // Egg and milk are counted by the water they carry, so hydration stays one
 // water-equivalent figure whichever liquid delivers it. The psyllium gel stays
@@ -579,7 +582,8 @@ export function calculateFlourMix(options) {
   // The 1:5 tangzhong ratio is a liquid ratio, so a milk tangzhong keeps it and
   // simply brings less water than a water one.
   const enriched = style === 'enrichedBun';
-  const egg = enriched ? Math.round(baseTotal * WHOLE_EGG) : 0;
+  const eggCount = enriched ? Math.max(1, Math.round((baseTotal * WHOLE_EGG) / EGG_GRAMS)) : 0;
+  const egg = eggCount * EGG_GRAMS;
   const eggWater = Math.round(egg * EGG_WATER);
   const tangzhongLiquid = Math.round(tangzhongFlourTotal * TANGZHONG_WATER_RATIO);
   const tangzhongWater = enriched ? Math.round(tangzhongLiquid * MILK_WATER) : tangzhongLiquid;
@@ -766,7 +770,7 @@ export function calculateFlourMix(options) {
   if (enriched) {
     const gelWater = amountOf(waterStreams, 'psylliumGel');
     weighed.push({ key: 'milk', group: 'liquid', amount: milk, percent: pct(milk, baseTotal) });
-    weighed.push({ key: 'egg', group: 'liquid', amount: egg, percent: pct(egg, baseTotal) });
+    weighed.push({ key: 'egg', group: 'liquid', amount: eggCount, percent: pct(egg, baseTotal), unit: 'pcs' });
     if (gelWater > 0) {
       weighed.push({ key: 'water', group: 'liquid', amount: gelWater, percent: pct(gelWater, baseTotal), unit: 'ml' });
     }
@@ -811,13 +815,14 @@ export function calculateFlourMix(options) {
     },
     hydration: Math.round(hydration * 1000) / 10,
     // `total` is in water equivalents; the streams are what gets poured, so for
-    // the enriched bun the tangzhong and remainder are grams of milk and `egg`
-    // is grams of whole egg.
+    // the enriched bun the tangzhong and remainder are grams of milk, `egg` is
+    // grams of whole egg out of the shell and `eggCount` the number of eggs.
     water: {
       total: waterTotal,
       liquid: enriched ? 'milk' : 'water',
       tangzhong: pouredTangzhong,
       egg,
+      eggCount,
       psylliumGel: amountOf(waterStreams, 'psylliumGel'),
       remainder: pouredRemainder,
       gelRatio,

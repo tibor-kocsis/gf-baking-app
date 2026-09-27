@@ -1,23 +1,31 @@
 import { StatusBar } from 'expo-status-bar';
 import { useKeepAwake } from 'expo-keep-awake';
 import { useState, useEffect, useRef } from 'react';
-import { View, Text, TextInput, ScrollView, TouchableOpacity, Animated, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  ScrollView,
+  TouchableOpacity,
+  Switch,
+  Animated,
+  StyleSheet,
+} from 'react-native';
 import { colors } from '../constants/colors';
 import { useI18n } from '../context/I18nContext';
 import {
   calculatePizzaIngredients,
   calculateWaffleIngredients,
-  calculateSandwichBreadIngredients,
-  calculateBaguetteIngredients,
   calculatePancakeIngredients,
   calculateCheeseStickIngredients,
+  calculatePizza2Ingredients,
 } from '../utils/recipeCalculators';
 import { Header } from '../components/Header';
 import { IngredientRow } from '../components/IngredientRow';
 import { NotesList } from '../components/NotesList';
 import { NoteEditor } from '../components/NoteEditor';
 import { PhotoPreview } from '../components/PhotoPreview';
-import { formatDuration } from './CookingModeView';
+import { formatDuration, fillAmounts } from './CookingModeView';
 
 // The cheese stick recipe's own ingredient groups, in the order it lists them.
 const CHEESE_STICK_GROUPS = [
@@ -46,18 +54,49 @@ const CHEESE_STICK_GROUPS = [
   },
 ];
 
+const PIZZA2_GROUPS = [
+  {
+    key: 'flour',
+    titleKey: 'common.flour',
+    items: [
+      ['sorghumUnimix', '🌿'],
+      ['potatoStarch', '🥔'],
+      ['brownRiceFlour', '🌾'],
+      ['psylliumHusk', '🌾'],
+    ],
+  },
+  {
+    key: 'wet',
+    titleKey: 'common.wetIngredients',
+    items: [
+      ['waterTangzhong', '💧'],
+      ['waterGel', '💧'],
+      ['waterYeast', '💧'],
+      ['oil', '🫒'],
+      ['honey', '🍯'],
+    ],
+  },
+  {
+    key: 'dry',
+    titleKey: 'common.dryIngredients',
+    items: [
+      ['salt', '🧂'],
+      ['yeast', '🦠'],
+    ],
+  },
+];
+
 export function DynamicRecipeView({ recipe, onBack, onStartCooking }) {
   useKeepAwake();
   const { t } = useI18n();
 
   // Determine initial value and step size based on recipe type
-  const isSandwichBread = recipe.id === 'sandwich-bread';
-  const isBaguette = recipe.id === 'baguette';
   const stepSize = recipe.stepSize || 1;
   const initialValue = String(recipe.initialValue || 1);
   const minValue = stepSize;
 
   const [count, setCount] = useState(initialValue);
+  const [pizzaTangzhong, setPizzaTangzhong] = useState(true);
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
@@ -129,19 +168,21 @@ export function DynamicRecipeView({ recipe, onBack, onStartCooking }) {
   const isWaffle = recipe.id === 'waffles';
   const isPancakes = recipe.id === 'pancakes';
   const isCheeseSticks = recipe.id === 'cheese-sticks';
+  const isPizza2 = recipe.id === 'pizza-2';
   const ingredients = isPizza
     ? calculatePizzaIngredients(count)
+    : isPizza2
+    ? calculatePizza2Ingredients(count, pizzaTangzhong)
     : isWaffle
     ? calculateWaffleIngredients(count)
-    : isSandwichBread
-    ? calculateSandwichBreadIngredients(count)
-    : isBaguette
-    ? calculateBaguetteIngredients(count)
     : isPancakes
     ? calculatePancakeIngredients(count)
     : isCheeseSticks
     ? calculateCheeseStickIngredients(count)
     : null;
+  // A recipe can swap its steps for a variant, such as pizza dough 2 without its tangzhong.
+  const activeRecipe =
+    recipe.variantFor && ingredients ? { ...recipe, ...recipe.variantFor(ingredients) } : recipe;
 
   return (
     <ScrollView style={styles.scrollView}>
@@ -183,8 +224,31 @@ export function DynamicRecipeView({ recipe, onBack, onStartCooking }) {
           </View>
         </View>
 
+        {/* Pizza dough 2 tangzhong switch */}
+        {isPizza2 && (
+          <TouchableOpacity
+            style={styles.switchCard}
+            onPress={() => setPizzaTangzhong(!pizzaTangzhong)}
+            activeOpacity={0.7}
+          >
+            <View style={styles.switchLabels}>
+              <Text style={styles.switchLabel}>{t('recipes.pizza2.tangzhongLabel')}</Text>
+              <Text style={styles.switchHint}>
+                {t(pizzaTangzhong ? 'recipes.pizza2.tangzhongOnHint' : 'recipes.pizza2.tangzhongOffHint')}
+              </Text>
+            </View>
+            <Switch
+              value={pizzaTangzhong}
+              onValueChange={setPizzaTangzhong}
+              trackColor={{ false: colors.border, true: colors.primary }}
+              thumbColor="#fff"
+              ios_backgroundColor={colors.border}
+            />
+          </TouchableOpacity>
+        )}
+
         {/* Pizza-specific summary */}
-        {isPizza && ingredients && (
+        {(isPizza || isPizza2) && ingredients && (
           <Animated.View
             style={[
               styles.summaryBox,
@@ -359,213 +423,6 @@ export function DynamicRecipeView({ recipe, onBack, onStartCooking }) {
           </View>
         )}
 
-        {/* Sandwich bread ingredients */}
-        {isSandwichBread && ingredients && (
-          <Animated.View
-            style={[
-              styles.ingredientsContainer,
-              {
-                opacity: fadeAnim,
-                transform: [{ scale: scaleAnim }],
-              },
-            ]}
-          >
-            <Text style={styles.sectionTitle}>{t('common.requiredIngredients')}</Text>
-
-            <View style={styles.ingredientCard}>
-              <Text style={styles.categoryTitle}>{t('common.flour')}</Text>
-              <IngredientRow
-                name={t('ingredients.sorghumFlour')}
-                amount={ingredients.sorghumFlour}
-                unit="g"
-                emoji="🌿"
-              />
-              <IngredientRow
-                name={t('ingredients.universalGfFlour')}
-                amount={ingredients.universalGfFlour}
-                unit="g"
-                emoji="🌱"
-              />
-            </View>
-
-            <View style={styles.ingredientCard}>
-              <Text style={styles.categoryTitle}>{t('common.dryIngredients')}</Text>
-              <IngredientRow
-                name={t('ingredients.psylliumHusk')}
-                amount={ingredients.psylliumHusk}
-                unit="g"
-                emoji="🌾"
-              />
-              <IngredientRow
-                name={t('ingredients.activeYeast')}
-                amount={ingredients.activeYeast}
-                unit="g"
-                emoji="🦠"
-              />
-              <IngredientRow
-                name={t('ingredients.salt')}
-                amount={ingredients.salt}
-                unit="g"
-                emoji="🧂"
-              />
-            </View>
-
-            <View style={styles.ingredientCard}>
-              <Text style={styles.categoryTitle}>{t('common.wetIngredients')}</Text>
-              <IngredientRow
-                name={t('ingredients.water')}
-                amount={ingredients.water}
-                unit="g"
-                emoji="💧"
-              />
-              <IngredientRow
-                name={t('ingredients.oil')}
-                amount={ingredients.oil}
-                unit="g"
-                emoji="🫒"
-              />
-              <IngredientRow
-                name={t('ingredients.honey')}
-                amount={ingredients.honey}
-                unit="g"
-                emoji="🍯"
-              />
-              <IngredientRow
-                name={t('ingredients.egg')}
-                amount={ingredients.egg}
-                unit=""
-                emoji="🥚"
-              />
-              <IngredientRow
-                name={t('ingredients.lemonJuice')}
-                amount={ingredients.lemonJuice}
-                unit={` ${t('common.unitTbsp')}`}
-                emoji="🍋"
-              />
-            </View>
-          </Animated.View>
-        )}
-
-        {/* Sandwich bread instructions */}
-        {isSandwichBread && ingredients && recipe.instructionsKey && (
-          <View style={styles.instructionsContainer}>
-            <Text style={styles.sectionTitle}>{t('common.instructions')}</Text>
-            <View style={styles.instructionCard}>
-              {t(recipe.instructionsKey).map((instruction, index) => (
-                <View key={index} style={styles.instructionRow}>
-                  <View style={styles.instructionNumber}>
-                    <Text style={styles.instructionNumberText}>{index + 1}</Text>
-                  </View>
-                  <Text style={styles.instructionText}>{instruction}</Text>
-                </View>
-              ))}
-            </View>
-          </View>
-        )}
-
-        {/* Baguette ingredients */}
-        {isBaguette && ingredients && (
-          <Animated.View
-            style={[
-              styles.ingredientsContainer,
-              {
-                opacity: fadeAnim,
-                transform: [{ scale: scaleAnim }],
-              },
-            ]}
-          >
-            <Text style={styles.sectionTitle}>{t('common.requiredIngredients')}</Text>
-
-            <View style={styles.ingredientCard}>
-              <Text style={styles.categoryTitle}>{t('common.flour')}</Text>
-              <IngredientRow
-                name={t('ingredients.sorghumFlourMix')}
-                amount={ingredients.sorghumFlourMix}
-                unit="g"
-                emoji="🌿"
-              />
-              <IngredientRow
-                name={t('ingredients.brownRiceFlour')}
-                amount={ingredients.brownRiceFlour}
-                unit="g"
-                emoji="🌾"
-              />
-              <IngredientRow
-                name={t('ingredients.tapiocaStarch')}
-                amount={ingredients.tapiocaStarch}
-                unit="g"
-                emoji="🥔"
-              />
-            </View>
-
-            <View style={styles.ingredientCard}>
-              <Text style={styles.categoryTitle}>{t('common.dryIngredients')}</Text>
-              <IngredientRow
-                name={t('ingredients.psylliumHusk')}
-                amount={ingredients.psylliumHusk}
-                unit="g"
-                emoji="🌾"
-              />
-              <IngredientRow
-                name={t('ingredients.yeast')}
-                amount={ingredients.yeast}
-                unit="g"
-                emoji="🦠"
-              />
-              <IngredientRow
-                name={t('ingredients.salt')}
-                amount={ingredients.salt}
-                unit="g"
-                emoji="🧂"
-              />
-            </View>
-
-            <View style={styles.ingredientCard}>
-              <Text style={styles.categoryTitle}>{t('common.wetIngredients')}</Text>
-              <IngredientRow
-                name={t('ingredients.water')}
-                amount={ingredients.water}
-                unit="g"
-                emoji="💧"
-              />
-              <IngredientRow
-                name={t('ingredients.honey')}
-                amount={ingredients.honey}
-                unit="g"
-                emoji="🍯"
-              />
-              <IngredientRow
-                name={t('ingredients.oil')}
-                amount={ingredients.oil}
-                unit="g"
-                emoji="🫒"
-              />
-            </View>
-          </Animated.View>
-        )}
-
-        {/* Baguette instructions */}
-        {isBaguette && ingredients && recipe.instructionsKey && (
-          <View style={styles.instructionsContainer}>
-            <Text style={styles.sectionTitle}>{t('common.instructions')}</Text>
-            <View style={styles.instructionCard}>
-              {t(recipe.instructionsKey).map((instruction, index) => {
-                const text = instruction
-                  .replace('{tangzhongTapioca}', ingredients.tangzhongTapioca)
-                  .replace('{tangzhongWater}', ingredients.tangzhongWater);
-                return (
-                  <View key={index} style={styles.instructionRow}>
-                    <View style={styles.instructionNumber}>
-                      <Text style={styles.instructionNumberText}>{index + 1}</Text>
-                    </View>
-                    <Text style={styles.instructionText}>{text}</Text>
-                  </View>
-                );
-              })}
-            </View>
-          </View>
-        )}
-
         {/* Pancake ingredients */}
         {isPancakes && ingredients && (
           <Animated.View
@@ -709,7 +566,62 @@ export function DynamicRecipeView({ recipe, onBack, onStartCooking }) {
                 );
               })}
             </View>
+          </View>
+        )}
 
+        {/* Pizza dough 2 ingredients */}
+        {isPizza2 && ingredients && (
+          <Animated.View
+            style={[
+              styles.ingredientsContainer,
+              {
+                opacity: fadeAnim,
+                transform: [{ scale: scaleAnim }],
+              },
+            ]}
+          >
+            <Text style={styles.sectionTitle}>{t('common.requiredIngredients')}</Text>
+            {PIZZA2_GROUPS.map((group) => (
+              <View key={group.key} style={styles.ingredientCard}>
+                <Text style={styles.categoryTitle}>{t(group.titleKey)}</Text>
+                {group.items.filter(([key]) => ingredients[key] > 0).map(([key, emoji]) => (
+                  <IngredientRow
+                    key={key}
+                    name={t(
+                      key === 'brownRiceFlour' && ingredients.tangzhong
+                        ? 'ingredients.brownRiceFlourTangzhong'
+                        : `ingredients.${key}`
+                    )}
+                    amount={ingredients[key]}
+                    unit="g"
+                    emoji={emoji}
+                  />
+                ))}
+              </View>
+            ))}
+          </Animated.View>
+        )}
+
+        {/* Pizza dough 2 instructions */}
+        {isPizza2 && ingredients && recipe.instructionsKey && (
+          <View style={styles.instructionsContainer}>
+            <Text style={styles.sectionTitle}>{t('common.instructions')}</Text>
+            <View style={styles.instructionCard}>
+              {t(activeRecipe.instructionsKey).map((instruction, index) => (
+                <View key={index} style={styles.instructionRow}>
+                  <View style={styles.instructionNumber}>
+                    <Text style={styles.instructionNumberText}>{index + 1}</Text>
+                  </View>
+                  <Text style={styles.instructionText}>{fillAmounts(instruction, ingredients)}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        )}
+
+        {/* Recipe notes, for recipes that carry them */}
+        {recipe.notesKey && ingredients && (
+          <View style={styles.instructionsContainer}>
             <Text style={[styles.sectionTitle, styles.notesTitle]}>{t('common.recipeNotes')}</Text>
             <View style={styles.instructionCard}>
               {t(recipe.notesKey).map((note, index) => (
@@ -971,6 +883,35 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '600',
     color: colors.primary,
+  },
+  switchCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 16,
+    backgroundColor: colors.surface,
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 3,
+  },
+  switchLabels: {
+    flex: 1,
+    gap: 3,
+  },
+  switchLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.text,
+  },
+  switchHint: {
+    fontSize: 13,
+    color: colors.textSecondary,
+    lineHeight: 18,
   },
   notesTitle: {
     marginTop: 24,

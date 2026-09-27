@@ -32,6 +32,91 @@ export function calculatePizzaIngredients(count) {
   };
 }
 
+// Pizza dough 2 calculation logic
+// The first pizza without the Miklos universal mix. That mix is ~80% starch plus
+// guar, xanthan, HPMC and potato flakes (0.99 g protein per 100 g), so taking it
+// out takes the binder out too: psyllium husk replaces the gums and a brown rice
+// tangzhong replaces the pre-cooked potato flakes. The flour:starch split stays
+// near the original's ~36:64 at 40:60, since that dough is known to work.
+//
+// Baker's percentages of the flour + starch base. The unimix is decomposed as in
+// the flour mix calculator (48% sorghum, 47% tapioca, 5% psyllium), so 68.75% of
+// it gives 33% sorghum flour; 7% brown rice brings the flour to 40%, and potato
+// (27.7%) sits at the 45% potato cap of the starch fraction.
+const PIZZA2 = {
+  unimix: 0.6875,
+  brownRiceFlour: 0.07, // all of it goes into the tangzhong, or raw into the dough without one
+  potatoStarch: 0.277,
+  psylliumTotal: 0.045,
+  hydration: 0.9, // a starting point: 85% if unmanageable, 95% if the rim stays tight
+  hydrationNoTangzhong: 0.87, // the flour mix rule: a tangzhong adds 3 points
+  honey: 0.03,
+  oil: 0.06,
+  salt: 0.022,
+  yeast: 0.015,
+};
+const PIZZA2_UNIMIX_PSYLLIUM = 0.05;
+const PIZZA2_TANGZHONG_RATIO = 5;
+const PIZZA2_GEL_RATIO = 10;
+const PIZZA2_DOUGH_PER_PIZZA_G = 290; // the baker's 280-300 g ball
+
+// The tangzhong can be switched off to bake the same blend without it: the brown
+// rice then goes into the dough raw, and the water drops by the 3 points the
+// cooked paste would have held.
+export function calculatePizza2Ingredients(count, tangzhong = true) {
+  const numPizzas = parseInt(count) || 0;
+  if (numPizzas <= 0) return null;
+  const hydration = tangzhong ? PIZZA2.hydration : PIZZA2.hydrationNoTangzhong;
+
+  const psylliumAdded = PIZZA2.psylliumTotal - PIZZA2.unimix * PIZZA2_UNIMIX_PSYLLIUM;
+  const doughPerBase =
+    PIZZA2.unimix +
+    PIZZA2.brownRiceFlour +
+    PIZZA2.potatoStarch +
+    psylliumAdded +
+    hydration +
+    PIZZA2.honey +
+    PIZZA2.oil +
+    PIZZA2.salt +
+    PIZZA2.yeast;
+  const base = (PIZZA2_DOUGH_PER_PIZZA_G / doughPerBase) * numPizzas;
+
+  const grams = (share) => {
+    const raw = share * base;
+    return raw < 20 ? Math.round(raw * 10) / 10 : Math.round(raw);
+  };
+
+  const water = Math.round(hydration * base);
+  const waterTangzhong = tangzhong
+    ? Math.round(PIZZA2.brownRiceFlour * PIZZA2_TANGZHONG_RATIO * base)
+    : 0;
+  const waterGel = Math.round(psylliumAdded * PIZZA2_GEL_RATIO * base);
+  const waterYeast = water - waterTangzhong - waterGel;
+
+  const result = {
+    sorghumUnimix: grams(PIZZA2.unimix),
+    potatoStarch: grams(PIZZA2.potatoStarch),
+    brownRiceFlour: grams(PIZZA2.brownRiceFlour),
+    psylliumHusk: grams(psylliumAdded),
+    waterTangzhong,
+    waterGel,
+    waterYeast,
+    oil: grams(PIZZA2.oil),
+    honey: grams(PIZZA2.honey),
+    salt: grams(PIZZA2.salt),
+    yeast: grams(PIZZA2.yeast),
+    numPizzas,
+  };
+  const counted = { ...result };
+  delete counted.numPizzas;
+  result.tangzhong = tangzhong;
+  result.totalWeight = Math.round(
+    Object.keys(counted).reduce((sum, key) => sum + counted[key], 0)
+  );
+  result.weightPerPizza = Math.round(result.totalWeight / numPizzas);
+  return result;
+}
+
 // Waffle calculation logic
 export function calculateWaffleIngredients(multiplier) {
   const mult = parseInt(multiplier) || 0;
@@ -55,101 +140,6 @@ export function calculateWaffleIngredients(multiplier) {
     sugar,
     bakingPowder,
     multiplier: mult,
-  };
-}
-
-// Sandwich bread calculation logic
-// Base recipe: 300g flour total
-// Water = flour (100% hydration) + psyllium × 6 (600% hydration)
-export function calculateSandwichBreadIngredients(flourAmount) {
-  const totalFlour = parseInt(flourAmount) || 0;
-  if (totalFlour <= 0) return null;
-
-  const ratio = totalFlour / 300; // Scale factor based on 300g base
-
-  // Flour split (56.67% sorghum, 43.33% universal GF)
-  const sorghumFlour = Math.round(totalFlour * 0.5667);
-  const universalGfFlour = totalFlour - sorghumFlour; // Remainder to ensure exact total
-
-  // Other dry ingredients (scaled by ratio)
-  const psylliumHusk = Math.round(5 * ratio);
-  const activeYeast = Math.round(8 * ratio);
-  const salt = Math.round(5 * ratio);
-
-  // Wet ingredients (scaled by ratio)
-  const oil = Math.round(20 * ratio);
-  const honey = Math.round(20 * ratio);
-  const egg = Math.round(ratio); // 1 egg per 300g, rounded
-  const lemonJuice = Math.round(ratio); // 1 tbsp per 300g, rounded
-
-  // Water calculation: 100% flour hydration + 600% psyllium hydration
-  const water = totalFlour + (psylliumHusk * 6);
-
-  return {
-    sorghumFlour,
-    universalGfFlour,
-    psylliumHusk,
-    activeYeast,
-    salt,
-    oil,
-    honey,
-    egg,
-    lemonJuice,
-    water,
-    totalFlour,
-  };
-}
-
-// Rounds a value to the nearest multiple of `step` (e.g. roundTo(174, 5) === 175)
-function roundTo(value, step) {
-  return Math.round(value / step) * step;
-}
-
-// Baguette calculation logic
-// Base recipe: 390g flour (170g sorghum flour mix + 170g brown rice flour + 50g
-// tapioca starch) + 8g psyllium husk + 12g yeast + 7g salt + 30g honey + 30g oil
-// + 300g water = 800g total ready dough weight (rounded to the nearest 50g so
-// the selector's steps always land on a clean multiple of 50).
-// A portion of the tapioca starch and water is diverted into a tangzhong (cooked paste) step.
-// The selector scales the whole recipe by the total dough weight, not just the flour.
-// Flour amounts only need 5g accuracy on a kitchen scale; the small-quantity
-// ingredients (yeast, salt, psyllium, etc.) keep 1g accuracy since 5g would be
-// a large swing relative to their size.
-const BAGUETTE_BASE_DOUGH_WEIGHT_G = 800;
-
-export function calculateBaguetteIngredients(doughWeight) {
-  const totalDoughWeight = parseInt(doughWeight) || 0;
-  if (totalDoughWeight <= 0) return null;
-
-  const ratio = totalDoughWeight / BAGUETTE_BASE_DOUGH_WEIGHT_G;
-
-  const sorghumFlourMix = roundTo(170 * ratio, 5);
-  const brownRiceFlour = roundTo(170 * ratio, 5);
-  const tapiocaStarch = roundTo(50 * ratio, 5);
-
-  const psylliumHusk = Math.round(8 * ratio);
-  const yeast = Math.round(12 * ratio);
-  const salt = Math.round(7 * ratio);
-  const honey = Math.round(30 * ratio);
-  const oil = Math.round(30 * ratio);
-  const water = Math.round(300 * ratio);
-
-  const tangzhongTapioca = Math.round(15 * ratio);
-  const tangzhongWater = Math.round(100 * ratio);
-
-  return {
-    sorghumFlourMix,
-    brownRiceFlour,
-    tapiocaStarch,
-    psylliumHusk,
-    yeast,
-    salt,
-    honey,
-    oil,
-    water,
-    tangzhongTapioca,
-    tangzhongWater,
-    totalDoughWeight,
   };
 }
 

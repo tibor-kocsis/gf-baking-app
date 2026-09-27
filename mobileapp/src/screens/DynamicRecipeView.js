@@ -17,6 +17,34 @@ import { IngredientRow } from '../components/IngredientRow';
 import { NotesList } from '../components/NotesList';
 import { NoteEditor } from '../components/NoteEditor';
 import { PhotoPreview } from '../components/PhotoPreview';
+import { formatDuration } from './CookingModeView';
+
+// The cheese stick recipe's own ingredient groups, in the order it lists them.
+const CHEESE_STICK_GROUPS = [
+  {
+    key: 'dough',
+    items: [
+      ['brownRiceFlourFine', '🌾'],
+      ['sorghumFlour', '🌾'],
+      ['tapiocaStarch', '🥔'],
+      ['potatoStarch', '🥔'],
+      ['psylliumHuskGround', '🌾'],
+      ['bakingPowder', '🧂'],
+      ['salt', '🧂'],
+      ['margarine', '🧈'],
+      ['cottageCheese', '🧀'],
+      ['sourCream', '🥛'],
+      ['gratedCheese', '🧀'],
+    ],
+  },
+  {
+    key: 'topping',
+    items: [
+      ['meltedMargarine', '🧈'],
+      ['toppingCheese', '🧀'],
+    ],
+  },
+];
 
 export function DynamicRecipeView({ recipe, onBack, onStartCooking }) {
   useKeepAwake();
@@ -632,50 +660,29 @@ export function DynamicRecipeView({ recipe, onBack, onStartCooking }) {
             ]}
           >
             <Text style={styles.sectionTitle}>{t('common.requiredIngredients')}</Text>
+            <Text style={styles.metaText}>{t(recipe.metaKey)}</Text>
 
-            <View style={styles.ingredientCard}>
-              <Text style={styles.categoryTitle}>{t('common.dryIngredients')}</Text>
-              <IngredientRow
-                name={t('ingredients.breadFlourMix')}
-                amount={ingredients.breadFlourMix}
-                unit="g"
-                emoji="🌾"
-              />
-              <IngredientRow
-                name={t('ingredients.bakingPowder')}
-                amount={ingredients.bakingPowder}
-                unit="g"
-                emoji="🧂"
-              />
-              <IngredientRow
-                name={t('ingredients.salt')}
-                amount={ingredients.salt}
-                unit="g"
-                emoji="🧂"
-              />
-            </View>
-
-            <View style={styles.ingredientCard}>
-              <Text style={styles.categoryTitle}>{t('common.wetIngredients')}</Text>
-              <IngredientRow
-                name={t('ingredients.cottageCheese')}
-                amount={ingredients.cottageCheese}
-                unit="g"
-                emoji="🧀"
-              />
-              <IngredientRow
-                name={t('ingredients.gratedCheese')}
-                amount={ingredients.gratedCheese}
-                unit="g"
-                emoji="🧀"
-              />
-              <IngredientRow
-                name={t('ingredients.butter')}
-                amount={ingredients.butter}
-                unit="g"
-                emoji="🧈"
-              />
-            </View>
+            {CHEESE_STICK_GROUPS.map((group) => (
+              <View key={group.key} style={styles.ingredientCard}>
+                <Text style={styles.categoryTitle}>
+                  {t(`recipes.cheeseSticks.groups.${group.key}`)}
+                </Text>
+                {group.items.map(([key, emoji]) => {
+                  const spoon = recipe.ingredientUnits[key];
+                  return (
+                    <IngredientRow
+                      key={key}
+                      name={t(`${recipe.ingredientNamesKey}.${key}`)}
+                      amount={ingredients[key]}
+                      unit={
+                        spoon ? ` ${t(spoon === 'tsp' ? 'common.unitTsp' : 'common.unitTbsp')}` : 'g'
+                      }
+                      emoji={emoji}
+                    />
+                  );
+                })}
+              </View>
+            ))}
           </Animated.View>
         )}
 
@@ -684,12 +691,31 @@ export function DynamicRecipeView({ recipe, onBack, onStartCooking }) {
           <View style={styles.instructionsContainer}>
             <Text style={styles.sectionTitle}>{t('common.instructions')}</Text>
             <View style={styles.instructionCard}>
-              {t(recipe.instructionsKey).map((instruction, index) => (
-                <View key={index} style={styles.instructionRow}>
-                  <View style={styles.instructionNumber}>
-                    <Text style={styles.instructionNumberText}>{index + 1}</Text>
+              {t(recipe.instructionsKey).map((instruction, index) => {
+                const step = recipe.cookingSteps[index];
+                return (
+                  <View key={index} style={styles.instructionRow}>
+                    <View style={styles.instructionNumber}>
+                      <Text style={styles.instructionNumberText}>{index + 1}</Text>
+                    </View>
+                    <View style={styles.instructionBody}>
+                      <Text style={styles.instructionTitle}>{t(recipe.stepTitlesKey)[index]}</Text>
+                      <Text style={styles.instructionText}>{instruction}</Text>
+                      {!!step && !!step.timerSeconds && (
+                        <Text style={styles.durationText}>⏱ {formatDuration(step.timerSeconds, t)}</Text>
+                      )}
+                    </View>
                   </View>
-                  <Text style={styles.instructionText}>{instruction}</Text>
+                );
+              })}
+            </View>
+
+            <Text style={[styles.sectionTitle, styles.notesTitle]}>{t('common.recipeNotes')}</Text>
+            <View style={styles.instructionCard}>
+              {t(recipe.notesKey).map((note, index) => (
+                <View key={index} style={styles.instructionRow}>
+                  <Text style={styles.noteBullet}>•</Text>
+                  <Text style={styles.instructionText}>{note}</Text>
                 </View>
               ))}
             </View>
@@ -931,6 +957,36 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.text,
     lineHeight: 24,
+  },
+  instructionBody: {
+    flex: 1,
+    gap: 4,
+  },
+  instructionTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: colors.text,
+  },
+  durationText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: colors.primary,
+  },
+  notesTitle: {
+    marginTop: 24,
+  },
+  noteBullet: {
+    fontSize: 16,
+    lineHeight: 24,
+    color: colors.textSecondary,
+    marginRight: 12,
+  },
+  metaText: {
+    fontSize: 14,
+    color: colors.textSecondary,
+    lineHeight: 20,
+    marginTop: -6,
+    marginBottom: 12,
   },
   startCookingButton: {
     backgroundColor: colors.secondary,

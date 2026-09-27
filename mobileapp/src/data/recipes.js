@@ -1,3 +1,5 @@
+import { CHEESE_STICK_SPOON_UNITS } from '../utils/recipeCalculators';
+
 // Recipe definitions with translation keys
 export const recipes = [
   {
@@ -107,16 +109,32 @@ export const recipes = [
     unitLabelKey: 'recipes.cheeseSticks.unitLabel',
     howManyKey: 'recipes.cheeseSticks.howMany',
     instructionsKey: 'instructions.cheeseSticks',
-    initialValue: 3,
-    stepSize: 1,
+    stepTitlesKey: 'recipes.cheeseSticks.stepTitles',
+    notesKey: 'recipes.cheeseSticks.notes',
+    metaKey: 'recipes.cheeseSticks.meta',
+    ingredientNamesKey: 'recipes.cheeseSticks.ingredients',
+    ingredientUnits: CHEESE_STICK_SPOON_UNITS,
+    initialValue: 30,
+    stepSize: 5,
     cookingSteps: [
-      { instructionIndex: 0, ingredients: ['breadFlourMix', 'bakingPowder', 'salt'] },
-      { instructionIndex: 1, ingredients: ['butter'] },
-      { instructionIndex: 2, ingredients: ['cottageCheese', 'gratedCheese'] },
-      { instructionIndex: 3, ingredients: [] },
-      { instructionIndex: 4, ingredients: [] },
-      { instructionIndex: 5, ingredients: [] },
-      { instructionIndex: 6, ingredients: [] },
+      {
+        instructionIndex: 0,
+        ingredients: [
+          'brownRiceFlourFine',
+          'sorghumFlour',
+          'tapiocaStarch',
+          'potatoStarch',
+          'psylliumHuskGround',
+          'bakingPowder',
+          'salt',
+        ],
+      },
+      { instructionIndex: 1, ingredients: ['margarine', 'cottageCheese', 'sourCream', 'gratedCheese'] },
+      { instructionIndex: 2, ingredients: [], timerSeconds: 2700 },
+      { instructionIndex: 3, ingredients: ['meltedMargarine', 'toppingCheese'] },
+      { instructionIndex: 4, ingredients: [], timerSeconds: 900 },
+      { instructionIndex: 5, ingredients: [], timerSeconds: 1020 },
+      { instructionIndex: 6, ingredients: [], timerSeconds: 600 },
     ],
   },
   {

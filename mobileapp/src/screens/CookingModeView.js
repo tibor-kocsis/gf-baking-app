@@ -14,6 +14,7 @@ export function CookingModeView({ recipe, ingredients, onBack }) {
 
   const cookingSteps = recipe.cookingSteps || [];
   const instructions = t(recipe.instructionsKey) || [];
+  const stepTitles = recipe.stepTitlesKey ? t(recipe.stepTitlesKey) || [] : [];
 
   const completedCount = Object.values(completedSteps).filter(Boolean).length;
   const totalSteps = cookingSteps.length;
@@ -45,7 +46,16 @@ export function CookingModeView({ recipe, ingredients, onBack }) {
     return translationKeyMap[ingredientKey] || ingredientKey;
   };
 
+  // Recipes whose ingredient names are their own (not the shared list) carry them
+  // under their own key.
+  const getIngredientName = (ingredientKey) =>
+    recipe.ingredientNamesKey
+      ? t(`${recipe.ingredientNamesKey}.${ingredientKey}`)
+      : t(`ingredients.${getIngredientTranslationKey(ingredientKey)}`);
+
   const getIngredientUnit = (ingredientKey) => {
+    const spoon = recipe.ingredientUnits && recipe.ingredientUnits[ingredientKey];
+    if (spoon) return ` ${t(spoon === 'tsp' ? 'common.unitTsp' : 'common.unitTbsp')}`;
     // Units based on ingredient type
     // Returns: empty string, 'g', 'ml', or translation key for tsp/tbsp
     const unitMap = {
@@ -103,6 +113,7 @@ export function CookingModeView({ recipe, ingredients, onBack }) {
                   <View style={styles.stepNumberContainer}>
                     <Text style={[styles.stepNumber, isCompleted && styles.textCompleted]}>
                       {t('common.step')} {index + 1}
+                      {stepTitles[step.instructionIndex] ? ` · ${stepTitles[step.instructionIndex]}` : ''}
                     </Text>
                   </View>
                 </TouchableOpacity>
@@ -110,6 +121,12 @@ export function CookingModeView({ recipe, ingredients, onBack }) {
                 <Text style={[styles.instructionText, isCompleted && styles.textCompleted]}>
                   {instruction}
                 </Text>
+
+                {!!step.timerSeconds && (
+                  <Text style={[styles.durationText, isCompleted && styles.textCompleted]}>
+                    ⏱ {formatDuration(step.timerSeconds, t)}
+                  </Text>
+                )}
 
                 {stepIngredients.length > 0 && (
                   <View style={styles.ingredientsSection}>
@@ -132,7 +149,7 @@ export function CookingModeView({ recipe, ingredients, onBack }) {
                             {isChecked && <Text style={styles.ingredientCheckmark}>✓</Text>}
                           </View>
                           <Text style={[styles.ingredientName, isChecked && styles.ingredientTextChecked]}>
-                            {t(`ingredients.${getIngredientTranslationKey(ingredientKey)}`)}
+                            {getIngredientName(ingredientKey)}
                           </Text>
                           {amount !== null && amount !== undefined && (
                             <Text style={[styles.ingredientAmount, isChecked && styles.ingredientTextChecked]}>
@@ -153,7 +170,18 @@ export function CookingModeView({ recipe, ingredients, onBack }) {
   );
 }
 
+// Whole minutes, which is how every recipe states its times.
+export function formatDuration(seconds, t) {
+  return t('common.durationMinutes').split('{minutes}').join(Math.round(seconds / 60));
+}
+
 const styles = StyleSheet.create({
+  durationText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: colors.primary,
+    marginBottom: 12,
+  },
   scrollView: {
     flex: 1,
     backgroundColor: colors.background,

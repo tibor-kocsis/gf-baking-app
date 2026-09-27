@@ -25,7 +25,7 @@ Gluten Free Baking is a mobile app that serves as a comprehensive gluten-free re
 - Waffles (batch calculator)
 - Baguette (ready dough weight calculator, 50g steps)
 - American Pancakes (pancake-count calculator, 1 pancake steps)
-- Cheese Sticks (stick-count calculator, 1 stick steps)
+- Cheese Sticks (stick-count calculator, 5 stick steps)
 - Flour Mix (blend solver driven by available ingredients, 50g steps)
 
 ## UI Design
@@ -156,9 +156,9 @@ mobileapp/
 - The selector scales the whole recipe against that base pancake count, in steps of 1 pancake
 
 ### Cheese Sticks Recipe (Dynamic, stick-count-based)
-- Base recipe (1x): 150g bread flour mix, 250g cottage cheese, 250g grated cheese, 85g butter, 5g salt, 3g baking powder
-- One stick requires 50g of the flour blend, so the base recipe yields 150 / 50 = 3 sticks
-- The selector scales the whole recipe against that base stick count, in steps of 1 stick
+- Recipe v2.1 (2026-09-27), egg-free; full text and changelog in `recipes/sajtos-rud.md`
+- Base recipe (30 sticks): 100g brown rice flour, 80g sorghum flour, 50g tapioca starch, 50g potato starch, 6g ground psyllium husk, 1 tsp baking powder, 0.5 tsp salt, 150g cold margarine, 250g cottage cheese, 3 tbsp sour cream, 100g grated cheese; topping 1 tbsp melted margarine, 50g grated cheese
+- The selector scales the whole recipe against 30 sticks, in steps of 5; spoon measures round to the nearest quarter spoon
 
 ### Flour Mix Calculator (blend solver)
 - The selector is the batch size: total flour + starch weight, which is the 100% reference for every baker's percentage shown (default 500g, 50g steps)

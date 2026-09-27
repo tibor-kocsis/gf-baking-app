@@ -190,33 +190,45 @@ export function calculatePancakeIngredients(pancakeCount) {
 }
 
 // Cheese sticks calculation logic
-// Base recipe (1x): 150g bread flour mix, 250g cottage cheese, 250g grated
-// cheese, 85g butter, 5g salt, 3g baking powder.
-// One stick requires 50g of the flour blend, so the base recipe yields
-// 150 / 50 = 3 sticks. The stepper scales the whole recipe against that.
-const CHEESE_STICK_FLOUR_PER_STICK_G = 50;
-const CHEESE_STICK_BASE_COUNT = 150 / CHEESE_STICK_FLOUR_PER_STICK_G;
+// Recipe version 2.1 (2026-09-27), see recipes/sajtos-rud.md for the changelog.
+// The base recipe yields 30 sticks; the stepper scales everything against that.
+// Spoon measures stay spoons and round to the nearest quarter spoon.
+const CHEESE_STICK_BASE_COUNT = 30;
+const CHEESE_STICK_BASE = {
+  brownRiceFlourFine: 100,
+  sorghumFlour: 80,
+  tapiocaStarch: 50,
+  potatoStarch: 50,
+  psylliumHuskGround: 6,
+  bakingPowder: 1, // tsp
+  salt: 0.5, // tsp
+  margarine: 150,
+  cottageCheese: 250,
+  sourCream: 3, // tbsp
+  gratedCheese: 100,
+  meltedMargarine: 1, // tbsp
+  toppingCheese: 50,
+};
+export const CHEESE_STICK_SPOON_UNITS = {
+  bakingPowder: 'tsp',
+  salt: 'tsp',
+  sourCream: 'tbsp',
+  meltedMargarine: 'tbsp',
+};
 
 export function calculateCheeseStickIngredients(stickCount) {
   const count = parseInt(stickCount) || 0;
   if (count <= 0) return null;
 
   const ratio = count / CHEESE_STICK_BASE_COUNT;
-
-  const breadFlourMix = count * CHEESE_STICK_FLOUR_PER_STICK_G;
-  const cottageCheese = Math.round(250 * ratio);
-  const gratedCheese = Math.round(250 * ratio);
-  const butter = Math.round(85 * ratio);
-  const salt = Math.round(5 * ratio);
-  const bakingPowder = Math.round(3 * ratio * 10) / 10;
-
-  return {
-    breadFlourMix,
-    cottageCheese,
-    gratedCheese,
-    butter,
-    salt,
-    bakingPowder,
-    stickCount: count,
-  };
+  const result = { stickCount: count };
+  Object.keys(CHEESE_STICK_BASE).forEach((key) => {
+    const raw = CHEESE_STICK_BASE[key] * ratio;
+    if (CHEESE_STICK_SPOON_UNITS[key]) {
+      result[key] = Math.max(0.25, Math.round(raw * 4) / 4);
+    } else {
+      result[key] = raw < 20 ? Math.round(raw * 10) / 10 : Math.round(raw);
+    }
+  });
+  return result;
 }

@@ -51,16 +51,22 @@ export function AppNavigator() {
     return <RecipeCatalog onSelectRecipe={navigateToRecipe} />;
   }
 
-  if (recipe.type === 'flour-mix') {
-    return <FlourMixCalculatorView recipe={recipe} onBack={navigateToCatalog} />;
-  }
-
   if (screen.type === 'cooking') {
     return (
       <CookingModeView
         recipe={recipe}
         ingredients={screen.ingredients}
         onBack={navigateBackFromCooking}
+      />
+    );
+  }
+
+  if (recipe.type === 'flour-mix') {
+    return (
+      <FlourMixCalculatorView
+        recipe={recipe}
+        onBack={navigateToCatalog}
+        onStartCooking={(plan) => navigateToCooking(recipe.id, plan)}
       />
     );
   }

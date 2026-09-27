@@ -143,6 +143,27 @@ water the egg and milk carry toward the same hydration.
 - **THEN** a hint gives the piece weights, the need for a pan or rings, the egg wash and a 180-190 °C bake to 96-98 °C inside
 - **AND** the egg line states the eggs' total weight out of the shell
 
+### Requirement: Flour Mix Cooking Mode and Notes
+The flour mix screen SHALL offer the same "start cooking" and personal notes as the
+recipes, with cooking steps built from the solved formula.
+
+#### Scenario: Starting cooking mode from the flour mix
+- **WHEN** a formula is shown and the user taps the start cooking button
+- **THEN** cooking mode opens with steps built from that formula
+- **AND** a tangzhong step appears only when the formula has a tangzhong, listing its source grams and its water or milk
+- **AND** a psyllium gel step appears only when husk is weighed out separately
+- **AND** the mixing step lists each flour and starch less what the tangzhong took, so the steps add up to the formula
+- **AND** the hot dog bun style uses milk, lists the eggs as a count and ends with an egg wash
+- **AND** the method follows the baker's own: rest 15 minutes, fold, shape and score by style, proof to 120-150%, bake to 96-98 °C inside, cool before slicing
+
+#### Scenario: Returning from cooking mode
+- **WHEN** the user goes back from cooking mode to the flour mix
+- **THEN** the batch size, style and cupboard selections are as they were
+
+#### Scenario: Notes on the flour mix
+- **WHEN** the user opens the flour mix screen
+- **THEN** the "My notes" section is shown below the formula, as on the recipes
+
 ### Requirement: Tangzhong Drawn From Flour First
 The app SHALL source the tangzhong from a plain flour where the cupboard holds one,
 following the published practice, and SHALL fall back through the sorghum unimix to the

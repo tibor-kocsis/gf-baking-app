@@ -25,6 +25,10 @@ import {
 } from '../utils/flourMixCalculator';
 import { Header } from '../components/Header';
 import { FormulaRow } from '../components/FormulaRow';
+import { NotesList } from '../components/NotesList';
+import { NoteEditor } from '../components/NoteEditor';
+import { PhotoPreview } from '../components/PhotoPreview';
+import { buildFlourMixPlan } from '../utils/flourMixSteps';
 
 const STYLE_RATIOS = {
   sandwich: '65 : 35',
@@ -61,19 +65,37 @@ const EMOJI = {
   vinegar: '🍶',
 };
 
-export function FlourMixCalculatorView({ recipe, onBack }) {
+// The last settings, so that coming back from cooking mode (which remounts this
+// screen) does not reset the cupboard. Kept for the app session only.
+let savedSettings = null;
+
+export function FlourMixCalculatorView({ recipe, onBack, onStartCooking }) {
   useKeepAwake();
   const { t } = useI18n();
 
+  const saved = savedSettings || {};
   const batchStep = recipe.stepSize || 50;
-  const [batchSize, setBatchSize] = useState(String(recipe.initialValue || 500));
-  const [style, setStyle] = useState('sandwich');
-  const [unimix, setUnimix] = useState(true);
-  const [flours, setFlours] = useState(['brownRice']);
-  const [starches, setStarches] = useState(['potato', 'tapioca']);
-  const [psyllium, setPsyllium] = useState(true);
-  const [tangzhong, setTangzhong] = useState(true);
-  const [tangzhongPercent, setTangzhongPercent] = useState(TANGZHONG_PERCENT_DEFAULT);
+  const [batchSize, setBatchSize] = useState(saved.batchSize || String(recipe.initialValue || 500));
+  const [style, setStyle] = useState(saved.style || 'sandwich');
+  const [unimix, setUnimix] = useState(saved.unimix !== undefined ? saved.unimix : true);
+  const [flours, setFlours] = useState(saved.flours || ['brownRice']);
+  const [starches, setStarches] = useState(saved.starches || ['potato', 'tapioca']);
+  const [psyllium, setPsyllium] = useState(saved.psyllium !== undefined ? saved.psyllium : true);
+  const [tangzhong, setTangzhong] = useState(saved.tangzhong !== undefined ? saved.tangzhong : true);
+  const [tangzhongPercent, setTangzhongPercent] = useState(
+    saved.tangzhongPercent || TANGZHONG_PERCENT_DEFAULT
+  );
+
+  useEffect(() => {
+    savedSettings = { batchSize, style, unimix, flours, starches, psyllium, tangzhong, tangzhongPercent };
+  }, [batchSize, style, unimix, flours, starches, psyllium, tangzhong, tangzhongPercent]);
+
+  // Notes state
+  const [notesExpanded, setNotesExpanded] = useState(false);
+  const [noteEditorVisible, setNoteEditorVisible] = useState(false);
+  const [editingNote, setEditingNote] = useState(null);
+  const [notesRefreshTrigger, setNotesRefreshTrigger] = useState(0);
+  const [previewPhoto, setPreviewPhoto] = useState(null);
 
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
@@ -568,8 +590,62 @@ export function FlourMixCalculatorView({ recipe, onBack }) {
                 </View>
               </View>
             )}
+
+            {!!onStartCooking && (
+              <TouchableOpacity
+                style={styles.startCookingButton}
+                onPress={() =>
+                  onStartCooking({ cookingPlan: buildFlourMixPlan(formula, t, nameOf) })
+                }
+                activeOpacity={0.8}
+              >
+                <Text style={styles.startCookingButtonText}>{t('common.startCooking')}</Text>
+              </TouchableOpacity>
+            )}
           </>
         )}
+
+        {/* My Notes */}
+        <View style={styles.notesSection}>
+          <TouchableOpacity
+            style={styles.notesSectionHeader}
+            onPress={() => setNotesExpanded(!notesExpanded)}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.sectionTitle}>{t('notes.title')}</Text>
+            <Text style={styles.expandIcon}>{notesExpanded ? '▼' : '▶'}</Text>
+          </TouchableOpacity>
+
+          {notesExpanded && (
+            <NotesList
+              recipeId={recipe.id}
+              onEditNote={(note) => {
+                setEditingNote(note);
+                setNoteEditorVisible(true);
+              }}
+              onAddNote={() => {
+                setEditingNote(null);
+                setNoteEditorVisible(true);
+              }}
+              onPhotoPress={setPreviewPhoto}
+              refreshTrigger={notesRefreshTrigger}
+            />
+          )}
+        </View>
+
+        <NoteEditor
+          visible={noteEditorVisible}
+          note={editingNote}
+          recipeId={recipe.id}
+          onClose={() => setNoteEditorVisible(false)}
+          onSaved={() => setNotesRefreshTrigger((prev) => prev + 1)}
+        />
+
+        <PhotoPreview
+          visible={!!previewPhoto}
+          photoUri={previewPhoto}
+          onClose={() => setPreviewPhoto(null)}
+        />
       </View>
     </ScrollView>
   );
@@ -956,6 +1032,43 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: colors.accent,
     marginTop: 8,
+  },
+  startCookingButton: {
+    backgroundColor: colors.secondary,
+    borderRadius: 16,
+    padding: 18,
+    marginTop: 12,
+    alignItems: 'center',
+    shadowColor: colors.secondary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  startCookingButtonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  notesSection: {
+    marginTop: 32,
+    backgroundColor: colors.surface,
+    borderRadius: 16,
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 3,
+  },
+  notesSectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  expandIcon: {
+    fontSize: 12,
+    color: colors.textSecondary,
   },
   noteText: {
     flex: 1,

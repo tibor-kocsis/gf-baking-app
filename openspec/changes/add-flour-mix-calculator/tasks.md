@@ -31,3 +31,9 @@
 - [x] 5.3 Check the tangzhong is refused on a unimix-only cupboard and sourced from brown rice otherwise
 - [x] 5.4 Check gram totals sum exactly to the stated flour, starch and water totals across a sweep of batch sizes
 - [x] 5.5 Check every new translation key resolves in all three languages
+
+## 6. Cooking Mode and Notes
+- [x] 6.1 Build cooking steps from the formula in `src/utils/flourMixSteps.js`
+- [x] 6.2 Let cooking mode take a ready-made step plan and route the flour mix to it
+- [x] 6.3 Add the start cooking button, the notes section and settings kept across cooking mode
+- [x] 6.4 Check the step grams add up to the formula for several cupboards

@@ -16,12 +16,9 @@ export function CookingModeView({ recipe: baseRecipe, ingredients, onBack }) {
   const [checkedIngredients, setCheckedIngredients] = useState({});
   const [completedSteps, setCompletedSteps] = useState({});
 
-  const cookingSteps = recipe.cookingSteps || [];
-  const instructions = t(recipe.instructionsKey) || [];
+  const instructions = recipe.instructionsKey ? t(recipe.instructionsKey) || [] : [];
   const stepTitles = recipe.stepTitlesKey ? t(recipe.stepTitlesKey) || [] : [];
 
-  const completedCount = Object.values(completedSteps).filter(Boolean).length;
-  const totalSteps = cookingSteps.length;
 
   const toggleIngredient = (ingredientKey) => {
     setCheckedIngredients((prev) => ({
@@ -72,6 +69,25 @@ export function CookingModeView({ recipe: baseRecipe, ingredients, onBack }) {
     return ingredientKey in unitMap ? unitMap[ingredientKey] : 'g';
   };
 
+  // Every step in one shape: { title, text, timerSeconds, items: [{ id, name, amount, unit }] }.
+  // A screen that builds its own steps (the flour mix) passes them ready-made as
+  // `ingredients.cookingPlan`; the recipes are mapped from their step definitions.
+  const steps = (ingredients && ingredients.cookingPlan) ||
+    (recipe.cookingSteps || []).map((step) => ({
+      title: stepTitles[step.instructionIndex],
+      text: fillAmounts(instructions[step.instructionIndex], ingredients),
+      timerSeconds: step.timerSeconds,
+      items: (step.ingredients || []).map((key) => ({
+        id: key,
+        name: getIngredientName(key),
+        amount: getIngredientAmount(key),
+        unit: getIngredientUnit(key),
+      })),
+    }));
+
+  const completedCount = Object.values(completedSteps).filter(Boolean).length;
+  const totalSteps = steps.length;
+
   const progressText = t('common.stepsCompleted')
     .replace('{completed}', completedCount)
     .replace('{total}', totalSteps);
@@ -96,10 +112,9 @@ export function CookingModeView({ recipe: baseRecipe, ingredients, onBack }) {
         </View>
 
         <View style={styles.stepsContainer}>
-          {cookingSteps.map((step, index) => {
+          {steps.map((step, index) => {
             const isCompleted = completedSteps[index];
-            const instruction = instructions[step.instructionIndex];
-            const stepIngredients = step.ingredients || [];
+            const stepIngredients = step.items || [];
 
             return (
               <View
@@ -117,13 +132,13 @@ export function CookingModeView({ recipe: baseRecipe, ingredients, onBack }) {
                   <View style={styles.stepNumberContainer}>
                     <Text style={[styles.stepNumber, isCompleted && styles.textCompleted]}>
                       {t('common.step')} {index + 1}
-                      {stepTitles[step.instructionIndex] ? ` · ${stepTitles[step.instructionIndex]}` : ''}
+                      {step.title ? ` · ${step.title}` : ''}
                     </Text>
                   </View>
                 </TouchableOpacity>
 
                 <Text style={[styles.instructionText, isCompleted && styles.textCompleted]}>
-                  {fillAmounts(instruction, ingredients)}
+                  {step.text}
                 </Text>
 
                 {!!step.timerSeconds && (
@@ -137,23 +152,21 @@ export function CookingModeView({ recipe: baseRecipe, ingredients, onBack }) {
                     <Text style={[styles.ingredientsSectionTitle, isCompleted && styles.textCompleted]}>
                       {t('common.ingredientsForStep')}:
                     </Text>
-                    {stepIngredients.map((ingredientKey) => {
-                      const isChecked = checkedIngredients[ingredientKey];
-                      const amount = getIngredientAmount(ingredientKey);
-                      const unit = getIngredientUnit(ingredientKey);
+                    {stepIngredients.map(({ id, name, amount, unit }) => {
+                      const isChecked = checkedIngredients[id];
 
                       return (
                         <TouchableOpacity
-                          key={ingredientKey}
+                          key={id}
                           style={styles.ingredientRow}
-                          onPress={() => toggleIngredient(ingredientKey)}
+                          onPress={() => toggleIngredient(id)}
                           activeOpacity={0.7}
                         >
                           <View style={[styles.ingredientCheckbox, isChecked && styles.ingredientCheckboxChecked]}>
                             {isChecked && <Text style={styles.ingredientCheckmark}>✓</Text>}
                           </View>
                           <Text style={[styles.ingredientName, isChecked && styles.ingredientTextChecked]}>
-                            {getIngredientName(ingredientKey)}
+                            {name}
                           </Text>
                           {amount !== null && amount !== undefined && (
                             <Text style={[styles.ingredientAmount, isChecked && styles.ingredientTextChecked]}>

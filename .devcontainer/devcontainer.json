@@ -6,12 +6,14 @@
     "build": {
         "dockerfile": "Dockerfile"
     },
+    "runArgs": ["-e", "DISPLAY=${localEnv:DISPLAY}", "-v", "/tmp/.X11-unix:/tmp/.X11-unix", "--shm-size=1g", "--cap-add=SYS_ADMIN"],
     "features": {
         "ghcr.io/devcontainers/features/node:1": {}
     },
     "mounts": [
         "source=mevo-bashhistory,target=/commandhistory,type=volume",
-        "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached"
+        "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached",
+        "source=claude-code-config-${devcontainerId},target=/home/vscode/.claude,type=volume"
     ],
 
     // Features to add to the dev container. More info: https://containers.dev/features.
@@ -31,7 +33,7 @@
     },
 
     // Use 'postCreateCommand' to run commands after the container is created.
-    "postCreateCommand": "npm install -g @fission-ai/openspec@latest @expo/ngrok; curl -fsSL https://claude.ai/install.sh | bash"
+    "postCreateCommand": "npm install -g @expo/ngrok; curl -fsSL https://claude.ai/install.sh | bash"
 
     // Configure tool-specific properties.
     // "customizations": {},

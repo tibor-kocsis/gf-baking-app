@@ -2,7 +2,7 @@
 
 ## Project
 
-**Gluten Free Baking** (`com.glutenfreebaking.app`) — offline Expo app of gluten-free recipe calculators. A catalog of tiles (pizza 1–3, waffles, pancakes, cheese sticks, bread/rolls flour mix); each recipe rescales its ingredients as the baker changes a count, batch size or multiplier, and has a cooking mode (step-by-step, timers, screen kept on) and notes with photos. No backend, no account — everything lives on the device.
+**Gluten Free Baking** (`com.glutenfreebaking.app`) — offline Expo app of gluten-free recipe calculators. Each recipe rescales its ingredients as the baker changes a count, batch size or multiplier, and has a cooking mode and notes with photos. No backend, no account — everything lives on the device.
 Source recipes with background and reasoning (Hungarian): `recipes/*.md`.
 
 ## Working agreements
@@ -18,71 +18,59 @@ Source recipes with background and reasoning (Hungarian): `recipes/*.md`.
 
 ## Architecture
 
-**Stack**: Expo SDK 54 managed workflow (no native code) · React Native 0.81 + React 19.1, new architecture · plain JavaScript (no TypeScript) · react-native-web · AsyncStorage · expo-file-system / expo-image-picker (note photos) · expo-keep-awake (recipe and cooking screens) · expo-localization · react-native-svg (icons) · expo-font + @expo-google-fonts (Figtree, Bricolage Grotesque, bundled). No navigation or state library.
+**Stack**: Expo SDK 54 managed workflow (no native code) · React Native + react-native-web · plain JavaScript (no TypeScript) · AsyncStorage for all persistence. No navigation or state library — keep it that way unless asked.
 
 ```
 mobileapp/
-├── App.js                   # font loading + I18nProvider + AppNavigator only
-├── locales/{en,hu,de}.js    # translation objects
-├── assets/                  # app icons (generate-icons.js), recipes/ photos
+├── App.js          # providers only
+├── locales/        # en, hu, de
+├── assets/         # app icons, recipe photos
 └── src/
-    ├── data/recipes.js      # the catalog: ids, types, translation keys, cookingSteps
-    ├── utils/               # pure logic: recipeCalculators, flourMixCalculator (solver), flourMixSteps (cooking plan), notesStorage
-    ├── screens/             # RecipeCatalog, DynamicRecipeView, FlourMixCalculatorView, CookingModeView
-    ├── components/          # Icon (SVG UI shapes), Header, RecipeHero, Stepper, StartCookingBar, IngredientRow, FormulaRow, notes + photo components, LanguageSelector
-    ├── navigation/AppNavigator.js   # useState screen stack + Android BackHandler
-    ├── context/I18nContext.js       # useI18n(), language persistence
-    └── constants/{colors,fonts,storage}.js
-recipes/                     # source recipes (hu), one per tile
+    ├── data/       # the recipe catalog (single source for catalog, navigation, cooking steps)
+    ├── utils/      # pure logic: calculators, flour mix solver, cooking plans, storage
+    ├── screens/    # render only
+    ├── components/
+    ├── navigation/ # screen-state stack + Android back button
+    ├── context/    # i18n
+    └── constants/  # colors, fonts, storage keys
+recipes/            # source recipes (hu), one per tile
 ```
 
-## Commands & test environment
+## Rules
 
-From `mobileapp/`:
-```bash
-npx expo export --platform web   # smoke-builds the bundle (catches syntax/import errors)
-node generate-icons.js           # only when icons change
-npm start / npm run web          # user only
-```
-No lint, type check, test runner or CI is set up. Check pure logic with a throwaway `node` script in the scratchpad (`node -e "import('./src/utils/recipeCalculators.js')…"` from `mobileapp/` works; ignore the module-type warning) rather than adding tooling unasked.
-
-Environments: web via `npm run web` (Metro on :8081) for Playwright checks; device via Expo Go (`--tunnel`, or `REACT_NATIVE_PACKAGER_HOSTNAME=<host ip>` for LAN). Playwright screenshots go to `.playwright-mcp/`. Web lacks the Android back button and parts of the file system — say so when a check can only happen on a device.
-
-## Code standards
-
+- **Business logic stays in `src/utils/` as pure functions** (no React, no i18n beyond an injected `t`); screens only call and render.
+- **Offline and in grams.** Everything, including fonts and photos, is bundled. Spoons only where the recipe says so, rounded to ¼.
+- **Storage keys** only from `constants/storage.js`. Renaming a key loses users' saved language/notes — don't, or migrate.
+- **Navigation**: the hardware back handler only changes screen state and returns `true`/`false` — never JSX, never render-only variables (that bug has shipped once). Settings must survive a trip to cooking mode and back.
+- **One cooking-step shape** for every recipe; recipes declare their steps in the catalog, the flour mix derives its plan from the solved formula.
+- **Styling**: `StyleSheet.create` at the bottom of each file, no inline style objects. Colours and fonts only from `constants/` — never hardcode. No emoji (boxes on web); icons are SVG, recipe images are bundled photos with credits in `assets/recipes/CREDITS.md`.
+- **Comments** explain the baking reason for a number or rule; keep that density when adding rules.
 - Functional components + hooks; PascalCase components, `handle*` handlers.
-- `StyleSheet.create` at the bottom of each file; no inline style objects. Colours only from `constants/colors.js` — never hardcode. Type via `fonts.*` from `constants/fonts.js` (`fontFamily`, never `fontWeight`: Android ignores weight on custom fonts). Icons via `<Icon name>` — no emoji (they render as boxes on web). Recipe tiles use photos: `image: require('../../assets/recipes/<id>.jpg')` (640×428 JPEG, bundled for offline; credit in `assets/recipes/CREDITS.md`).
-- **Business logic stays in `src/utils/` as pure functions** (no React, no i18n calls beyond an injected `t`); screens only call and render.
-- AsyncStorage keys only from `constants/storage.js`. Renaming a key loses users' saved language/notes — don't, or migrate.
-- Comments explain the baking reason for a number or rule (see `recipes.js`, `flourMixCalculator.js`); keep that density when adding rules.
-- Everything must work offline and in grams (spoons only where the recipe says so, rounded to ¼).
 
-## Key patterns
+## Flour mix solver invariants
 
-- **Navigation**: `AppNavigator` holds `{ type: 'catalog' | 'recipe' | 'cooking' }`. The hardware back handler only changes screen state and returns `true`/`false` — never JSX, never touching render-only variables (that bug has shipped once). Settings must survive a trip to cooking mode and back.
-- **Recipe types**: `dynamic` → `DynamicRecipeView`; `flour-mix` → `FlourMixCalculatorView`. The catalog and navigation pick new recipes up from `recipes.js` automatically.
-- **Cooking mode takes one step shape**: `{ instructionIndex, ingredients: [keys], timerSeconds? }`. Dynamic recipes declare `cookingSteps` (plus `variantFor(ingredients)` when an option changes the steps, e.g. pizza 2 without tangzhong); the flour mix builds its plan in `flourMixSteps.js` from the solved formula.
-- **Adding a recipe**: entry in `recipes.js` (with a photo in `assets/recipes/`) (`initialValue` / `stepSize` default to 1) → pure `calculate*Ingredients` in `recipeCalculators.js` → rendering branch in `DynamicRecipeView.js` (not fully data-driven) → strings in all three locales → `cookingSteps` whose ingredient keys match the calculator's → source doc in `recipes/`.
-
-## Flour mix solver
-
-`utils/flourMixCalculator.js` — grid search over unimix weight × flour:starch split, scored by weighted cap violations. Invariants:
 - Batch size = flour + starch, the 100% base for every percentage shown.
-- Sorghum unimix is **not a flour**: always decomposed (48% sorghum / 47% tapioca / 5% psyllium); only its 95% counts toward the base, and its parts count toward the caps.
-- Caps can contradict; the solver relaxes the least harmful one and **always reports which cap and by how much**. Potato is protected hardest (weighted ~10× the others).
-- Tangzhong flour comes only from plain flour (brown rice first, then plain sorghum), never the unimix; with no plain flour it is dropped with a note.
-- Hydration is style-independent by design; adjustments are rule-based (see file comments).
+- Sorghum unimix is **not a flour**: always decomposed into its parts; only its flour + starch share counts toward the base, and its parts count toward the caps.
+- Caps can contradict; the solver relaxes the least harmful one and **always reports which cap and by how much**. Potato is protected hardest.
+- Tangzhong flour comes only from plain flour, never the unimix; with no plain flour it is dropped with a note.
+- Hydration is style-independent by design.
 
 ## Localization
 
-- Three languages: `en` (fallback), `hu`, `de`. Every UI string goes into all three locale files with identical key structure (translate automatically). Device locale decides at first launch; the choice persists.
-- Hungarian copy is informal ("tegeződő": "Keverd össze", "Szeretnéd"), short and literal — no misleading wording. Ingredient names follow `recipes/*.md`.
-- Instructions are arrays under `instructions.<id>`; `cookingSteps[].instructionIndex` points into them, so reordering an array means updating the steps.
-- New language: `locales/<code>.js` → import in `I18nContext.js` → button in `LanguageSelector.js`.
+- `en` (fallback), `hu`, `de`. Every UI string goes into all three with identical key structure (translate automatically). Device locale decides at first launch; the choice persists.
+- Hungarian copy is informal ("tegeződő"), short and literal — no misleading wording. Ingredient names follow `recipes/*.md`.
+- Cooking steps point into instruction arrays by index: reordering an array means updating the steps.
 
 ## UI guide
 
-- White + tomato red (`colors.js`: `#D9452F` accent, light grey `#F5F5F4` ground, near-black ink, dark `inverse` summary cards). Bricolage Grotesque headings, Figtree body. Bordered cards (radius 24), small uppercase accent group labels, 2-column catalog grid, Start Cooking pinned at the bottom. Design canvas: https://claude.ai/artifact/5aqn51s62QBKXLrdwUPn8M
-- Portrait phone first; must also look right in the web build. Light mode only (`userInterfaceStyle: light`).
-- Press feedback on every touchable; animations via `Animated` with `useNativeDriver` where supported.
-- Cooking mode is read at arm's length with messy hands: large text, big tap targets, one step at a time.
+- Clean, modern: white ground, one tomato-red accent, bold grotesque headings. Design canvas: https://claude.ai/artifact/5aqn51s62QBKXLrdwUPn8M
+- Portrait phone first; must also look right in the web build. Light mode only.
+- Press feedback on every touchable.
+- Cooking mode is read at arm's length with messy hands: large text, big tap targets, screen kept on.
+
+## Checking work
+
+No lint, type check, test runner or CI — don't add tooling unasked.
+- `npx expo export --platform web` (from `mobileapp/`) smoke-builds the bundle.
+- Pure logic: throwaway `node` script in the scratchpad.
+- UI: Playwright against the user's `npm run web` (Metro :8081). Web lacks the Android back button and parts of the file system — say so when a check can only happen on a device.

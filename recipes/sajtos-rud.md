@@ -4,7 +4,7 @@ Verzió 2.1 · 2026-09-27
 
 Tojás nélküli, omlós, aranybarna túrós sajtos rúd barna rizslisztből és ciroklisztből, útifűmaghéjjal.
 
-30 rúd · előkészítés 25 perc · pihentetés 60 perc · sütés 17 perc · 180 °C, alsó-felső sütés
+2 tepsi (250 g túró) · előkészítés 25 perc · pihentetés 60 perc · sütés 17 perc · 180 °C, alsó-felső sütés
 
 ## Hozzávalók
 
@@ -14,11 +14,11 @@ Tojás nélküli, omlós, aranybarna túrós sajtos rúd barna rizslisztből és
 - 50 g tápiókakeményítő
 - 50 g burgonyakeményítő
 - 6 g útifűmaghéj-őrlemény
-- 1 tk sütőpor
-- 0,5 tk só
+- 4 g sütőpor (1 tk)
+- 3 g só (0,5 tk)
 - 150 g hideg sütőmargarin
 - 250 g túró (áttörve)
-- 3 ek tejföl
+- 60 g tejföl (3 ek)
 - 100 g reszelt trappista sajt
 
 ### Tetejére

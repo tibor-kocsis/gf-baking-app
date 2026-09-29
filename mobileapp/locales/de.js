@@ -92,8 +92,8 @@ export default {
     cheeseSticks: {
       name: 'Quark-Käsestangen',
       description: 'Eifreie, mürbe, goldbraune Quark-Käsestangen aus Naturreis- und Sorghummehl mit Flohsamenschalen.',
-      unitLabel: 'Stangen',
-      howMany: 'Wie viele Käsestangen möchtest du?',
+      unitLabel: 'Bleche',
+      howMany: 'Wie viele Bleche? (250 g Quark = 2 Bleche)',
       meta: 'Vorbereitung 25 Min. · Ruhezeit 60 Min. · Backen 17 Min. · 180 °C, Ober-/Unterhitze',
       groups: {
         dough: 'Teig',
@@ -356,9 +356,9 @@ export default {
     ],
     cheeseSticks: [
       'Naturreismehl, Sorghummehl, Tapioka, Kartoffelstärke, Flohsamenschalen, Backpulver und Salz vermischen.',
-      'Die kalte Margarine einbröseln, dann Quark, Schmand und die 100 g geriebenen Käse zugeben. Verkneten; wenn der Teig bröselt, löffelweise kaltes Wasser zugeben.',
+      'Die kalte Margarine einbröseln, dann Quark, Schmand und die {gratedCheese} g geriebenen Käse zugeben. Verkneten; wenn der Teig bröselt, löffelweise kaltes Wasser zugeben.',
       'In Folie gewickelt kühlen, damit Reismehl und Flohsamen die Feuchtigkeit aufnehmen.',
-      'Auf einer mit Reismehl bestäubten Fläche oder zwischen zwei Backpapieren 6-7 mm dick ausrollen. Dünn mit geschmolzener Margarine bestreichen, mit den 50 g Käse bestreuen, andrücken, in 1 cm breite Streifen schneiden und auf ein mit Backpapier belegtes Blech legen.',
+      'Auf einer mit Reismehl bestäubten Fläche oder zwischen zwei Backpapieren 6-7 mm dick ausrollen. Dünn mit geschmolzener Margarine bestreichen, mit den {toppingCheese} g Käse bestreuen, andrücken, in 1 cm breite Streifen schneiden und auf ein mit Backpapier belegtes Blech legen.',
       'Das Blech mit den Stangen zurück in den Kühlschrank stellen und den Ofen auf 180 °C (Ober-/Unterhitze) vorheizen.',
       'Backen, bis die Ränder goldbraun sind, die Mitte aber noch nicht hart ist. Nicht zu lange backen; beim Abkühlen werden sie noch fester.',
       'Auf dem Blech abkühlen lassen, so werden sie knusprig.',

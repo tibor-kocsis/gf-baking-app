@@ -92,8 +92,8 @@ export default {
     cheeseSticks: {
       name: 'Túrós sajtos rúd',
       description: 'Tojás nélküli, omlós, aranybarna túrós sajtos rúd barna rizslisztből és ciroklisztből, útifűmaghéjjal.',
-      unitLabel: 'rúd',
-      howMany: 'Hány sajtos rudat szeretnél?',
+      unitLabel: 'tepsi',
+      howMany: 'Hány tepsivel sütsz? (250 g túró = 2 tepsi)',
       meta: 'Előkészítés 25 perc · Pihentetés 60 perc · Sütés 17 perc · 180 °C, alsó-felső sütés',
       groups: {
         dough: 'Tészta',
@@ -356,9 +356,9 @@ export default {
     ],
     cheeseSticks: [
       'Keverd össze a barna rizslisztet, a ciroklisztet, a tápiókát, a burgonyakeményítőt, az útifűmaghéjat, a sütőport és a sót.',
-      'Morzsold bele a hideg margarint, majd add hozzá a túrót, a tejfölt és a 100 g reszelt sajtot. Gyúrd össze; ha morzsálódik, kanalanként adj hozzá hideg vizet.',
+      'Morzsold bele a hideg margarint, majd add hozzá a túrót, a tejfölt és a reszelt sajtot ({gratedCheese} g). Gyúrd össze; ha morzsálódik, kanalanként adj hozzá hideg vizet.',
       'Fóliába csomagolva tedd hűtőbe, hogy a rizsliszt és az útifű megszívja magát.',
-      'Rizsliszttel szórt lapon vagy két sütőpapír között nyújtsd 6-7 mm vastagra. Kend meg vékonyan olvasztott margarinnal, szórd meg az 50 g sajttal, nyomkodd bele, majd vágd 1 cm-es csíkokra és tedd sütőpapíros tepsire.',
+      'Rizsliszttel szórt lapon vagy két sütőpapír között nyújtsd 6-7 mm vastagra. Kend meg vékonyan olvasztott margarinnal, szórd meg a sajttal ({toppingCheese} g), nyomkodd bele, majd vágd 1 cm-es csíkokra és tedd sütőpapíros tepsire.',
       'A tepsit a rudakkal tedd vissza a hűtőbe, közben melegítsd elő a sütőt 180 °C-ra (alsó-felső).',
       'Süsd, amíg a széle aranyszínű, de a közepe még nem kemény. Ne süsd túl, kihűlve még szilárdul.',
       'Hagyd a tepsin kihűlni, úgy lesz ropogós.',

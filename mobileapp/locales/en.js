@@ -92,8 +92,8 @@ export default {
     cheeseSticks: {
       name: 'Cottage cheese sticks',
       description: 'Egg-free, crumbly, golden cottage cheese sticks made with brown rice and sorghum flour and psyllium husk.',
-      unitLabel: 'sticks',
-      howMany: 'How many cheese sticks would you like?',
+      unitLabel: 'trays',
+      howMany: 'How many trays? (250 g cottage cheese = 2 trays)',
       meta: 'Prep 25 min · Rest 60 min · Bake 17 min · 180 °C, top and bottom heat',
       groups: {
         dough: 'Dough',
@@ -356,9 +356,9 @@ export default {
     ],
     cheeseSticks: [
       'Mix the brown rice flour, sorghum flour, tapioca, potato starch, psyllium husk, baking powder and salt.',
-      'Rub in the cold margarine, then add the cottage cheese, sour cream and the 100 g of grated cheese. Knead together; if it crumbles, add cold water a spoonful at a time.',
+      'Rub in the cold margarine, then add the cottage cheese, sour cream and the {gratedCheese} g of grated cheese. Knead together; if it crumbles, add cold water a spoonful at a time.',
       'Wrap in cling film and chill, so the rice flour and psyllium can absorb the moisture.',
-      'On a rice-floured surface or between two sheets of baking paper, roll out 6-7 mm thick. Brush thinly with melted margarine, sprinkle with the 50 g of cheese, press it in, then cut into 1 cm strips and place on a lined tray.',
+      'On a rice-floured surface or between two sheets of baking paper, roll out 6-7 mm thick. Brush thinly with melted margarine, sprinkle with the {toppingCheese} g of cheese, press it in, then cut into 1 cm strips and place on a lined tray.',
       'Put the tray of sticks back in the fridge while the oven preheats to 180 °C (top and bottom heat).',
       'Bake until the edges are golden but the middle is not yet hard. Do not overbake; they firm up as they cool.',
       'Let them cool on the tray; that is what makes them crisp.',

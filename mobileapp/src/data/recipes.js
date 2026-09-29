@@ -281,8 +281,8 @@ export const recipes = [
     metaKey: 'recipes.cheeseSticks.meta',
     ingredientNamesKey: 'recipes.cheeseSticks.ingredients',
     units: CHEESE_STICK_SPOON_UNITS,
-    initialValue: 30,
-    stepSize: 5,
+    initialValue: 2, // trays: the base recipe, 250 g cottage cheese
+    stepSize: 1,
     calculate: (count) => calculateCheeseStickIngredients(count),
     // The recipe's own groups, in the order it lists them.
     ingredientGroups: [

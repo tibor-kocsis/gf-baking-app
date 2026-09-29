@@ -2,13 +2,35 @@
 // recipe screen and cooking mode render. Pure: translations come in as `t`.
 import { interpolate } from './format';
 
-// Every switch at its declared default.
+// Every switch and choice at its declared default.
 export function defaultOptions(recipe) {
   const options = {};
   (recipe.options || []).forEach((option) => {
     options[option.key] = option.default;
   });
   return options;
+}
+
+// The settings cards on the recipe screen: each switch opens a card and the
+// choices under it join that card. Options hidden by visibleWhen drop out.
+// [[{ key, type: 'switch' | 'choice', label key, hint key, choices }]]
+export function optionCardsFor(recipe, options) {
+  const cards = [];
+  (recipe.options || []).forEach((option) => {
+    if (option.visibleWhen && !option.visibleWhen(options)) return;
+    const choice = option.type === 'choice';
+    const chosen = choice && option.choices.find((item) => item.key === options[option.key]);
+    const row = {
+      key: option.key,
+      type: choice ? 'choice' : 'switch',
+      labelKey: option.labelKey,
+      hintKey: choice ? chosen && chosen.hintKey : options[option.key] ? option.onHintKey : option.offHintKey,
+      choices: option.choices,
+    };
+    if (choice && cards.length > 0) cards[cards.length - 1].push(row);
+    else cards.push([row]);
+  });
+  return cards;
 }
 
 // The recipe with its variant for these options applied, e.g. pizza dough 2

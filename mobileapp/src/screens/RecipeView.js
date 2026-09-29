@@ -1,10 +1,14 @@
 import { useMemo } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { colors } from '../constants/colors';
+import { fonts } from '../constants/fonts';
 import { useI18n } from '../context/I18nContext';
 import { useSessionState } from '../hooks/useSessionState';
 import { usePulse } from '../hooks/usePulse';
 import { formatUnit } from '../utils/format';
 import {
   defaultOptions,
+  optionCardsFor,
   resolveRecipe,
   ingredientGroupsFor,
   instructionsFor,
@@ -15,6 +19,8 @@ import { RecipeScreenLayout } from '../components/RecipeScreenLayout';
 import { Stepper } from '../components/Stepper';
 import { Card } from '../components/Card';
 import { SwitchRow } from '../components/SwitchRow';
+import { SegmentedControl } from '../components/SegmentedControl';
+import { Hint } from '../components/Typography';
 import { SummaryCard } from '../components/SummaryCard';
 import { Section } from '../components/Section';
 import { IngredientCard } from '../components/IngredientCard';
@@ -52,19 +58,43 @@ export function RecipeView({ recipe, onBack, onStartCooking }) {
         suffix={recipe.unitLabelKey ? t(recipe.unitLabelKey) : null}
       />
 
-      {(recipe.options || []).map((option) => (
-        <Card key={option.key}>
-          <SwitchRow
-            label={t(option.labelKey)}
-            hint={t(options[option.key] ? option.onHintKey : option.offHintKey)}
-            value={options[option.key]}
-            onValueChange={(value) => setOption(option.key, value)}
-          />
+      {optionCardsFor(recipe, options).map((rows) => (
+        <Card key={rows[0].key}>
+          {rows.map((row, index) =>
+            row.type === 'choice' ? (
+              <OptionChoice key={row.key} row={row} value={options[row.key]} onChange={setOption} />
+            ) : (
+              <SwitchRow
+                key={row.key}
+                label={t(row.labelKey)}
+                hint={t(row.hintKey)}
+                value={options[row.key]}
+                onValueChange={(value) => setOption(row.key, value)}
+                divider={index < rows.length - 1}
+              />
+            )
+          )}
         </Card>
       ))}
 
       {!!ingredients && <RecipeResults recipe={activeRecipe} ingredients={ingredients} pulse={pulse} />}
     </RecipeScreenLayout>
+  );
+}
+
+// One choice of a recipe option, e.g. pizza dough 2's flour without the unimix.
+function OptionChoice({ row, value, onChange }) {
+  const { t } = useI18n();
+  return (
+    <View style={styles.choice}>
+      <Text style={styles.choiceLabel}>{t(row.labelKey)}</Text>
+      <SegmentedControl
+        options={row.choices.map((item) => ({ key: item.key, label: t(item.labelKey) }))}
+        value={value}
+        onChange={(key) => onChange(row.key, key)}
+      />
+      {!!row.hintKey && <Hint>{t(row.hintKey)}</Hint>}
+    </View>
   );
 }
 
@@ -115,3 +145,16 @@ function RecipeResults({ recipe, ingredients, pulse }) {
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  choice: {
+    marginTop: 8,
+    marginBottom: 8,
+    gap: 10,
+  },
+  choiceLabel: {
+    fontSize: 14,
+    fontFamily: fonts.bold,
+    color: colors.textSecondary,
+  },
+});

@@ -28,11 +28,22 @@ Pizzánként 290 g-os tésztagolyó (280–300 g között). A százalékok a lis
 ## Tangzhong nélkül
 Kapcsolható. Kikapcsolva ugyanaz a keverék, a barna rizsliszt nyersen megy a tésztába, és a víz 87% (a lisztkeverék szabálya: a tangzhong 3 pontot ad). Összehasonlító sütésnek: az egyetlen különbség a főzött paszta.
 
+## Unimix nélkül
+Kapcsolható. Kikapcsolva az unimix részei külön mennek: a cirokrésze (33%) helyett a választott liszt, a tápiókarésze (32,3%) helyett a választott keményítő, az útifű pedig mind (4,5%) gélnek.
+
+- Liszt: cirok (alap) / barna rizs / köles. A köles nincs a lisztkeverék 35%-os plafonjához kötve: 50–100%-os köleskenyerek is működnek, a keserűség az avas liszttől jön, ezért csak friss köles.
+- Keményítő: mindkettő (alap, a mai 54:46 tápióka:burgonya) / csak burgonya / csak tápióka, mindig a teljes 60%. Burgonya: ropogósabb, omlósabb, hamarabb szikkad. Tápióka: rágósabb, jobban barnul, ragacsos lehet.
+- Víz: a 90% (87%) erre a keverékre van beállítva, ezért a lisztkeverék szabályai csak az eltérésre számítanak. Barna rizs +3, köles −2; csak burgonya 0 (a mai burgonya is >40%, a −3 már benne van), csak tápióka +3 (kiesik a −3).
+- Ha az élesztős vízre az alap 10%-ánál kevesebb jutna, a gél 1:8 (a lisztkeverék szabálya). Kölessel és tangzhonggal ez történik.
+- Tangzhong nélkül és barna rizzsel a két barna rizs egy tételként megy a tésztába.
+
+Pizzára közvetlen összehasonlító mérés nincs sem a lisztekre, sem burgonya vs tápióka keményítőre; kenyeres adatokból és a lisztkeverék szabályaiból.
+
 ## Elkészítés
 1. Tangzhong: barna rizsliszt + víz, sűrű pasztára főzve, langyosra hűtve.
 2. Útifű + gélvíz, 10 perc.
 3. Élesztő + méz a langyos vízben.
-4. Unimix, burgonyakeményítő, só; hozzá a tangzhong, a gél, az élesztős víz, végül az olaj. 15 perc pihenő.
+4. Lisztek, keményítők, só; hozzá a tangzhong, a gél, az élesztős víz, végül az olaj. 15 perc pihenő.
 5. 290 g-os golyók, sütőpapíron olajos ujjal 30 cm-re, középen vékony, 1,5–2 cm-es perem.
 6. 60–90 perc kelesztés; a sütő 250 °C-ra, legalább 45 percig, kővel vagy acéllappal.
 7. Közepét megszurkálni, 6–8 perc elősütés feltét nélkül.

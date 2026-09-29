@@ -14,7 +14,8 @@ export function buildRecipePlan(recipe, ingredients, t) {
       title: instruction.title,
       text: instruction.text,
       timerSeconds: step.timerSeconds,
-      items: (step.ingredients || []).map((key) => ({
+      // Options zero some ingredients out (the unimix or the ones replacing it).
+      items: (step.ingredients || []).filter((key) => ingredients[key] > 0).map((key) => ({
         id: key,
         name: t(ingredientNameKey(recipe, key)),
         amount: ingredients[key],

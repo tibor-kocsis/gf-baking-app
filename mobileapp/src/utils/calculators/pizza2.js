@@ -23,24 +23,58 @@ const PIZZA2 = {
   salt: 0.022,
   yeast: 0.015,
 };
-const UNIMIX_PSYLLIUM = 0.05;
+const UNIMIX = { flour: 0.48, tapioca: 0.47, psyllium: 0.05 };
 const TANGZHONG_RATIO = 5;
 const GEL_RATIO = 10;
+// The flour mix rule: below 10% of the base left for the yeast water, the gel
+// drops to 1:8 so there is enough free water to slurry the yeast.
+const GEL_RATIO_REDUCED = 8;
+const MIN_FREE_WATER = 0.1;
 const DOUGH_PER_PIZZA_G = 290; // the baker's 280-300 g ball
+
+// Without the unimix its parts are weighed out one by one: its sorghum share
+// (33%) becomes the chosen flour, its tapioca share (32.3%) the chosen starch and
+// its psyllium goes into the gel. The 90% water was set on the unimix blend, so
+// the flour mix's water rules apply only as the difference from it: brown rice
+// over 40% of the flour +3, millet over 25% -2, and the potato-over-40% -3 is
+// already in the 90%, so all potato changes nothing and all tapioca gives it back.
+const MAIN_FLOUR = PIZZA2.unimix * UNIMIX.flour;
+const UNIMIX_STARCH = PIZZA2.unimix * UNIMIX.tapioca;
+const FLOUR_KEYS = { sorghum: 'sorghumFlour', brownRice: 'brownRiceFlourDough', millet: 'milletFlour' };
+const FLOUR_WATER = { sorghum: 0, brownRice: 0.03, millet: -0.02 };
+const STARCH_WATER = { both: 0, potato: 0, tapioca: 0.03 };
+
+function blendFor(unimix, flour, starch) {
+  if (unimix) {
+    return { sorghumUnimix: PIZZA2.unimix, potatoStarch: PIZZA2.potatoStarch, psylliumInBlend: PIZZA2.unimix * UNIMIX.psyllium };
+  }
+  const starchTotal = UNIMIX_STARCH + PIZZA2.potatoStarch;
+  const starches = {
+    both: { tapiocaStarch: UNIMIX_STARCH, potatoStarch: PIZZA2.potatoStarch },
+    potato: { potatoStarch: starchTotal },
+    tapioca: { tapiocaStarch: starchTotal },
+  }[starch];
+  return { [FLOUR_KEYS[flour]]: MAIN_FLOUR, ...starches, psylliumInBlend: 0 };
+}
 
 // The tangzhong can be switched off to bake the same blend without it: the brown
 // rice then goes into the dough raw, and the water drops by the 3 points the
 // cooked paste would have held.
-export function calculatePizza2Ingredients(count, tangzhong = true) {
+export function calculatePizza2Ingredients(
+  count,
+  { tangzhong = true, unimix = true, flour = 'sorghum', starch = 'both' } = {}
+) {
   const numPizzas = parseCount(count);
   if (!numPizzas) return null;
-  const hydration = tangzhong ? PIZZA2.hydration : PIZZA2.hydrationNoTangzhong;
+  const { psylliumInBlend, ...blend } = blendFor(unimix, flour, starch);
+  const hydration =
+    (tangzhong ? PIZZA2.hydration : PIZZA2.hydrationNoTangzhong) +
+    (unimix ? 0 : FLOUR_WATER[flour] + STARCH_WATER[starch]);
 
-  const psylliumAdded = PIZZA2.psylliumTotal - PIZZA2.unimix * UNIMIX_PSYLLIUM;
+  const psylliumAdded = PIZZA2.psylliumTotal - psylliumInBlend;
   const doughPerBase = sumOf({
-    unimix: PIZZA2.unimix,
+    ...blend,
     brownRiceFlour: PIZZA2.brownRiceFlour,
-    potatoStarch: PIZZA2.potatoStarch,
     psylliumHusk: psylliumAdded,
     water: hydration,
     honey: PIZZA2.honey,
@@ -55,13 +89,23 @@ export function calculatePizza2Ingredients(count, tangzhong = true) {
   const waterTangzhong = tangzhong
     ? Math.round(PIZZA2.brownRiceFlour * TANGZHONG_RATIO * base)
     : 0;
-  const waterGel = Math.round(psylliumAdded * GEL_RATIO * base);
+  let waterGel = Math.round(psylliumAdded * GEL_RATIO * base);
+  if (water - waterTangzhong - waterGel < MIN_FREE_WATER * base) {
+    waterGel = Math.round(psylliumAdded * GEL_RATIO_REDUCED * base);
+  }
   const waterYeast = water - waterTangzhong - waterGel;
 
+  // Raw brown rice as the chosen flour takes in the tangzhong's share too.
+  const rawBrownRice = !tangzhong && blend.brownRiceFlourDough;
   const weighed = {
-    sorghumUnimix: grams(PIZZA2.unimix),
-    potatoStarch: grams(PIZZA2.potatoStarch),
-    brownRiceFlour: grams(PIZZA2.brownRiceFlour),
+    sorghumUnimix: 0,
+    sorghumFlour: 0,
+    brownRiceFlourDough: 0,
+    milletFlour: 0,
+    tapiocaStarch: 0,
+    potatoStarch: 0,
+    ...Object.fromEntries(Object.keys(blend).map((key) => [key, grams(blend[key])])),
+    brownRiceFlour: rawBrownRice ? 0 : grams(PIZZA2.brownRiceFlour),
     psylliumHusk: grams(psylliumAdded),
     waterTangzhong,
     waterGel,
@@ -71,6 +115,9 @@ export function calculatePizza2Ingredients(count, tangzhong = true) {
     salt: grams(PIZZA2.salt),
     yeast: grams(PIZZA2.yeast),
   };
+  if (rawBrownRice) {
+    weighed.brownRiceFlourDough = grams(blend.brownRiceFlourDough + PIZZA2.brownRiceFlour);
+  }
   const totalWeight = Math.round(sumOf(weighed));
   return {
     ...weighed,

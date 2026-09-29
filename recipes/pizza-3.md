@@ -28,6 +28,9 @@ A Caputo Fioreglut elvére: sok keményítő, sok kötőanyag, nyújtható tész
 - Útifű 6%: a Fioreglut becsült kötőanyagát pótolja. Ez a legbizonytalanabb szám (5,5–6,5%).
 - Aznapra: meleg kelesztés 60–90 perc a hűtős 1–48 óra helyett.
 
+## Kukorica nélkül
+Kapcsolható. Kikapcsolva a 40% kukorica helyére: burgonya 36% (a keményítő 45%-a, a plafonján) és tápióka 44% (55%, 5 ponttal a 50%-os plafon felett). 80% keményítőnél a két plafon nem tartható egyszerre; a lisztkeverék szabálya szerint a burgonya a védettebb. A víz marad 80%: az a Caputo száma, nem a lisztkeverék szabálya.
+
 ## Elkészítés
 1. Útifű + gélvíz, 10 perc.
 2. Élesztő + méz a langyos vízben.

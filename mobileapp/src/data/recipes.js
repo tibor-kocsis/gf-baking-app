@@ -18,7 +18,12 @@ import {
 //   featured                       full-width card under the catalog grid
 // Scaled recipes also:
 //   calculate(count, options)      ingredient amounts, or null for no count
-//   options                        switches passed to calculate: [{ key, default, labelKey, onHintKey, offHintKey }]
+//   options                        settings passed to calculate:
+//                                    switch  { key, default, labelKey, onHintKey, offHintKey }
+//                                    choice  { key, type: 'choice', default, labelKey,
+//                                              choices: [{ key, labelKey, hintKey }] }
+//                                  either may have visibleWhen(options); a choice
+//                                  sits in the card of the switch above it
 //   howManyKey, unitLabelKey       the stepper's label and suffix
 //   summary                        dark summary card: [{ labelKey, key }] in grams
 //   metaKey                        one line of times under the ingredients title
@@ -29,6 +34,17 @@ import {
 //   instructionsKey, stepTitlesKey, notesKey
 //   cookingSteps                   [{ instructionIndex, ingredients: [keys], timerSeconds }]
 //   variantFor(options)            fields that replace the above for the chosen options
+
+// Pizza dough 2's flours and starches: the unimix, or the chosen flour and starches.
+// Only the ones the options use have an amount; the rest drop out of the cards.
+const PIZZA2_BLEND = [
+  'sorghumUnimix',
+  'sorghumFlour',
+  'brownRiceFlourDough',
+  'milletFlour',
+  'tapiocaStarch',
+  'potatoStarch',
+];
 
 const PIZZA_SUMMARY = [
   { labelKey: 'common.totalDough', key: 'totalWeight' },
@@ -64,8 +80,39 @@ export const recipes = [
     howManyKey: 'recipes.pizza2.howMany',
     instructionsKey: 'instructions.pizza2',
     notesKey: 'recipes.pizza2.notes',
-    calculate: (count, options) => calculatePizza2Ingredients(count, options.tangzhong),
+    calculate: (count, options) => calculatePizza2Ingredients(count, options),
     options: [
+      {
+        key: 'unimix',
+        default: true,
+        labelKey: 'recipes.pizza2.unimixLabel',
+        onHintKey: 'recipes.pizza2.unimixOnHint',
+        offHintKey: 'recipes.pizza2.unimixOffHint',
+      },
+      {
+        key: 'flour',
+        type: 'choice',
+        default: 'sorghum',
+        labelKey: 'recipes.pizza2.flourLabel',
+        visibleWhen: (options) => !options.unimix,
+        choices: [
+          { key: 'sorghum', labelKey: 'recipes.pizza2.flours.sorghum', hintKey: 'recipes.pizza2.flourHints.sorghum' },
+          { key: 'brownRice', labelKey: 'recipes.pizza2.flours.brownRice', hintKey: 'recipes.pizza2.flourHints.brownRice' },
+          { key: 'millet', labelKey: 'recipes.pizza2.flours.millet', hintKey: 'recipes.pizza2.flourHints.millet' },
+        ],
+      },
+      {
+        key: 'starch',
+        type: 'choice',
+        default: 'both',
+        labelKey: 'recipes.pizza2.starchLabel',
+        visibleWhen: (options) => !options.unimix,
+        choices: [
+          { key: 'potato', labelKey: 'recipes.pizza2.starches.potato', hintKey: 'recipes.pizza2.starchHints.potato' },
+          { key: 'tapioca', labelKey: 'recipes.pizza2.starches.tapioca', hintKey: 'recipes.pizza2.starchHints.tapioca' },
+          { key: 'both', labelKey: 'recipes.pizza2.starches.both', hintKey: 'recipes.pizza2.starchHints.both' },
+        ],
+      },
       {
         key: 'tangzhong',
         default: true,
@@ -75,12 +122,11 @@ export const recipes = [
       },
     ],
     summary: PIZZA_SUMMARY,
+    // brownRiceFlourDough is brown rice chosen as the main flour, apart from the
+    // tangzhong's; without a tangzhong the two are weighed as one.
+    ingredientNames: { brownRiceFlourDough: 'ingredients.brownRiceFlour' },
     ingredientGroups: [
-      {
-        key: 'flour',
-        titleKey: 'common.flour',
-        items: ['sorghumUnimix', 'potatoStarch', 'brownRiceFlour', 'psylliumHusk'],
-      },
+      { key: 'flour', titleKey: 'common.flour', items: [...PIZZA2_BLEND, 'brownRiceFlour', 'psylliumHusk'] },
       {
         key: 'wet',
         titleKey: 'common.wetIngredients',
@@ -92,7 +138,12 @@ export const recipes = [
     // the dough with the rest of the blend.
     variantFor: (options) =>
       options.tangzhong
-        ? { ingredientNames: { brownRiceFlour: 'ingredients.brownRiceFlourTangzhong' } }
+        ? {
+            ingredientNames: {
+              brownRiceFlour: 'ingredients.brownRiceFlourTangzhong',
+              brownRiceFlourDough: 'ingredients.brownRiceFlour',
+            },
+          }
         : {
             instructionsKey: 'instructions.pizza2NoTangzhong',
             cookingSteps: [
@@ -100,7 +151,7 @@ export const recipes = [
               { instructionIndex: 1, ingredients: ['yeast', 'honey', 'waterYeast'] },
               {
                 instructionIndex: 2,
-                ingredients: ['sorghumUnimix', 'potatoStarch', 'brownRiceFlour', 'salt', 'oil'],
+                ingredients: [...PIZZA2_BLEND, 'brownRiceFlour', 'salt', 'oil'],
                 timerSeconds: 900,
               },
               { instructionIndex: 3, ingredients: [] },
@@ -113,7 +164,7 @@ export const recipes = [
       { instructionIndex: 0, ingredients: ['brownRiceFlour', 'waterTangzhong'] },
       { instructionIndex: 1, ingredients: ['psylliumHusk', 'waterGel'] },
       { instructionIndex: 2, ingredients: ['yeast', 'honey', 'waterYeast'] },
-      { instructionIndex: 3, ingredients: ['sorghumUnimix', 'potatoStarch', 'salt', 'oil'], timerSeconds: 900 },
+      { instructionIndex: 3, ingredients: [...PIZZA2_BLEND, 'salt', 'oil'], timerSeconds: 900 },
       { instructionIndex: 4, ingredients: [] },
       { instructionIndex: 5, ingredients: [] },
       { instructionIndex: 6, ingredients: [] },
@@ -131,7 +182,16 @@ export const recipes = [
     howManyKey: 'recipes.pizza3.howMany',
     instructionsKey: 'instructions.pizza3',
     notesKey: 'recipes.pizza3.notes',
-    calculate: (count) => calculatePizza3Ingredients(count),
+    calculate: (count, options) => calculatePizza3Ingredients(count, options),
+    options: [
+      {
+        key: 'corn',
+        default: true,
+        labelKey: 'recipes.pizza3.cornLabel',
+        onHintKey: 'recipes.pizza3.cornOnHint',
+        offHintKey: 'recipes.pizza3.cornOffHint',
+      },
+    ],
     summary: PIZZA_SUMMARY,
     ingredientGroups: [
       {

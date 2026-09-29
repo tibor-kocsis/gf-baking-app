@@ -26,20 +26,26 @@ const PIZZA3 = {
   salt: 0.025,
   freshYeast: 0.015,
 };
+// Corn can be left out: the potato goes to its 45% cap of the starch (36%) and
+// tapioca takes the rest (44%, 55% of the starch). The caps cannot both hold at
+// 80% starch, and the flour mix protects potato hardest. The water stays at 80%:
+// it is Caputo's figure, not a flour mix rule.
+const NO_CORN_STARCHES = { cornStarch: 0, potatoStarch: 0.36, tapiocaStarch: 0.44 };
 const HYDRATION = 0.8;
 const GEL_RATIO = 10;
 const BALL_G = 280;
 
-export function calculatePizza3Ingredients(count) {
+export function calculatePizza3Ingredients(count, { corn = true } = {}) {
   const numPizzas = parseCount(count);
   if (!numPizzas) return null;
+  const blend = corn ? PIZZA3 : { ...PIZZA3, ...NO_CORN_STARCHES };
 
-  const base = (BALL_G / (HYDRATION + sumOf(PIZZA3))) * numPizzas;
+  const base = (BALL_G / (HYDRATION + sumOf(blend))) * numPizzas;
   const water = Math.round(HYDRATION * base);
-  const waterGel = Math.round(PIZZA3.psylliumHusk * GEL_RATIO * base);
+  const waterGel = Math.round(blend.psylliumHusk * GEL_RATIO * base);
 
   const weighed = {
-    ...scaleAmounts(PIZZA3, base),
+    ...scaleAmounts(blend, base),
     waterGel,
     waterYeast: water - waterGel,
   };

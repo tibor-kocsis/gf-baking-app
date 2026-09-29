@@ -27,12 +27,15 @@ mobileapp/
 ├── assets/         # app icons, recipe photos
 └── src/
     ├── data/       # the recipe catalog (single source for catalog, navigation, cooking steps)
-    ├── utils/      # pure logic: calculators, flour mix solver, cooking plans, storage
-    ├── screens/    # render only
-    ├── components/
+    ├── utils/      # pure logic: calculators/ (one per recipe + shared scaling), flour mix solver,
+    │               #   recipe model, cooking plans, formatting, notes storage
+    ├── screens/    # render only: RecipeView (any scaled recipe), FlourMixCalculatorView, CookingModeView, RecipeCatalog
+    ├── components/ # shared building blocks (Card, Section, IngredientCard, SwitchRow, ...); flourMix/ sections
+    ├── hooks/      # useSessionState (settings across cooking mode), usePulse
+    ├── platform/   # dialogs, photo files: `x.js` native, `x.web.js` browser (Metro picks by platform)
     ├── navigation/ # screen-state stack + Android back button
-    ├── context/    # i18n
-    └── constants/  # colors, fonts, storage keys
+    ├── context/    # i18n: t(key, params) fills {name} placeholders
+    └── constants/  # colors, fonts, layout, storage keys
 recipes/            # source recipes (hu), one per tile
 ```
 
@@ -42,7 +45,9 @@ recipes/            # source recipes (hu), one per tile
 - **Offline and in grams.** Everything, including fonts and photos, is bundled. Spoons only where the recipe says so, rounded to ¼.
 - **Storage keys** only from `constants/storage.js`. Renaming a key loses users' saved language/notes — don't, or migrate.
 - **Navigation**: the hardware back handler only changes screen state and returns `true`/`false` — never JSX, never render-only variables (that bug has shipped once). Settings must survive a trip to cooking mode and back.
-- **One cooking-step shape** for every recipe; recipes declare their steps in the catalog, the flour mix derives its plan from the solved formula.
+- **One cooking-step shape** for every recipe (`utils/cookingPlan.js`); recipes declare their steps in the catalog, the flour mix derives its plan from the solved formula. The recipe screen builds the plan; cooking mode only renders it.
+- **Scaled recipes are data**: a new one is a calculator in `utils/calculators/` + a catalog entry (groups, names, units, summary, options, variants — schema at the top of `data/recipes.js`) + translations. Never branch on a recipe id in a screen.
+- **Platform differences** live in `src/platform/` as `.js` / `.web.js` twins, not `Platform.OS` checks in components. react-native-web's `Alert` is a no-op: use `platform/dialogs`.
 - **Styling**: `StyleSheet.create` at the bottom of each file, no inline style objects. Colours and fonts only from `constants/` — never hardcode. No emoji (boxes on web); icons are SVG, recipe images are bundled photos with credits in `assets/recipes/CREDITS.md`.
 - **Comments** explain the baking reason for a number or rule; keep that density when adding rules.
 - Functional components + hooks; PascalCase components, `handle*` handlers.

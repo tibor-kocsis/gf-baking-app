@@ -1,13 +1,10 @@
 export default {
   app: {
     title: 'Gluten Free Baking',
-    subtitle: 'Delicious recipes for everyone',
   },
   common: {
-    recipes: 'Recipes',
     ingredients: 'Ingredients',
     instructions: 'Instructions',
-    glutenFreeRecipe: 'Gluten-free recipe',
     requiredIngredients: 'Required Ingredients',
     flour: 'Flour',
     wetIngredients: 'Wet Ingredients',
@@ -150,7 +147,6 @@ export default {
     ciderVinegar: 'Apple cider vinegar',
   },
   flourMix: {
-    subtitle: 'Gluten-free formula',
     batchLabel: 'Total flour + starch (g)',
     styleTitle: 'Target style',
     styleHint: 'Sets the flour : starch target — {ratio} for this style.',

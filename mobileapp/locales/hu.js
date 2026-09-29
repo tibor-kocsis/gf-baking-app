@@ -1,13 +1,10 @@
 export default {
   app: {
     title: 'Gluténmentes Sütés',
-    subtitle: 'Finom receptek mindenkinek',
   },
   common: {
-    recipes: 'Receptek',
     ingredients: 'Hozzávalók',
     instructions: 'Elkészítés',
-    glutenFreeRecipe: 'Gluténmentes recept',
     requiredIngredients: 'Szükséges hozzávalók',
     flour: 'Liszt',
     wetIngredients: 'Nedves hozzávalók',
@@ -150,7 +147,6 @@ export default {
     ciderVinegar: 'Almaecet',
   },
   flourMix: {
-    subtitle: 'Gluténmentes formula',
     batchLabel: 'Összes liszt + keményítő (g)',
     styleTitle: 'Cél állag',
     styleHint: 'Ez adja a liszt : keményítő célt — ennél az állagnál {ratio}.',

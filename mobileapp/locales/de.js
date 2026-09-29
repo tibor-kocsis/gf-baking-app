@@ -1,13 +1,10 @@
 export default {
   app: {
     title: 'Glutenfreies Backen',
-    subtitle: 'Köstliche Rezepte für alle',
   },
   common: {
-    recipes: 'Rezepte',
     ingredients: 'Zutaten',
     instructions: 'Zubereitung',
-    glutenFreeRecipe: 'Glutenfreies Rezept',
     requiredIngredients: 'Benötigte Zutaten',
     flour: 'Mehl',
     wetIngredients: 'Flüssige Zutaten',
@@ -150,7 +147,6 @@ export default {
     ciderVinegar: 'Apfelessig',
   },
   flourMix: {
-    subtitle: 'Glutenfreie Formel',
     batchLabel: 'Mehl + Stärke insgesamt (g)',
     styleTitle: 'Zielstil',
     styleHint: 'Legt das Ziel Mehl : Stärke fest — {ratio} für diesen Stil.',

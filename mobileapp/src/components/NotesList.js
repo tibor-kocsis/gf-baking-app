@@ -1,7 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { colors } from '../constants/colors';
+import { fonts } from '../constants/fonts';
 import { useI18n } from '../context/I18nContext';
+import { Icon } from './Icon';
 import { getNotes } from '../utils/notesStorage';
 import { NoteCard } from './NoteCard';
 
@@ -56,7 +58,7 @@ export function NotesList({ recipeId, onEditNote, onAddNote, onPhotoPress, refre
         onPress={onAddNote}
         activeOpacity={0.7}
       >
-        <Text style={styles.addButtonIcon}>➕</Text>
+        <Icon name="plus" size={18} color={colors.onPrimary} strokeWidth={2.4} />
         <Text style={styles.addButtonText}>{t('notes.addNote')}</Text>
       </TouchableOpacity>
     </View>
@@ -78,6 +80,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 14,
+    fontFamily: fonts.regular,
     color: colors.textSecondary,
     textAlign: 'center',
     lineHeight: 20,
@@ -92,12 +95,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     gap: 8,
   },
-  addButtonIcon: {
-    fontSize: 16,
-  },
   addButtonText: {
-    color: '#fff',
+    color: colors.onPrimary,
     fontSize: 16,
-    fontWeight: '600',
+    fontFamily: fonts.semibold,
   },
 });

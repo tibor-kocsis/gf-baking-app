@@ -1,5 +1,6 @@
 import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { colors } from '../constants/colors';
+import { fonts } from '../constants/fonts';
 import { useI18n } from '../context/I18nContext';
 
 export function NoteCard({ note, onPress, onPhotoPress }) {
@@ -63,6 +64,7 @@ const styles = StyleSheet.create({
   },
   date: {
     fontSize: 12,
+    fontFamily: fonts.regular,
     color: colors.textSecondary,
   },
   edited: {
@@ -70,6 +72,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 14,
+    fontFamily: fonts.regular,
     color: colors.text,
     lineHeight: 20,
   },

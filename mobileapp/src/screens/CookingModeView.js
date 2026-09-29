@@ -3,8 +3,10 @@ import { useKeepAwake } from 'expo-keep-awake';
 import { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import { colors } from '../constants/colors';
+import { fonts } from '../constants/fonts';
 import { useI18n } from '../context/I18nContext';
 import { Header } from '../components/Header';
+import { Icon } from '../components/Icon';
 
 export function CookingModeView({ recipe: baseRecipe, ingredients, onBack }) {
   useKeepAwake();
@@ -127,7 +129,9 @@ export function CookingModeView({ recipe: baseRecipe, ingredients, onBack }) {
                   activeOpacity={0.7}
                 >
                   <View style={[styles.stepCheckbox, isCompleted && styles.stepCheckboxChecked]}>
-                    {isCompleted && <Text style={styles.checkmark}>✓</Text>}
+                    {isCompleted && (
+                      <Icon name="check" size={18} color={colors.onPrimary} strokeWidth={3} />
+                    )}
                   </View>
                   <View style={styles.stepNumberContainer}>
                     <Text style={[styles.stepNumber, isCompleted && styles.textCompleted]}>
@@ -142,15 +146,16 @@ export function CookingModeView({ recipe: baseRecipe, ingredients, onBack }) {
                 </Text>
 
                 {!!step.timerSeconds && (
-                  <Text style={[styles.durationText, isCompleted && styles.textCompleted]}>
-                    ⏱ {formatDuration(step.timerSeconds, t)}
-                  </Text>
+                  <View style={styles.durationRow}>
+                    <Icon name="timer" size={20} color={colors.primaryOnSoft} strokeWidth={2} />
+                    <Text style={styles.durationText}>{formatDuration(step.timerSeconds, t)}</Text>
+                  </View>
                 )}
 
                 {stepIngredients.length > 0 && (
                   <View style={styles.ingredientsSection}>
                     <Text style={[styles.ingredientsSectionTitle, isCompleted && styles.textCompleted]}>
-                      {t('common.ingredientsForStep')}:
+                      {t('common.ingredientsForStep')}
                     </Text>
                     {stepIngredients.map(({ id, name, amount, unit }) => {
                       const isChecked = checkedIngredients[id];
@@ -163,7 +168,9 @@ export function CookingModeView({ recipe: baseRecipe, ingredients, onBack }) {
                           activeOpacity={0.7}
                         >
                           <View style={[styles.ingredientCheckbox, isChecked && styles.ingredientCheckboxChecked]}>
-                            {isChecked && <Text style={styles.ingredientCheckmark}>✓</Text>}
+                            {isChecked && (
+                              <Icon name="check" size={16} color={colors.onPrimary} strokeWidth={3} />
+                            )}
                           </View>
                           <Text style={[styles.ingredientName, isChecked && styles.ingredientTextChecked]}>
                             {name}
@@ -202,11 +209,21 @@ export function formatDuration(seconds, t) {
 }
 
 const styles = StyleSheet.create({
+  durationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    gap: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 14,
+    backgroundColor: colors.primarySoft,
+    marginBottom: 14,
+  },
   durationText: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: colors.primary,
-    marginBottom: 12,
+    fontSize: 17,
+    fontFamily: fonts.bold,
+    color: colors.primaryOnSoft,
   },
   scrollView: {
     flex: 1,
@@ -214,19 +231,19 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    padding: 20,
-    paddingTop: 60,
+    paddingHorizontal: 16,
+    paddingTop: 56,
     paddingBottom: 40,
   },
   progressContainer: {
     marginBottom: 24,
+    gap: 8,
   },
   progressText: {
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: 15,
+    fontFamily: fonts.semibold,
     color: colors.textSecondary,
     textAlign: 'center',
-    marginBottom: 8,
   },
   progressBarBackground: {
     height: 8,
@@ -236,34 +253,32 @@ const styles = StyleSheet.create({
   },
   progressBarFill: {
     height: '100%',
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.primary,
     borderRadius: 4,
   },
   stepsContainer: {
-    gap: 16,
+    gap: 14,
   },
   stepCard: {
     backgroundColor: colors.surface,
-    borderRadius: 16,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: colors.border,
     padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 3,
   },
   stepCardCompleted: {
-    opacity: 0.7,
+    opacity: 0.6,
   },
   stepHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
+    minHeight: 44,
+    marginBottom: 10,
   },
   stepCheckbox: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     borderWidth: 2,
     borderColor: colors.primary,
     justifyContent: 'center',
@@ -271,85 +286,76 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   stepCheckboxChecked: {
-    backgroundColor: colors.secondary,
-    borderColor: colors.secondary,
-  },
-  checkmark: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#fff',
+    backgroundColor: colors.primary,
   },
   stepNumberContainer: {
     flex: 1,
   },
   stepNumber: {
     fontSize: 14,
-    fontWeight: '700',
+    fontFamily: fonts.extrabold,
     color: colors.primary,
     textTransform: 'uppercase',
-    letterSpacing: 1,
+    letterSpacing: 1.2,
   },
   instructionText: {
-    fontSize: 16,
+    fontSize: 20,
+    fontFamily: fonts.medium,
     color: colors.text,
-    lineHeight: 24,
-    marginBottom: 12,
+    lineHeight: 29,
+    marginBottom: 14,
   },
   textCompleted: {
     color: colors.textSecondary,
   },
   ingredientsSection: {
-    backgroundColor: colors.background,
-    borderRadius: 12,
-    padding: 12,
-    marginTop: 4,
+    gap: 8,
   },
   ingredientsSectionTitle: {
-    fontSize: 12,
-    fontWeight: '700',
+    fontSize: 13,
+    fontFamily: fonts.extrabold,
     color: colors.textSecondary,
     textTransform: 'uppercase',
-    letterSpacing: 1,
-    marginBottom: 8,
+    letterSpacing: 1.2,
   },
   ingredientRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    gap: 14,
+    minHeight: 56,
+    paddingHorizontal: 14,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
   },
   ingredientCheckbox: {
-    width: 22,
-    height: 22,
-    borderRadius: 4,
+    width: 28,
+    height: 28,
+    borderRadius: 9,
     borderWidth: 2,
     borderColor: colors.border,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 10,
   },
   ingredientCheckboxChecked: {
-    backgroundColor: colors.secondary,
-    borderColor: colors.secondary,
-  },
-  ingredientCheckmark: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    color: '#fff',
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
   ingredientName: {
     flex: 1,
-    fontSize: 15,
+    fontSize: 18,
+    fontFamily: fonts.medium,
     color: colors.text,
   },
   ingredientAmount: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: colors.primary,
+    fontSize: 19,
+    fontFamily: fonts.extrabold,
+    color: colors.text,
+    fontVariant: ['tabular-nums'],
   },
   ingredientTextChecked: {
     textDecorationLine: 'line-through',
-    color: colors.textSecondary,
+    color: colors.textMuted,
   },
 });

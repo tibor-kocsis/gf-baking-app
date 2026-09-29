@@ -2,7 +2,9 @@ import { useState, useRef, useCallback } from 'react';
 import { View, Text, TouchableOpacity, Image, StyleSheet, Alert, Platform, Modal } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { colors } from '../constants/colors';
+import { fonts } from '../constants/fonts';
 import { useI18n } from '../context/I18nContext';
+import { Icon } from './Icon';
 
 const MAX_PHOTOS = 3;
 
@@ -73,7 +75,7 @@ function WebcamCapture({ visible, onCapture, onClose, t }) {
         <canvas ref={canvasRef} style={{ display: 'none' }} />
         <View style={webcamStyles.controls}>
           <TouchableOpacity style={webcamStyles.captureButton} onPress={capturePhoto}>
-            <Text style={webcamStyles.captureButtonText}>📸</Text>
+            <Icon name="camera" size={32} color={colors.black} />
           </TouchableOpacity>
           <TouchableOpacity style={webcamStyles.closeButton} onPress={handleClose}>
             <Text style={webcamStyles.closeButtonText}>{t('notes.cancel')}</Text>
@@ -87,7 +89,7 @@ function WebcamCapture({ visible, onCapture, onClose, t }) {
 const webcamStyles = Platform.OS === 'web' ? {
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: colors.black,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -107,22 +109,20 @@ const webcamStyles = Platform.OS === 'web' ? {
     width: 70,
     height: 70,
     borderRadius: 35,
-    backgroundColor: '#fff',
+    backgroundColor: colors.onPrimary,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  captureButtonText: {
-    fontSize: 32,
   },
   closeButton: {
     paddingHorizontal: 20,
     paddingVertical: 10,
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    backgroundColor: colors.overlayLight,
     borderRadius: 8,
   },
   closeButtonText: {
-    color: '#fff',
+    color: colors.onPrimary,
     fontSize: 16,
+    fontFamily: fonts.regular,
   },
 } : {};
 
@@ -244,7 +244,7 @@ export function PhotoPicker({ photos = [], onPhotosChange, disabled = false }) {
             onPress={showImagePickerOptions}
             disabled={loading}
           >
-            <Text style={styles.addButtonIcon}>📷</Text>
+            <Icon name="camera" size={20} color={colors.textSecondary} />
             <Text style={styles.addButtonText}>{t('notes.addPhoto')}</Text>
           </TouchableOpacity>
         )}
@@ -287,9 +287,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   removeButtonText: {
-    color: '#fff',
+    color: colors.onPrimary,
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: fonts.bold,
     lineHeight: 18,
   },
   addButton: {
@@ -303,17 +303,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: colors.surface,
   },
-  addButtonIcon: {
-    fontSize: 24,
-  },
   addButtonText: {
     fontSize: 10,
+    fontFamily: fonts.regular,
     color: colors.textSecondary,
     marginTop: 4,
     textAlign: 'center',
   },
   limitText: {
     fontSize: 12,
+    fontFamily: fonts.regular,
     color: colors.textSecondary,
     marginTop: 8,
     fontStyle: 'italic',

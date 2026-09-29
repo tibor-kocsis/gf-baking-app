@@ -12,6 +12,7 @@ import {
   Alert,
 } from 'react-native';
 import { colors } from '../constants/colors';
+import { fonts } from '../constants/fonts';
 import { useI18n } from '../context/I18nContext';
 import { saveNote, deleteNote, savePhoto, deletePhoto } from '../utils/notesStorage';
 import { PhotoPicker } from './PhotoPicker';
@@ -180,7 +181,7 @@ export function NoteEditor({ visible, note, recipeId, onClose, onSaved }) {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: colors.overlay,
     justifyContent: 'flex-end',
   },
   container: {
@@ -204,17 +205,18 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 17,
-    fontWeight: '600',
+    fontFamily: fonts.semibold,
     color: colors.text,
   },
   cancelText: {
     fontSize: 16,
+    fontFamily: fonts.regular,
     color: colors.textSecondary,
   },
   saveText: {
     fontSize: 16,
     color: colors.primary,
-    fontWeight: '600',
+    fontFamily: fonts.semibold,
     textAlign: 'right',
   },
   disabledText: {
@@ -225,6 +227,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     fontSize: 16,
+    fontFamily: fonts.regular,
     color: colors.text,
     minHeight: 120,
     textAlignVertical: 'top',
@@ -236,11 +239,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#dc3545',
+    borderColor: colors.danger,
   },
   deleteButtonText: {
-    color: '#dc3545',
+    color: colors.danger,
     fontSize: 16,
-    fontWeight: '500',
+    fontFamily: fonts.medium,
   },
 });

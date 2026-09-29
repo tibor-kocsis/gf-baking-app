@@ -41,7 +41,7 @@ export function PhotoPreview({ visible, photoUri, onClose }) {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.9)',
+    backgroundColor: colors.overlayDark,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: colors.overlayLight,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 20,
     height: 2,
-    backgroundColor: '#fff',
+    backgroundColor: colors.onPrimary,
     borderRadius: 1,
   },
   closeLine1: {

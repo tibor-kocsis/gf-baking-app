@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, Pressable } from 'react-native';
 import { colors } from '../constants/colors';
+import { fonts } from '../constants/fonts';
 import { useI18n } from '../context/I18nContext';
+import { Icon } from './Icon';
 
 const LANGUAGES = [
   { code: 'en', name: 'English' },
@@ -26,9 +28,11 @@ export function LanguageSelector() {
         style={styles.triggerButton}
         onPress={() => setIsOpen(true)}
         activeOpacity={0.7}
+        accessibilityRole="button"
+        accessibilityLabel={currentLanguage?.name || 'English'}
       >
-        <Text style={styles.triggerButtonText}>{currentLanguage?.name || 'English'}</Text>
-        <Text style={styles.chevron}>▼</Text>
+        <Icon name="globe" size={18} color={colors.text} />
+        <Text style={styles.triggerButtonText}>{(language || 'en').toUpperCase()}</Text>
       </TouchableOpacity>
 
       <Modal
@@ -58,7 +62,7 @@ export function LanguageSelector() {
                   {lang.name}
                 </Text>
                 {language === lang.code && (
-                  <Text style={styles.checkmark}>✓</Text>
+                  <Icon name="check" size={20} color={colors.onPrimary} strokeWidth={2.4} />
                 )}
               </TouchableOpacity>
             ))}
@@ -72,37 +76,32 @@ export function LanguageSelector() {
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    marginTop: 32,
   },
   triggerButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 20,
+    height: 44,
+    paddingHorizontal: 14,
+    borderRadius: 22,
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
-    gap: 8,
+    gap: 6,
   },
   triggerButtonText: {
     fontSize: 14,
-    fontWeight: '600',
+    fontFamily: fonts.semibold,
     color: colors.text,
-  },
-  chevron: {
-    fontSize: 10,
-    color: colors.textSecondary,
   },
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: colors.overlay,
     justifyContent: 'flex-end',
   },
   bottomSheet: {
     backgroundColor: colors.background,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
     paddingHorizontal: 20,
     paddingBottom: 40,
     paddingTop: 12,
@@ -116,8 +115,8 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   sheetTitle: {
-    fontSize: 18,
-    fontWeight: '700',
+    fontSize: 20,
+    fontFamily: fonts.display,
     color: colors.text,
     textAlign: 'center',
     marginBottom: 20,
@@ -126,9 +125,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 16,
+    minHeight: 56,
     paddingHorizontal: 16,
-    borderRadius: 12,
+    borderRadius: 16,
     marginBottom: 8,
     backgroundColor: colors.surface,
   },
@@ -137,15 +136,11 @@ const styles = StyleSheet.create({
   },
   languageOptionText: {
     fontSize: 16,
-    fontWeight: '500',
+    fontFamily: fonts.medium,
     color: colors.text,
   },
   languageOptionTextActive: {
-    color: '#fff',
-  },
-  checkmark: {
-    fontSize: 18,
-    color: '#fff',
-    fontWeight: '700',
+    fontFamily: fonts.bold,
+    color: colors.onPrimary,
   },
 });

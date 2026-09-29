@@ -22,6 +22,7 @@ const SHAPES = {
   check: <Path d="M5 12.5l4.5 4.5L19 7.5" />,
   minus: <Path d="M5 12h14" />,
   plus: <Path d="M12 5v14M5 12h14" />,
+  close: <Path d="M6 6l12 12M18 6L6 18" />,
   timer: (
     <>
       <Circle cx="12" cy="13.5" r="7.5" />

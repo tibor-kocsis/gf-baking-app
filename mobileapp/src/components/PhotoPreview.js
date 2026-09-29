@@ -1,39 +1,22 @@
-import { Modal, View, Image, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import { Modal, View, Image, Pressable, StyleSheet } from 'react-native';
 import { colors } from '../constants/colors';
+import { useI18n } from '../context/I18nContext';
+import { Icon } from './Icon';
 
-const { width, height } = Dimensions.get('window');
-
-export function PhotoPreview({ visible, photoUri, onClose }) {
-  if (!photoUri) {
-    return null;
-  }
+// A note photo full screen; any tap closes it. Sized with flex rather than the
+// window size read once at start-up, so it follows rotation and browser resizes.
+export function PhotoPreview({ photoUri, onClose }) {
+  const { t } = useI18n();
+  if (!photoUri) return null;
 
   return (
-    <Modal
-      visible={visible}
-      transparent={true}
-      animationType="fade"
-      onRequestClose={onClose}
-    >
-      <TouchableOpacity
-        style={styles.overlay}
-        activeOpacity={1}
-        onPress={onClose}
-      >
-        <View style={styles.container}>
-          <Image
-            source={{ uri: photoUri }}
-            style={styles.image}
-            resizeMode="contain"
-          />
-          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-            <View style={styles.closeButtonInner}>
-              <View style={[styles.closeLine, styles.closeLine1]} />
-              <View style={[styles.closeLine, styles.closeLine2]} />
-            </View>
-          </TouchableOpacity>
+    <Modal visible transparent animationType="fade" onRequestClose={onClose}>
+      <Pressable style={styles.overlay} onPress={onClose}>
+        <Image source={{ uri: photoUri }} style={styles.image} resizeMode="contain" />
+        <View style={styles.closeButton} accessibilityRole="button" accessibilityLabel={t('notes.cancel')}>
+          <Icon name="close" size={20} color={colors.onPrimary} strokeWidth={2.4} />
         </View>
-      </TouchableOpacity>
+      </Pressable>
     </Modal>
   );
 }
@@ -44,16 +27,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.overlayDark,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  container: {
-    width: width,
-    height: height,
-    justifyContent: 'center',
-    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 60,
   },
   image: {
-    width: width - 40,
-    height: height - 120,
+    width: '100%',
+    height: '100%',
   },
   closeButton: {
     position: 'absolute',
@@ -65,24 +44,5 @@ const styles = StyleSheet.create({
     backgroundColor: colors.overlayLight,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  closeButtonInner: {
-    width: 20,
-    height: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  closeLine: {
-    position: 'absolute',
-    width: 20,
-    height: 2,
-    backgroundColor: colors.onPrimary,
-    borderRadius: 1,
-  },
-  closeLine1: {
-    transform: [{ rotate: '45deg' }],
-  },
-  closeLine2: {
-    transform: [{ rotate: '-45deg' }],
   },
 });

@@ -1,18 +1,20 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { colors } from '../constants/colors';
 import { fonts } from '../constants/fonts';
+import { useI18n } from '../context/I18nContext';
 import { Icon } from './Icon';
 
 // Back button plus an optional centred title (the recipe screens put the name
 // in their hero instead).
 export function Header({ title, onBack }) {
+  const { t } = useI18n();
   return (
     <View style={styles.headerBar}>
       <Pressable
         style={({ pressed }) => [styles.backButton, pressed && styles.pressed]}
         onPress={onBack}
         accessibilityRole="button"
-        accessibilityLabel="Back"
+        accessibilityLabel={t('common.back')}
       >
         <Icon name="back" size={22} color={colors.text} strokeWidth={2} />
       </Pressable>

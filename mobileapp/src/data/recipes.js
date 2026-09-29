@@ -1,21 +1,62 @@
-import { CHEESE_STICK_SPOON_UNITS } from '../utils/recipeCalculators';
+import {
+  calculatePizzaIngredients,
+  calculatePizza2Ingredients,
+  calculatePizza3Ingredients,
+  calculateWaffleIngredients,
+  calculatePancakeIngredients,
+  calculateCheeseStickIngredients,
+  CHEESE_STICK_SPOON_UNITS,
+} from '../utils/calculators';
 
-// Recipe definitions with translation keys
+// The recipe catalog: the single source for the catalog screen, navigation and
+// cooking steps. A new scaled recipe is a calculator plus an entry here plus its
+// translations; no screen needs to change.
+//
+// Every recipe:
+//   id, type ('scaled' | 'flour-mix'), nameKey, descriptionKey, image,
+//   initialValue, stepSize         the stepper's start and step
+//   featured                       full-width card under the catalog grid
+// Scaled recipes also:
+//   calculate(count, options)      ingredient amounts, or null for no count
+//   options                        switches passed to calculate: [{ key, default, labelKey, onHintKey, offHintKey }]
+//   howManyKey, unitLabelKey       the stepper's label and suffix
+//   summary                        dark summary card: [{ labelKey, key }] in grams
+//   metaKey                        one line of times under the ingredients title
+//   ingredientGroups               [{ key, titleKey, items: [ingredient keys] }]
+//   ingredientNamesKey             namespace for names (default 'ingredients')
+//   ingredientNames                per-key translation overrides
+//   units                          per-key unit tokens (default 'g'), see utils/format.js
+//   instructionsKey, stepTitlesKey, notesKey
+//   cookingSteps                   [{ instructionIndex, ingredients: [keys], timerSeconds }]
+//   variantFor(options)            fields that replace the above for the chosen options
+
+const PIZZA_SUMMARY = [
+  { labelKey: 'common.totalDough', key: 'totalWeight' },
+  { labelKey: 'common.perPizza', key: 'weightPerPizza' },
+];
+
 export const recipes = [
   {
     id: 'pizza',
-    type: 'dynamic',
+    type: 'scaled',
     nameKey: 'recipes.pizza.name',
     image: require('../../assets/recipes/pizza.jpg'), // Unsplash photo, credits in assets/recipes/CREDITS.md
     descriptionKey: 'recipes.pizza.description',
     unitLabelKey: 'recipes.pizza.unitLabel',
     howManyKey: 'recipes.pizza.howMany',
-    baseWeight: 300,
+    calculate: (count) => calculatePizzaIngredients(count),
+    summary: PIZZA_SUMMARY,
+    ingredientNames: { glutenFreeFlour: 'ingredients.universalGfFlour' },
+    ingredientGroups: [
+      { key: 'flour', titleKey: 'common.flour', items: ['sorghumFlour', 'glutenFreeFlour'] },
+      { key: 'wet', titleKey: 'common.wetIngredients', items: ['water', 'oil', 'honey'] },
+      { key: 'dry', titleKey: 'common.dryIngredients', items: ['salt', 'yeast'] },
+    ],
   },
   {
     // The first pizza without the Miklos universal mix; the original stays as is.
     id: 'pizza-2',
-    type: 'dynamic',
+    type: 'scaled',
     nameKey: 'recipes.pizza2.name',
     image: require('../../assets/recipes/pizza-2.jpg'),
     descriptionKey: 'recipes.pizza2.description',
@@ -23,11 +64,36 @@ export const recipes = [
     howManyKey: 'recipes.pizza2.howMany',
     instructionsKey: 'instructions.pizza2',
     notesKey: 'recipes.pizza2.notes',
+    calculate: (count, options) => calculatePizza2Ingredients(count, options.tangzhong),
+    options: [
+      {
+        key: 'tangzhong',
+        default: true,
+        labelKey: 'recipes.pizza2.tangzhongLabel',
+        onHintKey: 'recipes.pizza2.tangzhongOnHint',
+        offHintKey: 'recipes.pizza2.tangzhongOffHint',
+      },
+    ],
+    summary: PIZZA_SUMMARY,
+    ingredientGroups: [
+      {
+        key: 'flour',
+        titleKey: 'common.flour',
+        items: ['sorghumUnimix', 'potatoStarch', 'brownRiceFlour', 'psylliumHusk'],
+      },
+      {
+        key: 'wet',
+        titleKey: 'common.wetIngredients',
+        items: ['waterTangzhong', 'waterGel', 'waterYeast', 'oil', 'honey'],
+      },
+      { key: 'dry', titleKey: 'common.dryIngredients', items: ['salt', 'yeast'] },
+    ],
     // Without the tangzhong the first step drops out and the brown rice goes into
     // the dough with the rest of the blend.
-    variantFor: (ingredients) =>
-      ingredients && ingredients.tangzhong === false
-        ? {
+    variantFor: (options) =>
+      options.tangzhong
+        ? { ingredientNames: { brownRiceFlour: 'ingredients.brownRiceFlourTangzhong' } }
+        : {
             instructionsKey: 'instructions.pizza2NoTangzhong',
             cookingSteps: [
               { instructionIndex: 0, ingredients: ['psylliumHusk', 'waterGel'] },
@@ -42,8 +108,7 @@ export const recipes = [
               { instructionIndex: 5, ingredients: [] },
               { instructionIndex: 6, ingredients: [] },
             ],
-          }
-        : {},
+          },
     cookingSteps: [
       { instructionIndex: 0, ingredients: ['brownRiceFlour', 'waterTangzhong'] },
       { instructionIndex: 1, ingredients: ['psylliumHusk', 'waterGel'] },
@@ -58,7 +123,7 @@ export const recipes = [
   {
     // On the principle of Caputo Fioreglut: starch-led, heavy binder, stretched.
     id: 'pizza-3',
-    type: 'dynamic',
+    type: 'scaled',
     nameKey: 'recipes.pizza3.name',
     image: require('../../assets/recipes/pizza-3.jpg'),
     descriptionKey: 'recipes.pizza3.description',
@@ -66,6 +131,17 @@ export const recipes = [
     howManyKey: 'recipes.pizza3.howMany',
     instructionsKey: 'instructions.pizza3',
     notesKey: 'recipes.pizza3.notes',
+    calculate: (count) => calculatePizza3Ingredients(count),
+    summary: PIZZA_SUMMARY,
+    ingredientGroups: [
+      {
+        key: 'flour',
+        titleKey: 'common.flour',
+        items: ['buckwheatFlour', 'sorghumFlour', 'cornStarch', 'potatoStarch', 'tapiocaStarch', 'psylliumHusk'],
+      },
+      { key: 'wet', titleKey: 'common.wetIngredients', items: ['waterGel', 'waterYeast', 'oil', 'honey'] },
+      { key: 'dry', titleKey: 'common.dryIngredients', items: ['salt', 'freshYeast'] },
+    ],
     cookingSteps: [
       { instructionIndex: 0, ingredients: ['psylliumHusk', 'waterGel'] },
       { instructionIndex: 1, ingredients: ['freshYeast', 'honey', 'waterYeast'] },
@@ -81,13 +157,20 @@ export const recipes = [
   },
   {
     id: 'waffles',
-    type: 'dynamic',
+    type: 'scaled',
     nameKey: 'recipes.waffles.name',
     image: require('../../assets/recipes/waffles.jpg'),
     descriptionKey: 'recipes.waffles.description',
     unitLabelKey: 'recipes.waffles.unitLabel',
     howManyKey: 'recipes.waffles.howMany',
     instructionsKey: 'instructions.waffles',
+    calculate: (count) => calculateWaffleIngredients(count),
+    ingredientNames: { flour: 'ingredients.gfFlour' },
+    units: { egg: 'count', milk: 'ml', vanilla: 'tsp' },
+    ingredientGroups: [
+      { key: 'dry', titleKey: 'common.dryIngredients', items: ['flour', 'sugar', 'bakingPowder'] },
+      { key: 'wet', titleKey: 'common.wetIngredients', items: ['egg', 'milk', 'butter', 'vanilla'] },
+    ],
     cookingSteps: [
       { instructionIndex: 0, ingredients: ['egg'] },
       { instructionIndex: 1, ingredients: ['butter'] },
@@ -99,7 +182,7 @@ export const recipes = [
   },
   {
     id: 'pancakes',
-    type: 'dynamic',
+    type: 'scaled',
     nameKey: 'recipes.pancakes.name',
     image: require('../../assets/recipes/pancakes.jpg'),
     descriptionKey: 'recipes.pancakes.description',
@@ -108,6 +191,12 @@ export const recipes = [
     instructionsKey: 'instructions.pancakes',
     initialValue: 22,
     stepSize: 1,
+    calculate: (count) => calculatePancakeIngredients(count),
+    units: { egg: 'count', milk: 'ml' },
+    ingredientGroups: [
+      { key: 'dry', titleKey: 'common.dryIngredients', items: ['riceFlour', 'sugar', 'bakingPowder', 'salt'] },
+      { key: 'wet', titleKey: 'common.wetIngredients', items: ['egg', 'butter', 'milk'] },
+    ],
     cookingSteps: [
       { instructionIndex: 0, ingredients: ['egg', 'sugar', 'salt'] },
       { instructionIndex: 1, ingredients: ['butter', 'milk'] },
@@ -120,7 +209,7 @@ export const recipes = [
   },
   {
     id: 'cheese-sticks',
-    type: 'dynamic',
+    type: 'scaled',
     nameKey: 'recipes.cheeseSticks.name',
     image: require('../../assets/recipes/cheese-sticks.jpg'),
     descriptionKey: 'recipes.cheeseSticks.description',
@@ -131,9 +220,31 @@ export const recipes = [
     notesKey: 'recipes.cheeseSticks.notes',
     metaKey: 'recipes.cheeseSticks.meta',
     ingredientNamesKey: 'recipes.cheeseSticks.ingredients',
-    ingredientUnits: CHEESE_STICK_SPOON_UNITS,
+    units: CHEESE_STICK_SPOON_UNITS,
     initialValue: 30,
     stepSize: 5,
+    calculate: (count) => calculateCheeseStickIngredients(count),
+    // The recipe's own groups, in the order it lists them.
+    ingredientGroups: [
+      {
+        key: 'dough',
+        titleKey: 'recipes.cheeseSticks.groups.dough',
+        items: [
+          'brownRiceFlourFine',
+          'sorghumFlour',
+          'tapiocaStarch',
+          'potatoStarch',
+          'psylliumHuskGround',
+          'bakingPowder',
+          'salt',
+          'margarine',
+          'cottageCheese',
+          'sourCream',
+          'gratedCheese',
+        ],
+      },
+      { key: 'topping', titleKey: 'recipes.cheeseSticks.groups.topping', items: ['meltedMargarine', 'toppingCheese'] },
+    ],
     cookingSteps: [
       {
         instructionIndex: 0,
@@ -160,6 +271,7 @@ export const recipes = [
     // flours and starches the baker has, so it gets its own screen.
     id: 'flour-mix',
     type: 'flour-mix',
+    featured: true,
     nameKey: 'recipes.flourMix.name',
     image: require('../../assets/recipes/flour-mix.jpg'),
     descriptionKey: 'recipes.flourMix.description',
@@ -167,3 +279,7 @@ export const recipes = [
     stepSize: 50,
   },
 ];
+
+export function findRecipe(recipeId) {
+  return recipes.find((recipe) => recipe.id === recipeId) || null;
+}

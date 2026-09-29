@@ -1,19 +1,23 @@
 import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
 import { colors } from '../constants/colors';
 import { fonts } from '../constants/fonts';
+import { useI18n } from '../context/I18nContext';
+import { stepUp, stepDown } from '../utils/stepper';
 import { Icon } from './Icon';
 
-// The count / batch-size card every calculator opens with.
-export function Stepper({ label, value, onChangeText, onIncrement, onDecrement, suffix }) {
+// The count / batch-size card every calculator opens with. The value stays text
+// so the baker can type; the buttons move it by `step`, never below `step`.
+export function Stepper({ label, value, onChange, step = 1, suffix }) {
+  const { t } = useI18n();
   return (
     <View style={styles.card}>
       <Text style={styles.label}>{label}</Text>
       <View style={styles.row}>
         <Pressable
           style={({ pressed }) => [styles.minusButton, pressed && styles.pressed]}
-          onPress={onDecrement}
+          onPress={() => onChange(stepDown(value, step, step))}
           accessibilityRole="button"
-          accessibilityLabel="−"
+          accessibilityLabel={t('common.decrease')}
         >
           <Icon name="minus" size={24} color={colors.primary} strokeWidth={2.2} />
         </Pressable>
@@ -21,7 +25,7 @@ export function Stepper({ label, value, onChangeText, onIncrement, onDecrement, 
           <TextInput
             style={[styles.input, !!suffix && styles.inputWithSuffix]}
             value={value}
-            onChangeText={onChangeText}
+            onChangeText={onChange}
             keyboardType="number-pad"
             placeholder="0"
             placeholderTextColor={colors.textMuted}
@@ -31,9 +35,9 @@ export function Stepper({ label, value, onChangeText, onIncrement, onDecrement, 
         </View>
         <Pressable
           style={({ pressed }) => [styles.plusButton, pressed && styles.pressedPrimary]}
-          onPress={onIncrement}
+          onPress={() => onChange(stepUp(value, step))}
           accessibilityRole="button"
-          accessibilityLabel="+"
+          accessibilityLabel={t('common.increase')}
         >
           <Icon name="plus" size={24} color={colors.onPrimary} strokeWidth={2.2} />
         </Pressable>

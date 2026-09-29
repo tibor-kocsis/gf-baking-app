@@ -1,49 +1,51 @@
-import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { View, Text, Pressable, Image, StyleSheet } from 'react-native';
 import { colors } from '../constants/colors';
 import { fonts } from '../constants/fonts';
 import { useI18n } from '../context/I18nContext';
 
+// Dated in the app's language, not the device's.
+function formatDate(timestamp, language) {
+  return new Date(timestamp).toLocaleDateString(language, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+}
+
 export function NoteCard({ note, onPress, onPhotoPress }) {
-  const { t } = useI18n();
-
-  const formatDate = (timestamp) => {
-    const date = new Date(timestamp);
-    return date.toLocaleDateString(undefined, {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
-  };
-
+  const { t, language } = useI18n();
   const isEdited = note.updatedAt > note.createdAt;
 
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.7}>
-      <View style={styles.header}>
-        <Text style={styles.date}>
-          {formatDate(note.createdAt)}
-          {isEdited && <Text style={styles.edited}> ({t('notes.edited')})</Text>}
-        </Text>
-      </View>
-      
+    <Pressable
+      style={({ pressed }) => [styles.container, pressed && styles.pressed]}
+      onPress={onPress}
+      accessibilityRole="button"
+    >
+      <Text style={styles.date}>
+        {formatDate(note.createdAt, language)}
+        {isEdited && <Text style={styles.edited}> ({t('notes.edited')})</Text>}
+      </Text>
+
       <Text style={styles.text} numberOfLines={3}>
         {note.text}
       </Text>
-      
+
       {note.photos && note.photos.length > 0 && (
         <View style={styles.photosRow}>
           {note.photos.map((uri, index) => (
-            <TouchableOpacity
+            <Pressable
               key={index}
-              onPress={() => onPhotoPress && onPhotoPress(uri)}
-              activeOpacity={0.8}
+              onPress={() => onPhotoPress(uri)}
+              style={({ pressed }) => pressed && styles.pressed}
+              accessibilityRole="imagebutton"
             >
               <Image source={{ uri }} style={styles.thumbnail} />
-            </TouchableOpacity>
+            </Pressable>
           ))}
         </View>
       )}
-    </TouchableOpacity>
+    </Pressable>
   );
 }
 
@@ -56,16 +58,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
+  pressed: {
+    opacity: 0.7,
   },
   date: {
     fontSize: 12,
     fontFamily: fonts.regular,
     color: colors.textSecondary,
+    marginBottom: 8,
   },
   edited: {
     fontStyle: 'italic',

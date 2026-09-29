@@ -1,81 +1,60 @@
 import { useState, useEffect } from 'react';
 import { BackHandler } from 'react-native';
-import { recipes } from '../data/recipes';
+import { useI18n } from '../context/I18nContext';
+import { findRecipe } from '../data/recipes';
 import { RecipeCatalog } from '../screens/RecipeCatalog';
-import { DynamicRecipeView } from '../screens/DynamicRecipeView';
+import { RecipeView } from '../screens/RecipeView';
 import { FlourMixCalculatorView } from '../screens/FlourMixCalculatorView';
 import { CookingModeView } from '../screens/CookingModeView';
 
+// The screen for each recipe type in the catalog.
+const RECIPE_SCREENS = {
+  scaled: RecipeView,
+  'flour-mix': FlourMixCalculatorView,
+};
+
+const CATALOG = { type: 'catalog' };
+
+// Where the back button leads from a screen, or null to let the system exit.
+// Plain state only: the back handler must never build JSX.
+export function backTarget(screen) {
+  if (screen.type === 'cooking') return { type: 'recipe', recipeId: screen.recipeId };
+  if (screen.type === 'recipe') return CATALOG;
+  return null;
+}
+
+// A screen-state stack of depth three: catalog -> recipe -> cooking mode.
 export function AppNavigator() {
-  const [screen, setScreen] = useState({ type: 'catalog' });
+  const { t } = useI18n();
+  const [screen, setScreen] = useState(CATALOG);
 
-  const navigateToRecipe = (recipeId) => {
-    setScreen({ type: 'recipe', recipeId });
-  };
-
-  const navigateToCatalog = () => {
-    setScreen({ type: 'catalog' });
-  };
-
-  const navigateToCooking = (recipeId, ingredients) => {
-    setScreen({ type: 'cooking', recipeId, ingredients });
-  };
-
-  const navigateBackFromCooking = () => {
-    setScreen({ type: 'recipe', recipeId: screen.recipeId });
-  };
-
-  // Handle hardware back button on Android
   useEffect(() => {
-    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
-      if (screen.type === 'cooking') {
-        navigateBackFromCooking();
-        return true;
-      }
-      if (screen.type === 'recipe') {
-        navigateToCatalog();
-        return true;
-      }
-      return false; // Not handled - let system handle (exit app)
+    const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
+      const target = backTarget(screen);
+      if (!target) return false;
+      setScreen(target);
+      return true;
     });
+    return () => subscription.remove();
+  }, [screen]);
 
-    return () => backHandler.remove();
-  }, [screen.type, screen.recipeId]);
+  const goBack = () => setScreen(backTarget(screen) || CATALOG);
+  const recipe = screen.recipeId ? findRecipe(screen.recipeId) : null;
 
-  if (screen.type === 'catalog') {
-    return <RecipeCatalog onSelectRecipe={navigateToRecipe} />;
-  }
-
-  const recipe = recipes.find(r => r.id === screen.recipeId);
   if (!recipe) {
-    return <RecipeCatalog onSelectRecipe={navigateToRecipe} />;
+    return <RecipeCatalog onSelectRecipe={(recipeId) => setScreen({ type: 'recipe', recipeId })} />;
   }
 
   if (screen.type === 'cooking') {
-    return (
-      <CookingModeView
-        recipe={recipe}
-        ingredients={screen.ingredients}
-        onBack={navigateBackFromCooking}
-      />
-    );
+    return <CookingModeView title={t(recipe.nameKey)} plan={screen.plan} onBack={goBack} />;
   }
 
-  if (recipe.type === 'flour-mix') {
-    return (
-      <FlourMixCalculatorView
-        recipe={recipe}
-        onBack={navigateToCatalog}
-        onStartCooking={(plan) => navigateToCooking(recipe.id, plan)}
-      />
-    );
-  }
-
+  const RecipeScreen = RECIPE_SCREENS[recipe.type];
   return (
-    <DynamicRecipeView
+    <RecipeScreen
       recipe={recipe}
-      onBack={navigateToCatalog}
-      onStartCooking={(ingredients) => navigateToCooking(recipe.id, ingredients)}
+      onBack={goBack}
+      onStartCooking={(plan) => setScreen({ type: 'cooking', recipeId: recipe.id, plan })}
     />
   );
 }

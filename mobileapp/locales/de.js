@@ -19,6 +19,11 @@ export default {
     unitTbsp: 'EL',
     durationMinutes: '{minutes} Min.',
     recipeNotes: 'Hinweise',
+    back: 'Zurück',
+    decrease: 'Verringern',
+    increase: 'Erhöhen',
+    unitPcs: 'Stk.',
+    selectLanguage: 'Sprache wählen',
   },
   recipes: {
     pizza: {
@@ -192,7 +197,6 @@ export default {
     },
     dryYeastHint: 'Mit Trockenhefe: durch drei teilen — {amount} g.',
     eggHint: 'Große Eier, etwa 50 g ohne Schale — insgesamt {amount} g. Zum Bestreichen ein separates Ei.',
-    eggUnit: 'Stk.',
     waterTitle: 'Wasser',
     waterTotal: 'Gesamthydration',
     waterEquivalentHint: 'In Wasseräquivalenten: Ei zählt zu 75%, Milch zu 88% als Wasser, daher ergeben die Zeilen mehr als die Gesamthydration.',
@@ -356,5 +360,7 @@ export default {
     confirmDelete: 'Diese Notiz löschen?',
     permissionDenied: 'Kamerazugriff zum Fotografieren erforderlich',
     edited: 'bearbeitet',
+    saveFailed: 'Die Notiz konnte nicht gespeichert werden. Bitte erneut versuchen.',
+    deleteFailed: 'Die Notiz konnte nicht gelöscht werden. Bitte erneut versuchen.',
   },
 };

@@ -3,147 +3,97 @@ import {
   View,
   Text,
   TextInput,
-  TouchableOpacity,
+  Pressable,
   Modal,
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  Alert,
 } from 'react-native';
 import { colors } from '../constants/colors';
 import { fonts } from '../constants/fonts';
 import { useI18n } from '../context/I18nContext';
-import { saveNote, deleteNote, savePhoto, deletePhoto } from '../utils/notesStorage';
+import { saveNoteWithPhotos, deleteNote } from '../utils/notesStorage';
+import { showMessage, confirmDestructive } from '../platform/dialogs';
 import { PhotoPicker } from './PhotoPicker';
 
+// Add or edit one note. `note` is null for a new one.
 export function NoteEditor({ visible, note, recipeId, onClose, onSaved }) {
   const { t } = useI18n();
   const [text, setText] = useState('');
   const [photos, setPhotos] = useState([]);
-  const [saving, setSaving] = useState(false);
-  const [pendingPhotos, setPendingPhotos] = useState([]); // New photos to save
+  const [busy, setBusy] = useState(false);
 
-  const isEditing = !!note?.id;
+  const isEditing = !!note;
+  const canSave = !busy && !!text.trim();
 
   useEffect(() => {
     if (visible) {
-      setText(note?.text || '');
-      setPhotos(note?.photos || []);
-      setPendingPhotos([]);
+      setText(note ? note.text : '');
+      setPhotos(note ? note.photos || [] : []);
     }
   }, [visible, note]);
 
-  const handlePhotosChange = (newPhotos) => {
-    // Track which photos are new (not yet saved to file system)
-    const existingPhotos = note?.photos || [];
-    const newPending = newPhotos.filter(p => !existingPhotos.includes(p));
-    setPendingPhotos(newPending);
-    setPhotos(newPhotos);
-  };
-
   const handleSave = async () => {
-    if (!text.trim()) {
-      return;
-    }
-
-    setSaving(true);
+    if (!canSave) return;
+    setBusy(true);
     try {
-      const noteId = note?.id || Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
-      
-      // Save new photos to permanent storage
-      const savedPhotos = [];
-      let photoIndex = 0;
-      
-      for (const photoUri of photos) {
-        if (pendingPhotos.includes(photoUri)) {
-          // New photo - save to file system
-          const permanentUri = await savePhoto(photoUri, noteId, photoIndex);
-          savedPhotos.push(permanentUri);
-        } else {
-          // Existing photo - keep as is
-          savedPhotos.push(photoUri);
-        }
-        photoIndex++;
-      }
-
-      // Delete removed photos
-      if (note?.photos) {
-        for (const oldPhoto of note.photos) {
-          if (!photos.includes(oldPhoto)) {
-            await deletePhoto(oldPhoto);
-          }
-        }
-      }
-
-      await saveNote({
-        id: note?.id,
-        recipeId,
-        text: text.trim(),
-        photos: savedPhotos,
-      });
-
+      await saveNoteWithPhotos({ note, recipeId, text: text.trim(), photos });
       onSaved();
       onClose();
     } catch (error) {
       console.error('Error saving note:', error);
-      Alert.alert('Error', 'Failed to save note');
+      showMessage(t('notes.saveFailed'));
     } finally {
-      setSaving(false);
+      setBusy(false);
     }
   };
 
-  const handleDelete = () => {
-    Alert.alert(
-      t('notes.deleteNote'),
-      t('notes.confirmDelete'),
-      [
-        { text: t('notes.cancel'), style: 'cancel' },
-        {
-          text: t('notes.deleteNote'),
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await deleteNote(note.id, recipeId);
-              onSaved();
-              onClose();
-            } catch (error) {
-              console.error('Error deleting note:', error);
-            }
-          },
-        },
-      ]
-    );
+  const handleDelete = async () => {
+    const confirmed = await confirmDestructive({
+      title: t('notes.deleteNote'),
+      message: t('notes.confirmDelete'),
+      confirmLabel: t('notes.deleteNote'),
+      cancelLabel: t('notes.cancel'),
+    });
+    if (!confirmed) return;
+    setBusy(true);
+    try {
+      await deleteNote(note.id, recipeId);
+      onSaved();
+      onClose();
+    } catch (error) {
+      console.error('Error deleting note:', error);
+      showMessage(t('notes.deleteFailed'));
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
-    <Modal
-      visible={visible}
-      animationType="slide"
-      transparent={true}
-      onRequestClose={onClose}
-    >
+    <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
       <KeyboardAvoidingView
         style={styles.overlay}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <View style={styles.container}>
           <View style={styles.header}>
-            <TouchableOpacity onPress={onClose} style={styles.headerButton}>
-              <Text style={styles.cancelText}>{t('notes.cancel')}</Text>
-            </TouchableOpacity>
-            <Text style={styles.title}>
-              {isEditing ? t('notes.editNote') : t('notes.addNote')}
-            </Text>
-            <TouchableOpacity
-              onPress={handleSave}
-              style={styles.headerButton}
-              disabled={saving || !text.trim()}
+            <Pressable
+              onPress={onClose}
+              style={({ pressed }) => [styles.headerButton, pressed && styles.pressed]}
+              accessibilityRole="button"
             >
-              <Text style={[styles.saveText, (!text.trim() || saving) && styles.disabledText]}>
-                {t('notes.save')}
-              </Text>
-            </TouchableOpacity>
+              <Text style={styles.cancelText}>{t('notes.cancel')}</Text>
+            </Pressable>
+            <Text style={styles.title}>{isEditing ? t('notes.editNote') : t('notes.addNote')}</Text>
+            <Pressable
+              onPress={handleSave}
+              style={({ pressed }) => [styles.headerButton, pressed && styles.pressed]}
+              disabled={!canSave}
+              accessibilityRole="button"
+            >
+              <Text style={[styles.saveText, !canSave && styles.disabledText]}>{t('notes.save')}</Text>
+            </Pressable>
           </View>
 
           <ScrollView style={styles.content} keyboardShouldPersistTaps="handled">
@@ -157,19 +107,17 @@ export function NoteEditor({ visible, note, recipeId, onClose, onSaved }) {
               autoFocus
             />
 
-            <PhotoPicker
-              photos={photos}
-              onPhotosChange={handlePhotosChange}
-              disabled={saving}
-            />
+            <PhotoPicker photos={photos} onPhotosChange={setPhotos} disabled={busy} />
 
             {isEditing && (
-              <TouchableOpacity
-                style={styles.deleteButton}
+              <Pressable
+                style={({ pressed }) => [styles.deleteButton, pressed && styles.pressed]}
                 onPress={handleDelete}
+                disabled={busy}
+                accessibilityRole="button"
               >
                 <Text style={styles.deleteButtonText}>{t('notes.deleteNote')}</Text>
-              </TouchableOpacity>
+              </Pressable>
             )}
           </ScrollView>
         </View>
@@ -196,12 +144,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingVertical: 8,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   headerButton: {
     minWidth: 60,
+    minHeight: 44,
+    justifyContent: 'center',
+  },
+  pressed: {
+    opacity: 0.6,
   },
   title: {
     fontSize: 17,

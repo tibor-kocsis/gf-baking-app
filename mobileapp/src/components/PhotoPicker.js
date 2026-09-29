@@ -1,258 +1,118 @@
-import { useState, useRef, useCallback } from 'react';
-import { View, Text, TouchableOpacity, Image, StyleSheet, Alert, Platform, Modal } from 'react-native';
+import { useState, useCallback } from 'react';
+import { View, Text, Pressable, Image, StyleSheet, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { colors } from '../constants/colors';
 import { fonts } from '../constants/fonts';
 import { useI18n } from '../context/I18nContext';
+import { showMessage } from '../platform/dialogs';
 import { Icon } from './Icon';
+import { BottomSheet } from './BottomSheet';
+import { WebcamCapture } from './WebcamCapture';
 
 const MAX_PHOTOS = 3;
+const PICKER_OPTIONS = { mediaTypes: ['images'], allowsEditing: true, quality: 0.8, exif: false };
 
-// Web Webcam Component
-function WebcamCapture({ visible, onCapture, onClose, t }) {
-  const videoRef = useRef(null);
-  const canvasRef = useRef(null);
-  const streamRef = useRef(null);
-
-  const startCamera = useCallback(async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: 'environment' } 
-      });
-      streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-      }
-    } catch (error) {
-      console.error('Error accessing webcam:', error);
-      Alert.alert(t('notes.permissionDenied'));
-      onClose();
-    }
-  }, [onClose, t]);
-
-  const stopCamera = useCallback(() => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop());
-      streamRef.current = null;
-    }
-  }, []);
-
-  const capturePhoto = () => {
-    if (videoRef.current && canvasRef.current) {
-      const video = videoRef.current;
-      const canvas = canvasRef.current;
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(video, 0, 0);
-      const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
-      stopCamera();
-      onCapture(dataUrl);
-    }
-  };
-
-  const handleClose = () => {
-    stopCamera();
-    onClose();
-  };
-
-  // Start camera when modal becomes visible
-  if (visible && !streamRef.current) {
-    startCamera();
-  }
-
-  if (!visible) return null;
-
-  return (
-    <Modal visible={visible} animationType="slide" onRequestClose={handleClose}>
-      <View style={webcamStyles.container}>
-        <video 
-          ref={videoRef} 
-          autoPlay 
-          playsInline 
-          style={webcamStyles.video}
-        />
-        <canvas ref={canvasRef} style={{ display: 'none' }} />
-        <View style={webcamStyles.controls}>
-          <TouchableOpacity style={webcamStyles.captureButton} onPress={capturePhoto}>
-            <Icon name="camera" size={32} color={colors.black} />
-          </TouchableOpacity>
-          <TouchableOpacity style={webcamStyles.closeButton} onPress={handleClose}>
-            <Text style={webcamStyles.closeButtonText}>{t('notes.cancel')}</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </Modal>
-  );
+async function hasPermission(source) {
+  const request =
+    source === 'camera'
+      ? ImagePicker.requestCameraPermissionsAsync
+      : ImagePicker.requestMediaLibraryPermissionsAsync;
+  const { status } = await request();
+  return status === 'granted';
 }
 
-const webcamStyles = Platform.OS === 'web' ? {
-  container: {
-    flex: 1,
-    backgroundColor: colors.black,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  video: {
-    width: '100%',
-    maxHeight: '70%',
-    objectFit: 'contain',
-  },
-  controls: {
-    position: 'absolute',
-    bottom: 40,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 20,
-  },
-  captureButton: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    backgroundColor: colors.onPrimary,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  closeButton: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    backgroundColor: colors.overlayLight,
-    borderRadius: 8,
-  },
-  closeButtonText: {
-    color: colors.onPrimary,
-    fontSize: 16,
-    fontFamily: fonts.regular,
-  },
-} : {};
-
+// Up to three photos for a note, from the camera or the library.
 export function PhotoPicker({ photos = [], onPhotosChange, disabled = false }) {
   const { t } = useI18n();
-  const [loading, setLoading] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [sourceSheetVisible, setSourceSheetVisible] = useState(false);
   const [webcamVisible, setWebcamVisible] = useState(false);
 
   const canAddPhoto = photos.length < MAX_PHOTOS && !disabled;
+  const addPhoto = (uri) => onPhotosChange(photos.concat(uri));
 
-  const requestPermissions = async (useCamera) => {
-    if (useCamera) {
-      const { status } = await ImagePicker.requestCameraPermissionsAsync();
-      return status === 'granted';
-    } else {
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      return status === 'granted';
-    }
-  };
-
-  const pickImage = async (useCamera) => {
-    const hasPermission = await requestPermissions(useCamera);
-    if (!hasPermission) {
-      Alert.alert(t('notes.permissionDenied'));
+  const pickImage = async (source) => {
+    if (!(await hasPermission(source))) {
+      showMessage(t('notes.permissionDenied'));
       return;
     }
-
-    setLoading(true);
+    setBusy(true);
     try {
-      const options = {
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        quality: 0.8,
-        // Compress to max 1024px
-        ...(Platform.OS !== 'web' && {
-          exif: false,
-        }),
-      };
-
-      let result;
-      if (useCamera) {
-        result = await ImagePicker.launchCameraAsync(options);
-      } else {
-        result = await ImagePicker.launchImageLibraryAsync(options);
-      }
-
+      const result =
+        source === 'camera'
+          ? await ImagePicker.launchCameraAsync(PICKER_OPTIONS)
+          : await ImagePicker.launchImageLibraryAsync(PICKER_OPTIONS);
       if (!result.canceled && result.assets && result.assets[0]) {
-        const newPhotos = [...photos, result.assets[0].uri];
-        onPhotosChange(newPhotos);
+        addPhoto(result.assets[0].uri);
       }
     } catch (error) {
       console.error('Error picking image:', error);
     } finally {
-      setLoading(false);
+      setBusy(false);
+    }
+  };
+
+  const handleSource = (source) => {
+    setSourceSheetVisible(false);
+    // The web image picker cannot open a camera, so the browser one takes over.
+    if (source === 'camera' && Platform.OS === 'web') {
+      setWebcamVisible(true);
+    } else {
+      pickImage(source);
     }
   };
 
   const handleWebcamCapture = (dataUrl) => {
-    const newPhotos = [...photos, dataUrl];
-    onPhotosChange(newPhotos);
+    addPhoto(dataUrl);
     setWebcamVisible(false);
   };
 
-  const showImagePickerOptions = () => {
-    if (Platform.OS === 'web') {
-      // On web, show choice between webcam and file picker
-      const useWebcam = window.confirm(
-        `${t('notes.camera')}?\n\nOK = ${t('notes.camera')}\nCancel = ${t('notes.gallery')}`
-      );
-      if (useWebcam) {
-        setWebcamVisible(true);
-      } else {
-        pickImage(false);
-      }
-    } else {
-      Alert.alert(
-        t('notes.addPhoto'),
-        '',
-        [
-          { text: t('notes.camera'), onPress: () => pickImage(true) },
-          { text: t('notes.gallery'), onPress: () => pickImage(false) },
-          { text: t('notes.cancel'), style: 'cancel' },
-        ]
-      );
-    }
-  };
-
-  const removePhoto = (index) => {
-    const newPhotos = photos.filter((_, i) => i !== index);
-    onPhotosChange(newPhotos);
-  };
+  const closeWebcam = useCallback(() => setWebcamVisible(false), []);
 
   return (
     <View style={styles.container}>
-      {Platform.OS === 'web' && (
-        <WebcamCapture
-          visible={webcamVisible}
-          onCapture={handleWebcamCapture}
-          onClose={() => setWebcamVisible(false)}
-          t={t}
-        />
-      )}
       <View style={styles.photosRow}>
         {photos.map((uri, index) => (
           <View key={index} style={styles.photoContainer}>
             <Image source={{ uri }} style={styles.photo} />
-            <TouchableOpacity
-              style={styles.removeButton}
-              onPress={() => removePhoto(index)}
+            <Pressable
+              style={({ pressed }) => [styles.removeButton, pressed && styles.pressed]}
+              onPress={() => onPhotosChange(photos.filter((_, i) => i !== index))}
+              disabled={disabled}
+              accessibilityRole="button"
+              hitSlop={10}
             >
-              <Text style={styles.removeButtonText}>×</Text>
-            </TouchableOpacity>
+              <Icon name="close" size={12} color={colors.onPrimary} strokeWidth={3} />
+            </Pressable>
           </View>
         ))}
-        
+
         {canAddPhoto && (
-          <TouchableOpacity
-            style={styles.addButton}
-            onPress={showImagePickerOptions}
-            disabled={loading}
+          <Pressable
+            style={({ pressed }) => [styles.addButton, pressed && styles.pressed]}
+            onPress={() => setSourceSheetVisible(true)}
+            disabled={busy}
+            accessibilityRole="button"
           >
             <Icon name="camera" size={20} color={colors.textSecondary} />
             <Text style={styles.addButtonText}>{t('notes.addPhoto')}</Text>
-          </TouchableOpacity>
+          </Pressable>
         )}
       </View>
-      
-      {photos.length >= MAX_PHOTOS && (
-        <Text style={styles.limitText}>{t('notes.photoLimitReached')}</Text>
-      )}
+
+      {photos.length >= MAX_PHOTOS && <Text style={styles.limitText}>{t('notes.photoLimitReached')}</Text>}
+
+      <BottomSheet
+        visible={sourceSheetVisible}
+        title={t('notes.addPhoto')}
+        options={[
+          { key: 'camera', label: t('notes.camera') },
+          { key: 'library', label: t('notes.gallery') },
+        ]}
+        onSelect={handleSource}
+        onClose={() => setSourceSheetVisible(false)}
+      />
+      <WebcamCapture visible={webcamVisible} onCapture={handleWebcamCapture} onClose={closeWebcam} />
     </View>
   );
 }
@@ -286,11 +146,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  removeButtonText: {
-    color: colors.onPrimary,
-    fontSize: 16,
-    fontFamily: fonts.bold,
-    lineHeight: 18,
+  pressed: {
+    opacity: 0.7,
   },
   addButton: {
     width: 80,

@@ -2,15 +2,16 @@ import { StatusBar } from 'expo-status-bar';
 import { View, Text, ScrollView, Pressable, Image, StyleSheet } from 'react-native';
 import { colors } from '../constants/colors';
 import { fonts } from '../constants/fonts';
+import { layout } from '../constants/layout';
 import { useI18n } from '../context/I18nContext';
 import { recipes } from '../data/recipes';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { Icon } from '../components/Icon';
 
-// The calculators sit in a two-column grid; the flour mix, which builds a blend
-// rather than scaling a fixed recipe, gets a full-width card under it.
-const gridRecipes = recipes.filter((recipe) => recipe.type !== 'flour-mix');
-const featuredRecipes = recipes.filter((recipe) => recipe.type === 'flour-mix');
+// The calculators sit in a two-column grid; featured ones (the flour mix, which
+// builds a blend rather than scaling a fixed recipe) get a full-width card under it.
+const gridRecipes = recipes.filter((recipe) => !recipe.featured);
+const featuredRecipes = recipes.filter((recipe) => recipe.featured);
 
 const gridRows = [];
 for (let index = 0; index < gridRecipes.length; index += 2) {
@@ -83,8 +84,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   container: {
-    paddingHorizontal: 16,
-    paddingTop: 56,
+    paddingHorizontal: layout.gutter,
+    paddingTop: layout.screenTop,
     paddingBottom: 40,
     gap: 24,
   },

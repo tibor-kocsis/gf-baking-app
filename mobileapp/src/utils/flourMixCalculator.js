@@ -12,6 +12,8 @@
 // must give. The solver therefore picks the least-bad blend and reports every
 // cap it had to relax, rather than silently exceeding one.
 
+import { parseCount, roundGrams, roundTenth } from './calculators/scaling';
+
 export const FLOUR_KEYS = ['sorghum', 'millet', 'brownRice', 'chickpea'];
 export const STARCH_KEYS = ['potato', 'tapioca', 'corn'];
 export const STYLE_KEYS = ['sandwich', 'rustic', 'softRoll', 'enrichedBun'];
@@ -25,14 +27,20 @@ const STYLE_FLOUR_SHARE = { sandwich: 0.65, rustic: 0.7, softRoll: 0.6, enriched
 const FLOUR_SHARE_MIN = 0.6;
 const FLOUR_SHARE_MAX = 0.7;
 
+// The style's flour : starch target as the baker reads it, e.g. "65 : 35".
+export function styleRatioLabel(style) {
+  const flour = Math.round(STYLE_FLOUR_SHARE[style] * 100);
+  return `${flour} : ${100 - flour}`;
+}
+
 // Share of its own fraction one ingredient may hold. Only applied when the
 // fraction has two or more sources, unimix-derived ones included — chickpea is
 // the exception, and is reported even when it is the only flour.
 // Chickpea is held at 15% by choice rather than by the published sensory data,
 // which finds no rejection threshold below 30%: it is here for the protein, not
 // for its flavour, so it stays in the background.
-const FLOUR_CAPS = { sorghum: 0.6, brownRice: 0.6, millet: 0.35, chickpea: 0.15 };
-const STARCH_CAPS = { potato: 0.45, tapioca: 0.5, corn: 0.5 };
+export const FLOUR_CAPS = { sorghum: 0.6, brownRice: 0.6, millet: 0.35, chickpea: 0.15 };
+export const STARCH_CAPS = { potato: 0.45, tapioca: 0.5, corn: 0.5 };
 
 // Preference weights for filling what is left of a fraction. Sorghum is the
 // neutral workhorse; corn is the late-gelatinising starch worth the most room.
@@ -124,11 +132,6 @@ const EGG_WATER = 0.75;
 const MILK_WATER = 0.88;
 
 const EPS = 1e-9;
-
-// Rounds a value to the nearest multiple of `step` (e.g. roundTo(174, 5) === 175)
-function roundTo(value, step) {
-  return Math.round(value / step) * step;
-}
 
 // Distributes `amount` across `sources` in proportion to their preference
 // weights, clipping each at its remaining room and handing the clipped surplus
@@ -408,7 +411,7 @@ function pct(value, total) {
 
 export function calculateFlourMix(options) {
   const settings = options || {};
-  const base = parseInt(settings.batchSizeG, 10) || 0;
+  const base = parseCount(settings.batchSizeG) || 0;
   const unimixAvailable = !!settings.unimixAvailable;
   const psylliumAvailable = !!settings.psylliumAvailable;
   const wantsTangzhong = !!settings.tangzhong;
@@ -782,7 +785,7 @@ export function calculateFlourMix(options) {
   const additions = {};
   Object.keys(additionRates).forEach((key) => {
     const raw = additionRates[key] * baseTotal;
-    additions[key] = raw < 20 ? Math.round(raw * 10) / 10 : Math.round(raw);
+    additions[key] = roundGrams(raw);
   });
   weighed.push({ key: 'oil', group: 'liquid', amount: additions.oil, percent: Math.round(additionRates.oil * 1000) / 10 });
   Object.keys(additionRates)
@@ -842,7 +845,7 @@ export function calculateFlourMix(options) {
       milletCapped: milletShare >= FLOUR_CAPS.millet - 0.005,
       brownRiceRest: brownRiceShare > 0.4,
     },
-    dryYeast: Math.round((additions.freshYeast / DRY_YEAST_DIVISOR) * 10) / 10,
+    dryYeast: roundTenth(additions.freshYeast / DRY_YEAST_DIVISOR),
     notes: notes.slice(0, 4),
   };
 }

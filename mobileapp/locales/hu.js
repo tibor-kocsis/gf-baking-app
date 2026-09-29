@@ -19,6 +19,11 @@ export default {
     unitTbsp: 'evőkanál',
     durationMinutes: '{minutes} perc',
     recipeNotes: 'Megjegyzések',
+    back: 'Vissza',
+    decrease: 'Csökkentés',
+    increase: 'Növelés',
+    unitPcs: 'db',
+    selectLanguage: 'Válassz nyelvet',
   },
   recipes: {
     pizza: {
@@ -192,7 +197,6 @@ export default {
     },
     dryYeastHint: 'Szárított élesztővel: harmadold — {amount} g.',
     eggHint: 'Nagy tojás, kb. 50 g héj nélkül — összesen {amount} g. A lekenéshez külön tojás kell.',
-    eggUnit: 'db',
     waterTitle: 'Bevizezés',
     waterTotal: 'Teljes bevizezés',
     waterEquivalentHint: 'Vízegyenértékben: a tojás 75%-át, a tej 88%-át víznek számolja, ezért a sorok összege több, mint a teljes bevizezés.',
@@ -356,5 +360,7 @@ export default {
     confirmDelete: 'Törlöd ezt a jegyzetet?',
     permissionDenied: 'Kamera hozzáférés szükséges a fotózáshoz',
     edited: 'szerkesztve',
+    saveFailed: 'Nem sikerült menteni a jegyzetet. Próbáld újra.',
+    deleteFailed: 'Nem sikerült törölni a jegyzetet. Próbáld újra.',
   },
 };

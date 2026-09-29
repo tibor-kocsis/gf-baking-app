@@ -19,7 +19,8 @@ const STYLE_BAKE = {
   enrichedBun: 'bakeEnrichedBun',
 };
 
-// `nameOf` turns a formula key into its translated ingredient name.
+// Returns the shared cooking-plan shape (see cookingPlan.js). `nameOf` turns a
+// formula key into its translated ingredient name.
 export function buildFlourMixPlan(formula, t, nameOf) {
   if (!formula || formula.error) return null;
 
@@ -77,7 +78,7 @@ export function buildFlourMixPlan(formula, t, nameOf) {
     .filter((row) => row.amount > 0);
   const mixItems = dry.concat(item('salt', 'salt', formula.additions.salt));
   if (formula.water.eggCount > 0) {
-    mixItems.push({ id: 'egg', name: nameOf('egg'), amount: formula.water.eggCount, unit: ` ${t('flourMix.eggUnit')}` });
+    mixItems.push({ id: 'egg', name: nameOf('egg'), amount: formula.water.eggCount, unit: 'pcs' });
   }
   mixItems.push(item('vinegar', 'vinegar', formula.additions.vinegar));
   mixItems.push(item('oil', 'oil', formula.additions.oil));

@@ -19,6 +19,11 @@ export default {
     unitTbsp: 'tbsp',
     durationMinutes: '{minutes} min',
     recipeNotes: 'Notes',
+    back: 'Back',
+    decrease: 'Decrease',
+    increase: 'Increase',
+    unitPcs: 'pcs',
+    selectLanguage: 'Select language',
   },
   recipes: {
     pizza: {
@@ -192,7 +197,6 @@ export default {
     },
     dryYeastHint: 'Dry yeast instead: divide by three — {amount} g.',
     eggHint: 'Large eggs, about 50 g out of the shell — {amount} g in all. The egg wash is a separate egg.',
-    eggUnit: 'pcs',
     waterTitle: 'Water',
     waterTotal: 'Total hydration',
     waterEquivalentHint: 'In water equivalents: egg counts as 75% water and milk as 88%, so the lines add up to more than the total hydration.',
@@ -356,5 +360,7 @@ export default {
     confirmDelete: 'Delete this note?',
     permissionDenied: 'Camera access needed to take photos',
     edited: 'edited',
+    saveFailed: 'Could not save the note. Try again.',
+    deleteFailed: 'Could not delete the note. Try again.',
   },
 };

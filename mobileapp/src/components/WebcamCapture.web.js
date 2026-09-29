@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { View, Text, Pressable, Modal, StyleSheet } from 'react-native';
 import { colors } from '../constants/colors';
+import { pressedStyle } from '../constants/pressed';
 import { fonts } from '../constants/fonts';
 import { useI18n } from '../context/I18nContext';
 import { showMessage } from '../platform/dialogs';
@@ -60,7 +61,7 @@ export function WebcamCapture({ visible, onCapture, onClose }) {
         <video ref={videoRef} autoPlay playsInline style={VIDEO_STYLE} />
         <View style={styles.controls}>
           <Pressable
-            style={({ pressed }) => [styles.captureButton, pressed && styles.pressed]}
+            style={({ pressed }) => [styles.captureButton, pressed && pressedStyle]}
             onPress={handleCapture}
             accessibilityRole="button"
             accessibilityLabel={t('notes.camera')}
@@ -68,7 +69,7 @@ export function WebcamCapture({ visible, onCapture, onClose }) {
             <Icon name="camera" size={32} color={colors.black} />
           </Pressable>
           <Pressable
-            style={({ pressed }) => [styles.closeButton, pressed && styles.pressed]}
+            style={({ pressed }) => [styles.closeButton, pressed && pressedStyle]}
             onPress={onClose}
             accessibilityRole="button"
           >
@@ -104,9 +105,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.onPrimary,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  pressed: {
-    opacity: 0.7,
   },
   closeButton: {
     paddingHorizontal: 20,

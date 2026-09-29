@@ -42,3 +42,18 @@ export function scaleAmounts(base, ratio, roundingFor = {}) {
 export function sumOf(amounts) {
   return Object.keys(amounts).reduce((sum, key) => sum + amounts[key], 0);
 }
+
+// The total and per-pizza weight every pizza dough reports under its amounts.
+export function doughTotals(weighed, numPizzas) {
+  const totalWeight = Math.round(sumOf(weighed));
+  return { totalWeight, weightPerPizza: Math.round(totalWeight / numPizzas), numPizzas };
+}
+
+// A rounding table for scaleAmounts: `round` for each of `keys`, `overrides` on top.
+export function roundingTable(keys, round, overrides = {}) {
+  const table = {};
+  keys.forEach((key) => {
+    table[key] = round;
+  });
+  return { ...table, ...overrides };
+}

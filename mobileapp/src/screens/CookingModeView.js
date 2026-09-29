@@ -3,6 +3,7 @@ import { useKeepAwake } from 'expo-keep-awake';
 import { useState } from 'react';
 import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native';
 import { colors } from '../constants/colors';
+import { pressedStyle } from '../constants/pressed';
 import { fonts } from '../constants/fonts';
 import { layout } from '../constants/layout';
 import { useI18n } from '../context/I18nContext';
@@ -61,7 +62,7 @@ function CookingStep({ number, step, completed, onToggle, checkedIngredients, on
   return (
     <View style={[styles.stepCard, completed && styles.stepCardCompleted]}>
       <Pressable
-        style={({ pressed }) => [styles.stepHeader, pressed && styles.pressed]}
+        style={({ pressed }) => [styles.stepHeader, pressed && pressedStyle]}
         onPress={onToggle}
         accessibilityRole="checkbox"
         accessibilityState={{ checked: completed }}
@@ -91,7 +92,7 @@ function CookingStep({ number, step, completed, onToggle, checkedIngredients, on
             return (
               <Pressable
                 key={item.id}
-                style={({ pressed }) => [styles.ingredientRow, pressed && styles.pressed]}
+                style={({ pressed }) => [styles.ingredientRow, pressed && pressedStyle]}
                 onPress={() => onToggleIngredient(item.id)}
                 accessibilityRole="checkbox"
                 accessibilityState={{ checked }}
@@ -152,9 +153,6 @@ const styles = StyleSheet.create({
     gap: 12,
     minHeight: layout.tapTarget,
     marginBottom: 10,
-  },
-  pressed: {
-    opacity: 0.7,
   },
   stepNumber: {
     flex: 1,

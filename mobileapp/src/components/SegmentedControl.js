@@ -1,5 +1,6 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { colors } from '../constants/colors';
+import { pressedStyle } from '../constants/pressed';
 import { fonts } from '../constants/fonts';
 
 // Single choice among a few short values in one row: [{ key, label }].
@@ -11,7 +12,7 @@ export function SegmentedControl({ options, value, onChange }) {
         return (
           <Pressable
             key={option.key}
-            style={({ pressed }) => [styles.segment, active && styles.segmentActive, pressed && styles.pressed]}
+            style={({ pressed }) => [styles.segment, active && styles.segmentActive, pressed && pressedStyle]}
             onPress={() => onChange(option.key)}
             accessibilityRole="radio"
             accessibilityState={{ checked: active }}
@@ -46,9 +47,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.16,
     shadowRadius: 3,
     elevation: 1,
-  },
-  pressed: {
-    opacity: 0.7,
   },
   text: {
     fontSize: 15,

@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { View, Text, Pressable, Image, StyleSheet, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { colors } from '../constants/colors';
+import { pressedStyle } from '../constants/pressed';
 import { fonts } from '../constants/fonts';
 import { useI18n } from '../context/I18nContext';
 import { showMessage } from '../platform/dialogs';
@@ -76,7 +77,7 @@ export function PhotoPicker({ photos = [], onPhotosChange, disabled = false }) {
           <View key={index} style={styles.photoContainer}>
             <Image source={{ uri }} style={styles.photo} />
             <Pressable
-              style={({ pressed }) => [styles.removeButton, pressed && styles.pressed]}
+              style={({ pressed }) => [styles.removeButton, pressed && pressedStyle]}
               onPress={() => onPhotosChange(photos.filter((_, i) => i !== index))}
               disabled={disabled}
               accessibilityRole="button"
@@ -89,7 +90,7 @@ export function PhotoPicker({ photos = [], onPhotosChange, disabled = false }) {
 
         {canAddPhoto && (
           <Pressable
-            style={({ pressed }) => [styles.addButton, pressed && styles.pressed]}
+            style={({ pressed }) => [styles.addButton, pressed && pressedStyle]}
             onPress={() => setSourceSheetVisible(true)}
             disabled={busy}
             accessibilityRole="button"
@@ -145,9 +146,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  pressed: {
-    opacity: 0.7,
   },
   addButton: {
     width: 80,

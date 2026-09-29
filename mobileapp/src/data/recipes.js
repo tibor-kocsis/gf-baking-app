@@ -46,6 +46,30 @@ const PIZZA2_BLEND = [
   'potatoStarch',
 ];
 
+// Cooking steps in instruction order, the index implied by position. Each is
+// [ingredients, timerSeconds]; a step with nothing to weigh is `[]`.
+const steps = (...list) =>
+  list.map(([ingredients = [], timerSeconds], instructionIndex) => ({
+    instructionIndex,
+    ingredients,
+    ...(timerSeconds && { timerSeconds }),
+  }));
+
+// Pizza dough 3's blend, weighed together in the dough step and listed in its card.
+const PIZZA3_BLEND = ['buckwheatFlour', 'sorghumFlour', 'cornStarch', 'potatoStarch', 'tapiocaStarch'];
+
+// Cheese sticks: the dry mix and the wet mix are both a step and a card group.
+const CHEESE_DRY = [
+  'brownRiceFlourFine',
+  'sorghumFlour',
+  'tapiocaStarch',
+  'potatoStarch',
+  'psylliumHuskGround',
+  'bakingPowder',
+  'salt',
+];
+const CHEESE_WET = ['margarine', 'cottageCheese', 'sourCream', 'gratedCheese'];
+
 const PIZZA_SUMMARY = [
   { labelKey: 'common.totalDough', key: 'totalWeight' },
   { labelKey: 'common.perPizza', key: 'weightPerPizza' },
@@ -146,30 +170,20 @@ export const recipes = [
           }
         : {
             instructionsKey: 'instructions.pizza2NoTangzhong',
-            cookingSteps: [
-              { instructionIndex: 0, ingredients: ['psylliumHusk', 'waterGel'] },
-              { instructionIndex: 1, ingredients: ['yeast', 'honey', 'waterYeast'] },
-              {
-                instructionIndex: 2,
-                ingredients: [...PIZZA2_BLEND, 'brownRiceFlour', 'salt', 'oil'],
-                timerSeconds: 900,
-              },
-              { instructionIndex: 3, ingredients: [] },
-              { instructionIndex: 4, ingredients: [] },
-              { instructionIndex: 5, ingredients: [] },
-              { instructionIndex: 6, ingredients: [] },
-            ],
+            cookingSteps: steps(
+              [['psylliumHusk', 'waterGel']],
+              [['yeast', 'honey', 'waterYeast']],
+              [[...PIZZA2_BLEND, 'brownRiceFlour', 'salt', 'oil'], 900],
+              [], [], [], []
+            ),
           },
-    cookingSteps: [
-      { instructionIndex: 0, ingredients: ['brownRiceFlour', 'waterTangzhong'] },
-      { instructionIndex: 1, ingredients: ['psylliumHusk', 'waterGel'] },
-      { instructionIndex: 2, ingredients: ['yeast', 'honey', 'waterYeast'] },
-      { instructionIndex: 3, ingredients: [...PIZZA2_BLEND, 'salt', 'oil'], timerSeconds: 900 },
-      { instructionIndex: 4, ingredients: [] },
-      { instructionIndex: 5, ingredients: [] },
-      { instructionIndex: 6, ingredients: [] },
-      { instructionIndex: 7, ingredients: [] },
-    ],
+    cookingSteps: steps(
+      [['brownRiceFlour', 'waterTangzhong']],
+      [['psylliumHusk', 'waterGel']],
+      [['yeast', 'honey', 'waterYeast']],
+      [[...PIZZA2_BLEND, 'salt', 'oil'], 900],
+      [], [], [], []
+    ),
   },
   {
     // On the principle of Caputo Fioreglut: starch-led, heavy binder, stretched.
@@ -197,23 +211,18 @@ export const recipes = [
       {
         key: 'flour',
         titleKey: 'common.flour',
-        items: ['buckwheatFlour', 'sorghumFlour', 'cornStarch', 'potatoStarch', 'tapiocaStarch', 'psylliumHusk'],
+        items: [...PIZZA3_BLEND, 'psylliumHusk'],
       },
       { key: 'wet', titleKey: 'common.wetIngredients', items: ['waterGel', 'waterYeast', 'oil', 'honey'] },
       { key: 'dry', titleKey: 'common.dryIngredients', items: ['salt', 'freshYeast'] },
     ],
-    cookingSteps: [
-      { instructionIndex: 0, ingredients: ['psylliumHusk', 'waterGel'] },
-      { instructionIndex: 1, ingredients: ['freshYeast', 'honey', 'waterYeast'] },
-      {
-        instructionIndex: 2,
-        ingredients: ['buckwheatFlour', 'sorghumFlour', 'cornStarch', 'potatoStarch', 'tapiocaStarch', 'salt', 'oil'],
-      },
-      { instructionIndex: 3, ingredients: [], timerSeconds: 1800 },
-      { instructionIndex: 4, ingredients: [] },
-      { instructionIndex: 5, ingredients: [] },
-      { instructionIndex: 6, ingredients: [] },
-    ],
+    cookingSteps: steps(
+      [['psylliumHusk', 'waterGel']],
+      [['freshYeast', 'honey', 'waterYeast']],
+      [[...PIZZA3_BLEND, 'salt', 'oil']],
+      [[], 1800],
+      [], [], []
+    ),
   },
   {
     id: 'waffles',
@@ -231,14 +240,12 @@ export const recipes = [
       { key: 'dry', titleKey: 'common.dryIngredients', items: ['flour', 'sugar', 'bakingPowder'] },
       { key: 'wet', titleKey: 'common.wetIngredients', items: ['egg', 'milk', 'butter', 'vanilla'] },
     ],
-    cookingSteps: [
-      { instructionIndex: 0, ingredients: ['egg'] },
-      { instructionIndex: 1, ingredients: ['butter'] },
-      { instructionIndex: 2, ingredients: ['flour', 'milk', 'sugar', 'vanilla', 'bakingPowder'] },
-      { instructionIndex: 3, ingredients: [] },
-      { instructionIndex: 4, ingredients: [] },
-      { instructionIndex: 5, ingredients: [] },
-    ],
+    cookingSteps: steps(
+      [['egg']],
+      [['butter']],
+      [['flour', 'milk', 'sugar', 'vanilla', 'bakingPowder']],
+      [], [], []
+    ),
   },
   {
     id: 'pancakes',
@@ -257,15 +264,12 @@ export const recipes = [
       { key: 'dry', titleKey: 'common.dryIngredients', items: ['riceFlour', 'sugar', 'bakingPowder', 'salt'] },
       { key: 'wet', titleKey: 'common.wetIngredients', items: ['egg', 'butter', 'milk'] },
     ],
-    cookingSteps: [
-      { instructionIndex: 0, ingredients: ['egg', 'sugar', 'salt'] },
-      { instructionIndex: 1, ingredients: ['butter', 'milk'] },
-      { instructionIndex: 2, ingredients: ['riceFlour', 'bakingPowder'] },
-      { instructionIndex: 3, ingredients: [] },
-      { instructionIndex: 4, ingredients: [] },
-      { instructionIndex: 5, ingredients: [] },
-      { instructionIndex: 6, ingredients: [] },
-    ],
+    cookingSteps: steps(
+      [['egg', 'sugar', 'salt']],
+      [['butter', 'milk']],
+      [['riceFlour', 'bakingPowder']],
+      [], [], [], []
+    ),
   },
   {
     id: 'cheese-sticks',
@@ -289,42 +293,19 @@ export const recipes = [
       {
         key: 'dough',
         titleKey: 'recipes.cheeseSticks.groups.dough',
-        items: [
-          'brownRiceFlourFine',
-          'sorghumFlour',
-          'tapiocaStarch',
-          'potatoStarch',
-          'psylliumHuskGround',
-          'bakingPowder',
-          'salt',
-          'margarine',
-          'cottageCheese',
-          'sourCream',
-          'gratedCheese',
-        ],
+        items: [...CHEESE_DRY, ...CHEESE_WET],
       },
       { key: 'topping', titleKey: 'recipes.cheeseSticks.groups.topping', items: ['meltedMargarine', 'toppingCheese'] },
     ],
-    cookingSteps: [
-      {
-        instructionIndex: 0,
-        ingredients: [
-          'brownRiceFlourFine',
-          'sorghumFlour',
-          'tapiocaStarch',
-          'potatoStarch',
-          'psylliumHuskGround',
-          'bakingPowder',
-          'salt',
-        ],
-      },
-      { instructionIndex: 1, ingredients: ['margarine', 'cottageCheese', 'sourCream', 'gratedCheese'] },
-      { instructionIndex: 2, ingredients: [], timerSeconds: 2700 },
-      { instructionIndex: 3, ingredients: ['meltedMargarine', 'toppingCheese'] },
-      { instructionIndex: 4, ingredients: [], timerSeconds: 900 },
-      { instructionIndex: 5, ingredients: [], timerSeconds: 1020 },
-      { instructionIndex: 6, ingredients: [], timerSeconds: 600 },
-    ],
+    cookingSteps: steps(
+      [CHEESE_DRY],
+      [CHEESE_WET],
+      [[], 2700],
+      [['meltedMargarine', 'toppingCheese']],
+      [[], 900],
+      [[], 1020],
+      [[], 600]
+    ),
   },
   {
     // A calculator rather than a recipe: it solves a flour blend from whatever

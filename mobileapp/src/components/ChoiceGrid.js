@@ -1,5 +1,6 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { colors } from '../constants/colors';
+import { pressedStyle } from '../constants/pressed';
 import { fonts } from '../constants/fonts';
 import { Icon } from './Icon';
 
@@ -12,7 +13,7 @@ export function ChoiceGrid({ options, value, onChange }) {
         return (
           <Pressable
             key={option.key}
-            style={({ pressed }) => [styles.option, active && styles.optionActive, pressed && styles.pressed]}
+            style={({ pressed }) => [styles.option, active && styles.optionActive, pressed && pressedStyle]}
             onPress={() => onChange(option.key)}
             accessibilityRole="radio"
             accessibilityState={{ checked: active }}
@@ -49,9 +50,6 @@ const styles = StyleSheet.create({
   optionActive: {
     backgroundColor: colors.inverse,
     borderColor: colors.inverse,
-  },
-  pressed: {
-    opacity: 0.7,
   },
   text: {
     fontSize: 15,

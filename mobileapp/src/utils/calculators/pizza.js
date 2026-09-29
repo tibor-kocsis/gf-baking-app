@@ -1,4 +1,4 @@
-import { parseCount } from './scaling';
+import { parseCount, doughTotals } from './scaling';
 
 // The original pizza dough: sorghum flour and a universal GF flour at 60:40,
 // 80% water, the flour for one pizza rounded to 25 g steps.
@@ -24,27 +24,14 @@ export function calculatePizzaIngredients(count) {
   const totalFlour = flourRounded * numPizzas;
   const perFlour = (share) => Math.round(flourRounded * share * numPizzas);
 
-  const sorghumFlour = Math.round(totalFlour * PIZZA.sorghumShare);
-  const glutenFreeFlour = Math.round(totalFlour * PIZZA.glutenFreeShare);
-  const water = perFlour(PIZZA.water);
-  const salt = perFlour(PIZZA.salt);
-  const yeast = perFlour(PIZZA.yeast);
-  const oil = perFlour(PIZZA.oil);
-  const honey = perFlour(PIZZA.honey);
-
-  const totalWeight = sorghumFlour + glutenFreeFlour + water + salt + yeast + oil + honey;
-  const weightPerPizza = Math.round(totalWeight / numPizzas);
-
-  return {
-    sorghumFlour,
-    glutenFreeFlour,
-    water,
-    salt,
-    yeast,
-    oil,
-    honey,
-    totalWeight,
-    weightPerPizza,
-    numPizzas,
+  const weighed = {
+    sorghumFlour: Math.round(totalFlour * PIZZA.sorghumShare),
+    glutenFreeFlour: Math.round(totalFlour * PIZZA.glutenFreeShare),
+    water: perFlour(PIZZA.water),
+    salt: perFlour(PIZZA.salt),
+    yeast: perFlour(PIZZA.yeast),
+    oil: perFlour(PIZZA.oil),
+    honey: perFlour(PIZZA.honey),
   };
+  return { ...weighed, ...doughTotals(weighed, numPizzas) };
 }

@@ -1,4 +1,4 @@
-import { parseCount, scaleAmounts, roundWhole, roundTenth } from './scaling';
+import { parseCount, scaleAmounts, roundingTable, roundWhole, roundTenth } from './scaling';
 
 // American pancakes calculation logic
 // Base recipe (1x): 250g rice flour, 3g baking powder, 1g salt, 50g sugar,
@@ -17,15 +17,11 @@ const PANCAKE_BASE = {
   butter: 80,
   milk: 100, // ml
 };
-const ROUNDING = {
-  riceFlour: roundWhole,
+const ROUNDING = roundingTable(Object.keys(PANCAKE_BASE), roundWhole, {
   bakingPowder: roundTenth,
   salt: roundTenth,
-  sugar: roundWhole,
   egg: roundTenth,
-  butter: roundWhole,
-  milk: roundWhole,
-};
+});
 
 export function calculatePancakeIngredients(pancakeCount) {
   const count = parseCount(pancakeCount);

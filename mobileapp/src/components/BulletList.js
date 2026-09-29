@@ -6,9 +6,9 @@ import { Card } from './Card';
 // Recipe notes and solver notes: a card of short paragraphs, each with a dot.
 export function BulletList({ items }) {
   return (
-    <Card>
+    <Card style={styles.list}>
       {items.map((item, index) => (
-        <View key={index} style={[styles.row, index === items.length - 1 && styles.rowLast]}>
+        <View key={index} style={styles.row}>
           <View style={styles.dot} />
           <Text style={styles.text}>{item}</Text>
         </View>
@@ -18,14 +18,13 @@ export function BulletList({ items }) {
 }
 
 const styles = StyleSheet.create({
+  list: {
+    gap: 14,
+  },
   row: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: 12,
-    marginBottom: 14,
-  },
-  rowLast: {
-    marginBottom: 0,
   },
   dot: {
     width: 8,

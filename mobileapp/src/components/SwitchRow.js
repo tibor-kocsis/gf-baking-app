@@ -1,5 +1,6 @@
 import { View, Text, Switch, Pressable, StyleSheet } from 'react-native';
 import { colors } from '../constants/colors';
+import { pressedStyle } from '../constants/pressed';
 import { fonts } from '../constants/fonts';
 
 // A labelled on/off switch; the whole row is the tap target. `divider` draws a
@@ -7,7 +8,7 @@ import { fonts } from '../constants/fonts';
 export function SwitchRow({ label, hint, value, onValueChange, divider }) {
   return (
     <Pressable
-      style={({ pressed }) => [styles.row, divider && styles.rowDivider, pressed && styles.pressed]}
+      style={({ pressed }) => [styles.row, divider && styles.rowDivider, pressed && pressedStyle]}
       onPress={() => onValueChange(!value)}
       accessibilityRole="switch"
       accessibilityState={{ checked: value }}
@@ -42,9 +43,6 @@ const styles = StyleSheet.create({
     marginBottom: 6,
     borderBottomWidth: 1,
     borderBottomColor: colors.divider,
-  },
-  pressed: {
-    opacity: 0.7,
   },
   labels: {
     flex: 1,

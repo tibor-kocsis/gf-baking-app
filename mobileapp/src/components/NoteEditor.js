@@ -34,19 +34,28 @@ export function NoteEditor({ visible, note, recipeId, onClose, onSaved }) {
     }
   }, [visible, note]);
 
-  const handleSave = async () => {
-    if (!canSave) return;
+  // Runs a save or delete with the editor locked; on success the list reloads and
+  // the sheet closes, on failure the baker sees `failedKey` and keeps their text.
+  const runLocked = async (action, failedKey) => {
     setBusy(true);
     try {
-      await saveNoteWithPhotos({ note, recipeId, text: text.trim(), photos });
+      await action();
       onSaved();
       onClose();
     } catch (error) {
-      console.error('Error saving note:', error);
-      showMessage(t('notes.saveFailed'));
+      console.error(`Error (${failedKey}):`, error);
+      showMessage(t(failedKey));
     } finally {
       setBusy(false);
     }
+  };
+
+  const handleSave = () => {
+    if (!canSave) return;
+    return runLocked(
+      () => saveNoteWithPhotos({ note, recipeId, text: text.trim(), photos }),
+      'notes.saveFailed'
+    );
   };
 
   const handleDelete = async () => {
@@ -57,17 +66,7 @@ export function NoteEditor({ visible, note, recipeId, onClose, onSaved }) {
       cancelLabel: t('notes.cancel'),
     });
     if (!confirmed) return;
-    setBusy(true);
-    try {
-      await deleteNote(note.id, recipeId);
-      onSaved();
-      onClose();
-    } catch (error) {
-      console.error('Error deleting note:', error);
-      showMessage(t('notes.deleteFailed'));
-    } finally {
-      setBusy(false);
-    }
+    return runLocked(() => deleteNote(note.id, recipeId), 'notes.deleteFailed');
   };
 
   return (

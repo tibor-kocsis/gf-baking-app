@@ -1,4 +1,5 @@
-import { parseCount, roundGrams, sumOf } from './scaling';
+import { parseCount, roundGrams, sumOf, doughTotals } from './scaling';
+import { SORGHUM_UNIMIX, TANGZHONG_WATER_RATIO, MIN_FREE_WATER_SHARE, psylliumGelWater } from './dough';
 
 // Pizza dough 2 calculation logic
 // The first pizza without the Miklos universal mix. That mix is ~80% starch plus
@@ -23,13 +24,6 @@ const PIZZA2 = {
   salt: 0.022,
   yeast: 0.015,
 };
-const UNIMIX = { flour: 0.48, tapioca: 0.47, psyllium: 0.05 };
-const TANGZHONG_RATIO = 5;
-const GEL_RATIO = 10;
-// The flour mix rule: below 10% of the base left for the yeast water, the gel
-// drops to 1:8 so there is enough free water to slurry the yeast.
-const GEL_RATIO_REDUCED = 8;
-const MIN_FREE_WATER = 0.1;
 const DOUGH_PER_PIZZA_G = 290; // the baker's 280-300 g ball
 
 // Without the unimix its parts are weighed out one by one: its sorghum share
@@ -38,15 +32,15 @@ const DOUGH_PER_PIZZA_G = 290; // the baker's 280-300 g ball
 // the flour mix's water rules apply only as the difference from it: brown rice
 // over 40% of the flour +3, millet over 25% -2, and the potato-over-40% -3 is
 // already in the 90%, so all potato changes nothing and all tapioca gives it back.
-const MAIN_FLOUR = PIZZA2.unimix * UNIMIX.flour;
-const UNIMIX_STARCH = PIZZA2.unimix * UNIMIX.tapioca;
+const MAIN_FLOUR = PIZZA2.unimix * SORGHUM_UNIMIX.sorghum;
+const UNIMIX_STARCH = PIZZA2.unimix * SORGHUM_UNIMIX.tapioca;
 const FLOUR_KEYS = { sorghum: 'sorghumFlour', brownRice: 'brownRiceFlourDough', millet: 'milletFlour' };
 const FLOUR_WATER = { sorghum: 0, brownRice: 0.03, millet: -0.02 };
 const STARCH_WATER = { both: 0, potato: 0, tapioca: 0.03 };
 
 function blendFor(unimix, flour, starch) {
   if (unimix) {
-    return { sorghumUnimix: PIZZA2.unimix, potatoStarch: PIZZA2.potatoStarch, psylliumInBlend: PIZZA2.unimix * UNIMIX.psyllium };
+    return { sorghumUnimix: PIZZA2.unimix, potatoStarch: PIZZA2.potatoStarch, psylliumInBlend: PIZZA2.unimix * SORGHUM_UNIMIX.psyllium };
   }
   const starchTotal = UNIMIX_STARCH + PIZZA2.potatoStarch;
   const starches = {
@@ -87,13 +81,16 @@ export function calculatePizza2Ingredients(
 
   const water = Math.round(hydration * base);
   const waterTangzhong = tangzhong
-    ? Math.round(PIZZA2.brownRiceFlour * TANGZHONG_RATIO * base)
+    ? Math.round(PIZZA2.brownRiceFlour * TANGZHONG_WATER_RATIO * base)
     : 0;
-  let waterGel = Math.round(psylliumAdded * GEL_RATIO * base);
-  if (water - waterTangzhong - waterGel < MIN_FREE_WATER * base) {
-    waterGel = Math.round(psylliumAdded * GEL_RATIO_REDUCED * base);
-  }
-  const waterYeast = water - waterTangzhong - waterGel;
+  // The flour mix rule: below 10% of the base left for the yeast water, the gel
+  // drops to 1:8 so there is enough free water to slurry the yeast.
+  const { gel: waterGel, remainder: waterYeast } = psylliumGelWater(
+    psylliumAdded * base,
+    water,
+    waterTangzhong,
+    MIN_FREE_WATER_SHARE * base
+  );
 
   // Raw brown rice as the chosen flour takes in the tangzhong's share too.
   const rawBrownRice = !tangzhong && blend.brownRiceFlourDough;
@@ -118,12 +115,5 @@ export function calculatePizza2Ingredients(
   if (rawBrownRice) {
     weighed.brownRiceFlourDough = grams(blend.brownRiceFlourDough + PIZZA2.brownRiceFlour);
   }
-  const totalWeight = Math.round(sumOf(weighed));
-  return {
-    ...weighed,
-    numPizzas,
-    tangzhong,
-    totalWeight,
-    weightPerPizza: Math.round(totalWeight / numPizzas),
-  };
+  return { ...weighed, tangzhong, ...doughTotals(weighed, numPizzas) };
 }

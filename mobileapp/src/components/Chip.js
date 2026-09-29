@@ -1,5 +1,6 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { colors } from '../constants/colors';
+import { pressedStyle } from '../constants/pressed';
 import { fonts } from '../constants/fonts';
 import { Icon } from './Icon';
 
@@ -12,7 +13,7 @@ export function ChipGroup({ options, selected, onToggle }) {
         return (
           <Pressable
             key={option.key}
-            style={({ pressed }) => [styles.chip, active && styles.chipActive, pressed && styles.pressed]}
+            style={({ pressed }) => [styles.chip, active && styles.chipActive, pressed && pressedStyle]}
             onPress={() => onToggle(option.key)}
             accessibilityRole="checkbox"
             accessibilityState={{ checked: active }}
@@ -47,9 +48,6 @@ const styles = StyleSheet.create({
     paddingLeft: 12,
     backgroundColor: colors.primarySoft,
     borderColor: colors.primary,
-  },
-  pressed: {
-    opacity: 0.7,
   },
   text: {
     fontSize: 15,

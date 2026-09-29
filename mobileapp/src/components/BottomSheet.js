@@ -1,5 +1,6 @@
 import { View, Text, Pressable, Modal, StyleSheet } from 'react-native';
 import { colors } from '../constants/colors';
+import { pressedStyle } from '../constants/pressed';
 import { fonts } from '../constants/fonts';
 import { Icon } from './Icon';
 
@@ -20,7 +21,7 @@ export function BottomSheet({ visible, title, options, onSelect, onClose }) {
               style={({ pressed }) => [
                 styles.option,
                 option.active && styles.optionActive,
-                pressed && styles.pressed,
+                pressed && pressedStyle,
               ]}
               onPress={() => onSelect(option.key)}
               accessibilityRole="button"
@@ -78,9 +79,6 @@ const styles = StyleSheet.create({
   },
   optionActive: {
     backgroundColor: colors.primary,
-  },
-  pressed: {
-    opacity: 0.7,
   },
   optionText: {
     fontSize: 16,

@@ -1,4 +1,4 @@
-import { parseCount, scaleAmounts, roundSpoons } from './scaling';
+import { parseCount, scaleAmounts, roundingTable, roundSpoons } from './scaling';
 
 // Cheese sticks calculation logic
 // Recipe version 2.1 (2026-09-27), see recipes/sajtos-rud.md for the changelog.
@@ -24,10 +24,7 @@ const CHEESE_STICK_BASE = {
 export const CHEESE_STICK_SPOON_UNITS = {
   meltedMargarine: 'tbsp',
 };
-const ROUNDING = {};
-Object.keys(CHEESE_STICK_SPOON_UNITS).forEach((key) => {
-  ROUNDING[key] = roundSpoons;
-});
+const ROUNDING = roundingTable(Object.keys(CHEESE_STICK_SPOON_UNITS), roundSpoons);
 
 export function calculateCheeseStickIngredients(trays) {
   const trayCount = parseCount(trays);

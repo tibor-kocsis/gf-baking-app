@@ -1,4 +1,4 @@
-import { parseCount, scaleAmounts, sumOf } from './scaling';
+import { parseCount, scaleAmounts, sumOf, doughTotals } from './scaling';
 
 // Pizza dough 3 calculation logic
 // Built on the principle of Caputo Fioreglut rather than a copy of it. Fioreglut
@@ -49,11 +49,5 @@ export function calculatePizza3Ingredients(count, { corn = true } = {}) {
     waterGel,
     waterYeast: water - waterGel,
   };
-  const totalWeight = Math.round(sumOf(weighed));
-  return {
-    ...weighed,
-    totalWeight,
-    weightPerPizza: Math.round(totalWeight / numPizzas),
-    numPizzas,
-  };
+  return { ...weighed, ...doughTotals(weighed, numPizzas) };
 }

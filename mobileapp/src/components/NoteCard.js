@@ -1,5 +1,6 @@
 import { View, Text, Pressable, Image, StyleSheet } from 'react-native';
 import { colors } from '../constants/colors';
+import { pressedStyle } from '../constants/pressed';
 import { fonts } from '../constants/fonts';
 import { useI18n } from '../context/I18nContext';
 
@@ -18,7 +19,7 @@ export function NoteCard({ note, onPress, onPhotoPress }) {
 
   return (
     <Pressable
-      style={({ pressed }) => [styles.container, pressed && styles.pressed]}
+      style={({ pressed }) => [styles.container, pressed && pressedStyle]}
       onPress={onPress}
       accessibilityRole="button"
     >
@@ -37,7 +38,7 @@ export function NoteCard({ note, onPress, onPhotoPress }) {
             <Pressable
               key={index}
               onPress={() => onPhotoPress(uri)}
-              style={({ pressed }) => pressed && styles.pressed}
+              style={({ pressed }) => pressed && pressedStyle}
               accessibilityRole="imagebutton"
             >
               <Image source={{ uri }} style={styles.thumbnail} />
@@ -57,9 +58,6 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     borderWidth: 1,
     borderColor: colors.border,
-  },
-  pressed: {
-    opacity: 0.7,
   },
   date: {
     fontSize: 12,

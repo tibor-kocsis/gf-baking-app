@@ -1,4 +1,4 @@
-import { parseCount, scaleAmounts, roundWhole, roundTenth } from './scaling';
+import { parseCount, scaleAmounts, roundingTable, roundWhole, roundTenth } from './scaling';
 
 // One batch; the stepper multiplies it.
 const WAFFLE_BATCH = {
@@ -10,15 +10,7 @@ const WAFFLE_BATCH = {
   sugar: 15,
   bakingPowder: 2.5,
 };
-const ROUNDING = {
-  egg: roundWhole,
-  milk: roundWhole,
-  flour: roundWhole,
-  butter: roundWhole,
-  vanilla: roundWhole,
-  sugar: roundWhole,
-  bakingPowder: roundTenth,
-};
+const ROUNDING = roundingTable(Object.keys(WAFFLE_BATCH), roundWhole, { bakingPowder: roundTenth });
 
 export function calculateWaffleIngredients(multiplier) {
   const batches = parseCount(multiplier);

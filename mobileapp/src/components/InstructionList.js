@@ -7,9 +7,9 @@ import { DurationBadge } from './DurationBadge';
 // The numbered method: [{ title, text, timerSeconds }].
 export function InstructionList({ steps }) {
   return (
-    <Card>
+    <Card style={styles.list}>
       {steps.map((step, index) => (
-        <View key={index} style={[styles.row, index === steps.length - 1 && styles.rowLast]}>
+        <View key={index} style={styles.row}>
           <View style={styles.number}>
             <Text style={styles.numberText}>{index + 1}</Text>
           </View>
@@ -25,14 +25,13 @@ export function InstructionList({ steps }) {
 }
 
 const styles = StyleSheet.create({
+  list: {
+    gap: 16,
+  },
   row: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: 14,
-    marginBottom: 16,
-  },
-  rowLast: {
-    marginBottom: 0,
   },
   number: {
     width: 28,

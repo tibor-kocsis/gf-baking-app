@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { colors } from '../constants/colors';
+import { pressedStyle } from '../constants/pressed';
 import { fonts } from '../constants/fonts';
 import { layout } from '../constants/layout';
 import { useI18n } from '../context/I18nContext';
@@ -39,7 +40,7 @@ export function RecipeNotesSection({ recipeId }) {
   return (
     <View style={styles.section}>
       <Pressable
-        style={({ pressed }) => [styles.header, pressed && styles.pressed]}
+        style={({ pressed }) => [styles.header, pressed && pressedStyle]}
         onPress={() => setExpanded(!expanded)}
         accessibilityRole="button"
         accessibilityState={{ expanded }}
@@ -92,9 +93,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     minHeight: layout.tapTarget,
-  },
-  pressed: {
-    opacity: 0.7,
   },
   body: {
     marginTop: 8,

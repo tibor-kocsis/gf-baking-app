@@ -13,15 +13,20 @@
 // cap it had to relax, rather than silently exceeding one.
 
 import { parseCount, roundGrams, roundTenth } from './calculators/scaling';
+import {
+  SORGHUM_UNIMIX as UNIMIX,
+  TANGZHONG_WATER_RATIO,
+  MIN_FREE_WATER_SHARE,
+  psylliumGelWater,
+} from './calculators/dough';
 
 export const FLOUR_KEYS = ['sorghum', 'millet', 'brownRice', 'chickpea'];
 export const STARCH_KEYS = ['potato', 'tapioca', 'corn'];
 export const STYLE_KEYS = ['sandwich', 'rustic', 'softRoll', 'enrichedBun'];
 
-// Magura sorghum "unimix", back-calculated from the label. This is NOT a flour:
-// every gram is decomposed into the flour, starch and psyllium totals, and only
-// the flour + starch part (95%) counts toward the batch base.
-const UNIMIX = { sorghum: 0.48, tapioca: 0.47, psyllium: 0.05 };
+// The sorghum unimix (calculators/dough.js) is NOT a flour: every gram is
+// decomposed into the flour, starch and psyllium totals, and only the flour +
+// starch part (95%) counts toward the batch base.
 
 const STYLE_FLOUR_SHARE = { sandwich: 0.65, rustic: 0.7, softRoll: 0.6, enrichedBun: 0.6 };
 const FLOUR_SHARE_MIN = 0.6;
@@ -66,7 +71,6 @@ const PSYLLIUM_MIN = 0.0375;
 const PSYLLIUM_MAX = 0.0525;
 
 const BASE_HYDRATION = 0.85;
-const TANGZHONG_WATER_RATIO = 5;
 
 // Flour first, which is what the published practice actually does: every source
 // that describes a tangzhong describes flour and water, and none discusses a pure
@@ -99,9 +103,6 @@ const TANGZHONG_SOURCES = [
 export const TANGZHONG_PERCENT_MIN = 3;
 export const TANGZHONG_PERCENT_MAX = 7;
 export const TANGZHONG_PERCENT_DEFAULT = 5;
-const PSYLLIUM_GEL_RATIO = 10;
-const PSYLLIUM_GEL_RATIO_REDUCED = 8;
-const MIN_REMAINDER_SHARE = 0.1;
 const MAX_PSYLLIUM_HYDRATION_BUMP = 0.075;
 
 // How far ahead of the other starches corn has to sit to count as the largest
@@ -542,20 +543,17 @@ export function calculateFlourMix(options) {
   }
   const tangzhongActive = tangzhongFlourTotal > 0;
 
-  const flourShareOf = (key) => (flourTotal > EPS ? amountOf(flourParts, key) / flourTotal : 0);
-  const starchShareOf = (key) => (starchTotal > EPS ? amountOf(starchParts, key) / starchTotal : 0);
+  // Share of a fraction held by these parts together (a mix part and its plain twin).
+  const shareOf = (parts, total, ...keys) =>
+    total > EPS ? keys.reduce((sum, key) => sum + amountOf(parts, key), 0) / total : 0;
+  const flourShareOf = (key) => shareOf(flourParts, flourTotal, key);
+  const starchShareOf = (key) => shareOf(starchParts, starchTotal, key);
   const brownRiceShare = flourShareOf('brownRice');
   const milletShare = flourShareOf('millet');
   const chickpeaShare = flourShareOf('chickpea');
   const potatoShare = starchShareOf('potato');
-  const sorghumShare =
-    flourTotal > EPS
-      ? (amountOf(flourParts, 'unimixSorghum') + amountOf(flourParts, 'sorghum')) / flourTotal
-      : 0;
-  const tapiocaShare =
-    starchTotal > EPS
-      ? (amountOf(starchParts, 'unimixTapioca') + amountOf(starchParts, 'tapioca')) / starchTotal
-      : 0;
+  const sorghumShare = shareOf(flourParts, flourTotal, 'unimixSorghum', 'sorghum');
+  const tapiocaShare = shareOf(starchParts, starchTotal, 'unimixTapioca', 'tapioca');
 
   // Hydration: 85% and the documented adjustments. The psyllium term is applied
   // proportionally rather than in steps so the stepper does not jump.
@@ -597,14 +595,11 @@ export function calculateFlourMix(options) {
   // Only the husk weighed out separately can be gelled: the unimix's psyllium is
   // already dispersed through its flour and starch, so it hydrates from the
   // mixing water instead and must not be counted into the gel.
-  let gelRatio = PSYLLIUM_GEL_RATIO;
-  let psylliumGel = Math.round(psylliumAdded * gelRatio);
-  let remainder = waterTotal - fixedWater - psylliumGel;
-  const minRemainder = baseTotal * MIN_REMAINDER_SHARE;
-  if (remainder < minRemainder) {
-    gelRatio = PSYLLIUM_GEL_RATIO_REDUCED;
-    psylliumGel = Math.round(psylliumAdded * gelRatio);
-    remainder = waterTotal - fixedWater - psylliumGel;
+  const minRemainder = baseTotal * MIN_FREE_WATER_SHARE;
+  const gelWater = psylliumGelWater(psylliumAdded, waterTotal, fixedWater, minRemainder);
+  const gelRatio = gelWater.ratio;
+  let { gel: psylliumGel, remainder } = gelWater;
+  if (gelWater.reduced) {
     notes.push({ key: 'gelRatioReduced' });
     if (remainder < minRemainder) {
       psylliumGel = Math.max(0, Math.round(waterTotal - fixedWater - minRemainder));
@@ -715,40 +710,25 @@ export function calculateFlourMix(options) {
     });
   }
 
-  const flourBreakdown = [];
-  if (amountOf(flourParts, 'unimixSorghum') > 0 || amountOf(flourParts, 'sorghum') > 0) {
-    flourBreakdown.push({
-      key: 'sorghum',
-      amount: amountOf(flourParts, 'unimixSorghum') + amountOf(flourParts, 'sorghum'),
-      fromMix: amountOf(flourParts, 'unimixSorghum'),
-      percent: pct(amountOf(flourParts, 'unimixSorghum') + amountOf(flourParts, 'sorghum'), flourTotal),
+  // One line per ingredient, biggest first. The lead ingredient (sorghum, tapioca)
+  // adds up its plain and unimix parts and says how much came from the mix.
+  const breakdownOf = (parts, total, lead, leadMixKey, others) => {
+    const lines = [];
+    const fromMix = amountOf(parts, leadMixKey);
+    const leadAmount = fromMix + amountOf(parts, lead);
+    if (leadAmount > 0) lines.push({ key: lead, amount: leadAmount, fromMix, percent: pct(leadAmount, total) });
+    others.forEach((key) => {
+      const amount = amountOf(parts, key);
+      if (amount > 0) lines.push({ key, amount, fromMix: 0, percent: pct(amount, total) });
     });
-  }
-  ['brownRice', 'millet', 'chickpea'].forEach((key) => {
-    const amount = amountOf(flourParts, key);
-    if (amount > 0) {
-      flourBreakdown.push({ key, amount, fromMix: 0, percent: pct(amount, flourTotal) });
-    }
-  });
-
-  const starchBreakdown = [];
-  if (amountOf(starchParts, 'unimixTapioca') > 0 || amountOf(starchParts, 'tapioca') > 0) {
-    starchBreakdown.push({
-      key: 'tapioca',
-      amount: amountOf(starchParts, 'unimixTapioca') + amountOf(starchParts, 'tapioca'),
-      fromMix: amountOf(starchParts, 'unimixTapioca'),
-      percent: pct(amountOf(starchParts, 'unimixTapioca') + amountOf(starchParts, 'tapioca'), starchTotal),
-    });
-  }
-  ['corn', 'potato'].forEach((key) => {
-    const amount = amountOf(starchParts, key);
-    if (amount > 0) {
-      starchBreakdown.push({ key, amount, fromMix: 0, percent: pct(amount, starchTotal) });
-    }
-  });
-
-  flourBreakdown.sort((a, b) => b.amount - a.amount);
-  starchBreakdown.sort((a, b) => b.amount - a.amount);
+    return lines.sort((a, b) => b.amount - a.amount);
+  };
+  const flourBreakdown = breakdownOf(flourParts, flourTotal, 'sorghum', 'unimixSorghum', [
+    'brownRice',
+    'millet',
+    'chickpea',
+  ]);
+  const starchBreakdown = breakdownOf(starchParts, starchTotal, 'tapioca', 'unimixTapioca', ['corn', 'potato']);
 
   const weighed = [];
   if (unimixWeight > 0) {

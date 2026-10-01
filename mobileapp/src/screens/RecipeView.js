@@ -20,6 +20,7 @@ import { Stepper } from '../components/Stepper';
 import { Card } from '../components/Card';
 import { SwitchRow } from '../components/SwitchRow';
 import { SegmentedControl } from '../components/SegmentedControl';
+import { ChoiceGrid } from '../components/ChoiceGrid';
 import { Hint } from '../components/Typography';
 import { SummaryCard } from '../components/SummaryCard';
 import { Section } from '../components/Section';
@@ -82,17 +83,18 @@ export function RecipeView({ recipe, onBack, onStartCooking }) {
   );
 }
 
-// One choice of a recipe option, e.g. pizza dough 2's flour without the unimix.
+// One choice of a recipe option, e.g. pizza dough 2's flours.
 function OptionChoice({ row, value, onChange }) {
   const { t } = useI18n();
+  const options = row.choices.map((item) => ({ key: item.key, label: t(item.labelKey) }));
   return (
     <View style={styles.choice}>
       <Text style={styles.choiceLabel}>{t(row.labelKey)}</Text>
-      <SegmentedControl
-        options={row.choices.map((item) => ({ key: item.key, label: t(item.labelKey) }))}
-        value={value}
-        onChange={(key) => onChange(row.key, key)}
-      />
+      {row.multiple ? (
+        <ChoiceGrid options={options} value={value} multiple onChange={(next) => onChange(row.key, next)} />
+      ) : (
+        <SegmentedControl options={options} value={value} onChange={(key) => onChange(row.key, key)} />
+      )}
       {!!row.hintKey && <Hint>{t(row.hintKey)}</Hint>}
     </View>
   );
@@ -108,7 +110,7 @@ function RecipeResults({ recipe, ingredients, pulse }) {
       {!!recipe.summary && (
         <SummaryCard
           animatedStyle={pulse}
-          items={recipe.summary.map((item) => ({ label: t(item.labelKey), value: `${ingredients[item.key]}g` }))}
+          items={recipe.summary.map((item) => ({ label: t(item.labelKey), value: `${ingredients[item.key]}${item.unit || 'g'}` }))}
         />
       )}
 

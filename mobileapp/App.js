@@ -1,4 +1,5 @@
 import { useFonts } from 'expo-font';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { I18nProvider } from './src/context/I18nContext';
 import { AppNavigator } from './src/navigation/AppNavigator';
 import { fontAssets } from './src/constants/fonts';
@@ -10,8 +11,10 @@ export default function App() {
   if (!fontsLoaded && !fontError) return null;
 
   return (
-    <I18nProvider>
-      <AppNavigator />
-    </I18nProvider>
+    <SafeAreaProvider>
+      <I18nProvider>
+        <AppNavigator />
+      </I18nProvider>
+    </SafeAreaProvider>
   );
 }

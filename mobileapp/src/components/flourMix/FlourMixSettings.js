@@ -18,6 +18,10 @@ import { ChipGroup } from '../Chip';
 import { SwitchRow } from '../SwitchRow';
 import { SegmentedControl } from '../SegmentedControl';
 
+// The sorghum unimix sits among the flour chips but is its own setting: the solver
+// takes it apart instead of weighing it as a flour.
+const UNIMIX_KEY = 'unimix';
+
 const TANGZHONG_PERCENT_CHOICES = Array.from(
   { length: TANGZHONG_PERCENT_MAX - TANGZHONG_PERCENT_MIN + 1 },
   (_, index) => TANGZHONG_PERCENT_MIN + index
@@ -44,20 +48,18 @@ export function FlourMixSettings({ settings, onChange }) {
 
       <Card style={styles.card}>
         <CategoryTitle>{t('flourMix.cupboardTitle')}</CategoryTitle>
-        <SwitchRow
-          label={t('flourMix.unimixLabel')}
-          hint={t('flourMix.unimixHint')}
-          value={settings.unimix}
-          onValueChange={(value) => onChange('unimix', value)}
-        />
-
-        <View style={styles.group}>
+        <View style={styles.firstGroup}>
           <Text style={styles.groupLabel}>{t('flourMix.floursLabel')}</Text>
           <ChipGroup
-            options={shortNames(FLOUR_KEYS)}
-            selected={settings.flours}
-            onToggle={(key) => onChange('flours', toggleInList(settings.flours, key))}
+            options={shortNames([UNIMIX_KEY, ...FLOUR_KEYS])}
+            selected={settings.unimix ? [UNIMIX_KEY, ...settings.flours] : settings.flours}
+            onToggle={(key) =>
+              key === UNIMIX_KEY
+                ? onChange('unimix', !settings.unimix)
+                : onChange('flours', toggleInList(settings.flours, key))
+            }
           />
+          {settings.unimix && <Hint>{t('flourMix.unimixHint')}</Hint>}
         </View>
 
         <View style={styles.group}>
@@ -104,6 +106,10 @@ export function FlourMixSettings({ settings, onChange }) {
 const styles = StyleSheet.create({
   card: {
     marginBottom: 20,
+  },
+  firstGroup: {
+    marginTop: 4,
+    gap: 10,
   },
   group: {
     marginTop: 18,

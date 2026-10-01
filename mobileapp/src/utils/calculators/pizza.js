@@ -33,5 +33,5 @@ export function calculatePizzaIngredients(count) {
     oil: perFlour(PIZZA.oil),
     honey: perFlour(PIZZA.honey),
   };
-  return { ...weighed, ...doughTotals(weighed, numPizzas) };
+  return { ...weighed, hydrationPercent: Math.round(PIZZA.water * 100), ...doughTotals(weighed, numPizzas) };
 }

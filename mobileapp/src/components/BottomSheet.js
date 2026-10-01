@@ -2,17 +2,19 @@ import { View, Text, Pressable, Modal, StyleSheet } from 'react-native';
 import { colors } from '../constants/colors';
 import { pressedStyle } from '../constants/pressed';
 import { fonts } from '../constants/fonts';
+import { useBottomInset } from '../hooks/useBottomInset';
 import { Icon } from './Icon';
 
 // A pick-one sheet from the bottom of the screen, the same on every platform
 // (the web has no native action sheet). options: [{ key, label, active }].
 // Tapping outside closes it.
 export function BottomSheet({ visible, title, options, onSelect, onClose }) {
+  const paddingBottom = useBottomInset(40);
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <Pressable style={styles.overlay} onPress={onClose}>
         {/* Swallows taps so only the dimmed area closes the sheet. */}
-        <Pressable style={styles.sheet} onPress={null}>
+        <Pressable style={[styles.sheet, { paddingBottom }]} onPress={null}>
           <View style={styles.handle} />
           {!!title && <Text style={styles.title}>{title}</Text>}
           {options.map((option) => (
@@ -49,7 +51,6 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingHorizontal: 20,
-    paddingBottom: 40,
     paddingTop: 12,
   },
   handle: {

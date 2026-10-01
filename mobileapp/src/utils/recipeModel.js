@@ -19,10 +19,13 @@ export function optionCardsFor(recipe, options) {
   (recipe.options || []).forEach((option) => {
     if (option.visibleWhen && !option.visibleWhen(options)) return;
     const choice = option.type === 'choice';
-    const chosen = choice && option.choices.find((item) => item.key === options[option.key]);
+    // A hint describes one choice alone, so several ticked choices show none.
+    const picked = [].concat(options[option.key]);
+    const chosen = choice && picked.length === 1 && option.choices.find((item) => item.key === picked[0]);
     const row = {
       key: option.key,
       type: choice ? 'choice' : 'switch',
+      multiple: !!option.multiple,
       labelKey: option.labelKey,
       hintKey: choice ? chosen && chosen.hintKey : options[option.key] ? option.onHintKey : option.offHintKey,
       choices: option.choices,

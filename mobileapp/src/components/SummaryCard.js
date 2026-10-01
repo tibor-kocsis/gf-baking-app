@@ -12,8 +12,10 @@ export function SummaryCard({ items, animatedStyle }) {
         <Fragment key={item.label}>
           {index > 0 && <View style={styles.divider} />}
           <View style={styles.item}>
-            <Text style={styles.label}>{item.label}</Text>
-            <Text style={styles.value}>{item.value}</Text>
+            <Text style={styles.label} numberOfLines={2}>{item.label}</Text>
+            <Text style={[styles.value, items.length > 2 && styles.valueCompact]} numberOfLines={1} adjustsFontSizeToFit>
+              {item.value}
+            </Text>
           </View>
         </Fragment>
       ))}
@@ -24,20 +26,21 @@ export function SummaryCard({ items, animatedStyle }) {
 const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'stretch',
     backgroundColor: colors.inverse,
     borderRadius: layout.cardRadius,
     padding: 22,
     marginBottom: 24,
   },
+  // Values share a baseline even when a label wraps to two lines.
   item: {
     flex: 1,
     gap: 2,
+    justifyContent: 'flex-end',
   },
   divider: {
     width: 1,
-    height: 48,
-    marginHorizontal: 16,
+    marginHorizontal: 12,
     backgroundColor: colors.textSecondary,
   },
   label: {
@@ -50,5 +53,9 @@ const styles = StyleSheet.create({
     fontFamily: fonts.display,
     color: colors.onInverse,
     fontVariant: ['tabular-nums'],
+  },
+  // Three boxes side by side: a smaller number keeps "1160 g" on one line.
+  valueCompact: {
+    fontSize: 26,
   },
 });

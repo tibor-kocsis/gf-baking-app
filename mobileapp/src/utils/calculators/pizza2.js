@@ -27,28 +27,44 @@ const PIZZA2 = {
 const DOUGH_PER_PIZZA_G = 290; // the baker's 280-300 g ball
 
 // Without the unimix its parts are weighed out one by one: its sorghum share
-// (33%) becomes the chosen flour, its tapioca share (32.3%) the chosen starch and
+// (33%) becomes the chosen flour(s), its tapioca share (32.3%) the chosen starch and
 // its psyllium goes into the gel. The 90% water was set on the unimix blend, so
 // the flour mix's water rules apply only as the difference from it: brown rice
 // over 40% of the flour +3, millet over 25% -2, and the potato-over-40% -3 is
 // already in the 90%, so all potato changes nothing and all tapioca gives it back.
 const MAIN_FLOUR = PIZZA2.unimix * SORGHUM_UNIMIX.sorghum;
 const UNIMIX_STARCH = PIZZA2.unimix * SORGHUM_UNIMIX.tapioca;
-const FLOUR_KEYS = { sorghum: 'sorghumFlour', brownRice: 'brownRiceFlourDough', millet: 'milletFlour' };
-const FLOUR_WATER = { sorghum: 0, brownRice: 0.03, millet: -0.02 };
+const FLOUR_KEYS = {
+  unimix: 'sorghumUnimix',
+  sorghum: 'sorghumFlour',
+  brownRice: 'brownRiceFlourDough',
+  millet: 'milletFlour',
+};
+const FLOUR_WATER = { unimix: 0, sorghum: 0, brownRice: 0.03, millet: -0.02 };
 const STARCH_WATER = { both: 0, potato: 0, tapioca: 0.03 };
 
-function blendFor(unimix, flour, starch) {
-  if (unimix) {
-    return { sorghumUnimix: PIZZA2.unimix, potatoStarch: PIZZA2.potatoStarch, psylliumInBlend: PIZZA2.unimix * SORGHUM_UNIMIX.psyllium };
-  }
-  const starchTotal = UNIMIX_STARCH + PIZZA2.potatoStarch;
+// The unimix is one of the flours: it takes an equal share of the main flour's
+// slot, and brings its own tapioca and psyllium along. That tapioca counts toward
+// the chosen starch, so only the rest of the starch is weighed out.
+function blendFor(flours, starch) {
+  const share = 1 / flours.length;
+  const unimixShare = flours.includes('unimix') ? PIZZA2.unimix * share : 0;
+  // The unimix's tapioca is part of the starch total, so it comes off the chosen
+  // starch: the tapioca first, or the potato when there is no tapioca to give.
+  const unimixStarch = unimixShare * SORGHUM_UNIMIX.tapioca;
+  const rest = UNIMIX_STARCH + PIZZA2.potatoStarch - unimixStarch;
   const starches = {
-    both: { tapiocaStarch: UNIMIX_STARCH, potatoStarch: PIZZA2.potatoStarch },
-    potato: { potatoStarch: starchTotal },
-    tapioca: { tapiocaStarch: starchTotal },
+    both: { tapiocaStarch: UNIMIX_STARCH - unimixStarch, potatoStarch: PIZZA2.potatoStarch },
+    potato: { potatoStarch: rest },
+    tapioca: { tapiocaStarch: rest },
   }[starch];
-  return { [FLOUR_KEYS[flour]]: MAIN_FLOUR, ...starches, psylliumInBlend: 0 };
+  const blend = { ...starches };
+  flours.forEach((flour) => {
+    if (flour !== 'unimix') blend[FLOUR_KEYS[flour]] = MAIN_FLOUR * share;
+  });
+  if (unimixShare) blend.sorghumUnimix = unimixShare;
+  Object.keys(blend).forEach((key) => blend[key] > 0 || delete blend[key]);
+  return { ...blend, psylliumInBlend: unimixShare * SORGHUM_UNIMIX.psyllium };
 }
 
 // The tangzhong can be switched off to bake the same blend without it: the brown
@@ -56,14 +72,18 @@ function blendFor(unimix, flour, starch) {
 // cooked paste would have held.
 export function calculatePizza2Ingredients(
   count,
-  { tangzhong = true, unimix = true, flour = 'sorghum', starch = 'both' } = {}
+  { tangzhong = true, flour = ['unimix'], starch = 'both' } = {}
 ) {
   const numPizzas = parseCount(count);
   if (!numPizzas) return null;
-  const { psylliumInBlend, ...blend } = blendFor(unimix, flour, starch);
+  const flours = [].concat(flour);
+  const { psylliumInBlend, ...blend } = blendFor(flours, starch);
+  // Each flour's water adjustment counts in proportion to its share of the main flour.
+  const flourWater = flours.reduce((sum, item) => sum + FLOUR_WATER[item], 0) / flours.length;
   const hydration =
     (tangzhong ? PIZZA2.hydration : PIZZA2.hydrationNoTangzhong) +
-    (unimix ? 0 : FLOUR_WATER[flour] + STARCH_WATER[starch]);
+    flourWater +
+    STARCH_WATER[starch];
 
   const psylliumAdded = PIZZA2.psylliumTotal - psylliumInBlend;
   const doughPerBase = sumOf({
@@ -115,5 +135,5 @@ export function calculatePizza2Ingredients(
   if (rawBrownRice) {
     weighed.brownRiceFlourDough = grams(blend.brownRiceFlourDough + PIZZA2.brownRiceFlour);
   }
-  return { ...weighed, tangzhong, ...doughTotals(weighed, numPizzas) };
+  return { ...weighed, tangzhong, hydrationPercent: Math.round(hydration * 100), ...doughTotals(weighed, numPizzas) };
 }

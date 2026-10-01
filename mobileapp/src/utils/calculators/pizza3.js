@@ -49,5 +49,5 @@ export function calculatePizza3Ingredients(count, { corn = true } = {}) {
     waterGel,
     waterYeast: water - waterGel,
   };
-  return { ...weighed, ...doughTotals(weighed, numPizzas) };
+  return { ...weighed, hydrationPercent: Math.round(HYDRATION * 100), ...doughTotals(weighed, numPizzas) };
 }

@@ -17,3 +17,8 @@ Intrukciók:
 - A tojásfehérjét verd fel habbá
 - Keverd hozzá lassan a tésztához
 - Gofri sütővel süsd ki
+
+Opcionális keményítő (egyféle, keményítőt nem tartalmazó lisztnél):
+- A liszt 20%-a keményítő (tápióka, burgonya vagy fele-fele): 80 g liszt + 20 g keményítő adagonként, a keményítő könnyebbé és ropogósabbá teszi.
+- Keményítővel 80 ml tej 100 ml helyett (tapasztalati érték).
+- Alapból ki van kapcsolva.

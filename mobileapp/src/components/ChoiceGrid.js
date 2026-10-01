@@ -5,17 +5,23 @@ import { fonts } from '../constants/fonts';
 import { Icon } from './Icon';
 
 // Single choice as a two-column grid of large buttons: [{ key, label }].
-export function ChoiceGrid({ options, value, onChange }) {
+// `multiple`: value is an array and a tap toggles a key; the last one stays on.
+export function ChoiceGrid({ options, value, onChange, multiple = false }) {
+  const handlePress = (key) => {
+    if (!multiple) return onChange(key);
+    if (!value.includes(key)) return onChange([...value, key]);
+    if (value.length > 1) onChange(value.filter((item) => item !== key));
+  };
   return (
     <View style={styles.grid}>
       {options.map((option) => {
-        const active = option.key === value;
+        const active = multiple ? value.includes(option.key) : option.key === value;
         return (
           <Pressable
             key={option.key}
             style={({ pressed }) => [styles.option, active && styles.optionActive, pressed && pressedStyle]}
-            onPress={() => onChange(option.key)}
-            accessibilityRole="radio"
+            onPress={() => handlePress(option.key)}
+            accessibilityRole={multiple ? 'checkbox' : 'radio'}
             accessibilityState={{ checked: active }}
           >
             {active && <Icon name="check" size={18} color={colors.onInverse} strokeWidth={2.4} />}

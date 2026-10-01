@@ -4,6 +4,7 @@ import { colors } from '../constants/colors';
 import { fonts } from '../constants/fonts';
 import { layout } from '../constants/layout';
 import { useI18n } from '../context/I18nContext';
+import { useBottomInset } from '../hooks/useBottomInset';
 import { recipes } from '../data/recipes';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { Icon } from '../components/Icon';
@@ -19,10 +20,11 @@ for (let index = 0; index < gridRecipes.length; index += 2) {
 }
 
 export function RecipeCatalog({ onSelectRecipe }) {
+  const paddingBottom = useBottomInset(40);
   const { t } = useI18n();
 
   return (
-    <ScrollView style={styles.scrollView} contentContainerStyle={styles.container}>
+    <ScrollView style={styles.scrollView} contentContainerStyle={[styles.container, { paddingBottom }]}>
       <StatusBar style="dark" />
 
       <View style={styles.topBar}>

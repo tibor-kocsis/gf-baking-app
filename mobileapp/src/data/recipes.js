@@ -21,11 +21,13 @@ import {
 //   options                        settings passed to calculate:
 //                                    switch  { key, default, labelKey, onHintKey, offHintKey }
 //                                    choice  { key, type: 'choice', default, labelKey,
-//                                              choices: [{ key, labelKey, hintKey }] }
+//                                              choices: [{ key, labelKey, hintKey }],
+//                                              multiple } multiple: value is an array of
+//                                              choice keys, never empty
 //                                  either may have visibleWhen(options); a choice
 //                                  sits in the card of the switch above it
 //   howManyKey, unitLabelKey       the stepper's label and suffix
-//   summary                        dark summary card: [{ labelKey, key }] in grams
+//   summary                        dark summary card: [{ labelKey, key, unit }], unit default grams
 //   metaKey                        one line of times under the ingredients title
 //   ingredientGroups               [{ key, titleKey, items: [ingredient keys] }]
 //   ingredientNamesKey             namespace for names (default 'ingredients')
@@ -35,7 +37,7 @@ import {
 //   cookingSteps                   [{ instructionIndex, ingredients: [keys], timerSeconds }]
 //   variantFor(options)            fields that replace the above for the chosen options
 
-// Pizza dough 2's flours and starches: the unimix, or the chosen flour and starches.
+// Pizza dough 2's flours and starches: the chosen flours (the unimix among them) and starches.
 // Only the ones the options use have an amount; the rest drop out of the cards.
 const PIZZA2_BLEND = [
   'sorghumUnimix',
@@ -74,6 +76,8 @@ const PIZZA_SUMMARY = [
   { labelKey: 'common.totalDough', key: 'totalWeight' },
   { labelKey: 'common.perPizza', key: 'weightPerPizza' },
 ];
+// The pizza doughs also show their hydration, the baker's first read on a dough.
+const PIZZA_DOUGH_SUMMARY = [...PIZZA_SUMMARY, { labelKey: 'common.hydration', key: 'hydrationPercent', unit: '%' }];
 
 export const recipes = [
   {
@@ -85,7 +89,7 @@ export const recipes = [
     unitLabelKey: 'recipes.pizza.unitLabel',
     howManyKey: 'recipes.pizza.howMany',
     calculate: (count) => calculatePizzaIngredients(count),
-    summary: PIZZA_SUMMARY,
+    summary: PIZZA_DOUGH_SUMMARY,
     ingredientNames: { glutenFreeFlour: 'ingredients.universalGfFlour' },
     ingredientGroups: [
       { key: 'flour', titleKey: 'common.flour', items: ['sorghumFlour', 'glutenFreeFlour'] },
@@ -107,19 +111,13 @@ export const recipes = [
     calculate: (count, options) => calculatePizza2Ingredients(count, options),
     options: [
       {
-        key: 'unimix',
-        default: true,
-        labelKey: 'recipes.pizza2.unimixLabel',
-        onHintKey: 'recipes.pizza2.unimixOnHint',
-        offHintKey: 'recipes.pizza2.unimixOffHint',
-      },
-      {
         key: 'flour',
         type: 'choice',
-        default: 'sorghum',
+        multiple: true,
+        default: ['unimix'],
         labelKey: 'recipes.pizza2.flourLabel',
-        visibleWhen: (options) => !options.unimix,
         choices: [
+          { key: 'unimix', labelKey: 'recipes.pizza2.flours.unimix', hintKey: 'recipes.pizza2.flourHints.unimix' },
           { key: 'sorghum', labelKey: 'recipes.pizza2.flours.sorghum', hintKey: 'recipes.pizza2.flourHints.sorghum' },
           { key: 'brownRice', labelKey: 'recipes.pizza2.flours.brownRice', hintKey: 'recipes.pizza2.flourHints.brownRice' },
           { key: 'millet', labelKey: 'recipes.pizza2.flours.millet', hintKey: 'recipes.pizza2.flourHints.millet' },
@@ -130,7 +128,6 @@ export const recipes = [
         type: 'choice',
         default: 'both',
         labelKey: 'recipes.pizza2.starchLabel',
-        visibleWhen: (options) => !options.unimix,
         choices: [
           { key: 'potato', labelKey: 'recipes.pizza2.starches.potato', hintKey: 'recipes.pizza2.starchHints.potato' },
           { key: 'tapioca', labelKey: 'recipes.pizza2.starches.tapioca', hintKey: 'recipes.pizza2.starchHints.tapioca' },
@@ -145,7 +142,7 @@ export const recipes = [
         offHintKey: 'recipes.pizza2.tangzhongOffHint',
       },
     ],
-    summary: PIZZA_SUMMARY,
+    summary: PIZZA_DOUGH_SUMMARY,
     // brownRiceFlourDough is brown rice chosen as the main flour, apart from the
     // tangzhong's; without a tangzhong the two are weighed as one.
     ingredientNames: { brownRiceFlourDough: 'ingredients.brownRiceFlour' },
@@ -206,7 +203,7 @@ export const recipes = [
         offHintKey: 'recipes.pizza3.cornOffHint',
       },
     ],
-    summary: PIZZA_SUMMARY,
+    summary: PIZZA_DOUGH_SUMMARY,
     ingredientGroups: [
       {
         key: 'flour',
@@ -233,17 +230,38 @@ export const recipes = [
     unitLabelKey: 'recipes.waffles.unitLabel',
     howManyKey: 'recipes.waffles.howMany',
     instructionsKey: 'instructions.waffles',
-    calculate: (count) => calculateWaffleIngredients(count),
+    calculate: (count, options) => calculateWaffleIngredients(count, options),
+    options: [
+      {
+        key: 'starch',
+        default: false,
+        labelKey: 'recipes.waffles.starchLabel',
+        onHintKey: 'recipes.waffles.starchOnHint',
+        offHintKey: 'recipes.waffles.starchOffHint',
+      },
+      {
+        key: 'starchType',
+        type: 'choice',
+        default: 'both',
+        labelKey: 'recipes.waffles.starchTypeLabel',
+        visibleWhen: (options) => options.starch,
+        choices: [
+          { key: 'tapioca', labelKey: 'recipes.waffles.starches.tapioca', hintKey: 'recipes.waffles.starchHints.tapioca' },
+          { key: 'potato', labelKey: 'recipes.waffles.starches.potato', hintKey: 'recipes.waffles.starchHints.potato' },
+          { key: 'both', labelKey: 'recipes.waffles.starches.both', hintKey: 'recipes.waffles.starchHints.both' },
+        ],
+      },
+    ],
     ingredientNames: { flour: 'ingredients.gfFlour' },
     units: { egg: 'count', milk: 'ml', vanilla: 'tsp' },
     ingredientGroups: [
-      { key: 'dry', titleKey: 'common.dryIngredients', items: ['flour', 'sugar', 'bakingPowder'] },
+      { key: 'dry', titleKey: 'common.dryIngredients', items: ['flour', 'tapiocaStarch', 'potatoStarch', 'sugar', 'bakingPowder'] },
       { key: 'wet', titleKey: 'common.wetIngredients', items: ['egg', 'milk', 'butter', 'vanilla'] },
     ],
     cookingSteps: steps(
       [['egg']],
       [['butter']],
-      [['flour', 'milk', 'sugar', 'vanilla', 'bakingPowder']],
+      [['flour', 'tapiocaStarch', 'potatoStarch', 'milk', 'sugar', 'vanilla', 'bakingPowder']],
       [], [], []
     ),
   },

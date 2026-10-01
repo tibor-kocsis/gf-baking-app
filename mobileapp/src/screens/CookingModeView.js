@@ -7,6 +7,7 @@ import { pressedStyle } from '../constants/pressed';
 import { fonts } from '../constants/fonts';
 import { layout } from '../constants/layout';
 import { useI18n } from '../context/I18nContext';
+import { useBottomInset } from '../hooks/useBottomInset';
 import { formatUnit } from '../utils/format';
 import { Header } from '../components/Header';
 import { Checkbox } from '../components/Checkbox';
@@ -19,6 +20,7 @@ import { MeterBar } from '../components/Meter';
 export function CookingModeView({ title, plan, onBack }) {
   useKeepAwake();
   const { t } = useI18n();
+  const paddingBottom = useBottomInset(40);
   const [checkedIngredients, setCheckedIngredients] = useState({});
   const [completedSteps, setCompletedSteps] = useState({});
 
@@ -27,7 +29,7 @@ export function CookingModeView({ title, plan, onBack }) {
   const completedCount = Object.values(completedSteps).filter(Boolean).length;
 
   return (
-    <ScrollView style={styles.scrollView} contentContainerStyle={styles.container}>
+    <ScrollView style={styles.scrollView} contentContainerStyle={[styles.container, { paddingBottom }]}>
       <StatusBar style="dark" />
       <Header title={title} onBack={onBack} />
 

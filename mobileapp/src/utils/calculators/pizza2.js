@@ -1,5 +1,12 @@
 import { parseCount, roundGrams, sumOf, doughTotals } from './scaling';
-import { SORGHUM_UNIMIX, TANGZHONG_WATER_RATIO, MIN_FREE_WATER_SHARE, psylliumGelWater } from './dough';
+import {
+  SORGHUM_UNIMIX,
+  TANGZHONG_WATER_RATIO,
+  TANGZHONG_PERCENT_DEFAULT,
+  clampTangzhongPercent,
+  MIN_FREE_WATER_SHARE,
+  psylliumGelWater,
+} from './dough';
 
 // Pizza dough 2 calculation logic
 // The first pizza without the Miklos universal mix. That mix is ~80% starch plus
@@ -12,11 +19,13 @@ import { SORGHUM_UNIMIX, TANGZHONG_WATER_RATIO, MIN_FREE_WATER_SHARE, psylliumGe
 // the flour mix calculator (48% sorghum, 47% tapioca, 5% psyllium), so 70.83% of
 // it gives 34% sorghum flour; 6% brown rice brings the flour to 40%, and potato
 // (26.7%) takes the rest of the 60% starch, 44.5% of it, under the 45% potato cap.
-// The brown rice is 6% because a cooked paste has only been measured up to 6% of
-// the flour (rice pan bread, Kim 2016); the earlier 7% was untested.
+// The brown rice is 6% of the base in total. How much of it is cooked into the
+// tangzhong is the baker's setting (dough.js has what is known about the share,
+// which points to 1-2%); the rest goes into the dough raw, so the blend, the
+// 40:60 and the water never move with it.
 const PIZZA2 = {
   unimix: 0.7083,
-  brownRiceFlour: 0.06, // all of it goes into the tangzhong, or raw into the dough without one
+  brownRiceFlour: 0.06, // cooked into the tangzhong up to this, the rest raw into the dough
   potatoStarch: 0.267,
   psylliumTotal: 0.045,
   hydration: 0.9, // a starting point: 85% if unmanageable, 95% if the rim stays tight
@@ -71,10 +80,12 @@ function blendFor(flours, starch) {
 
 // The tangzhong can be switched off to bake the same blend without it: the brown
 // rice then goes into the dough raw, and the water drops by the 3 points the
-// cooked paste would have held.
+// cooked paste would have held. With it on, `tangzhongShare` (percent of the base)
+// is cooked and the rest of the brown rice stays raw; the 3 points are flat, as in
+// the flour mix.
 export function calculatePizza2Ingredients(
   count,
-  { tangzhong = true, flour = ['unimix'], starch = 'both' } = {}
+  { tangzhong = true, tangzhongShare = TANGZHONG_PERCENT_DEFAULT, flour = ['unimix'], starch = 'both' } = {}
 ) {
   const numPizzas = parseCount(count);
   if (!numPizzas) return null;
@@ -101,10 +112,9 @@ export function calculatePizza2Ingredients(
   const base = (DOUGH_PER_PIZZA_G / doughPerBase) * numPizzas;
   const grams = (share) => roundGrams(share * base);
 
+  const cooked = tangzhong ? Math.min(clampTangzhongPercent(tangzhongShare) / 100, PIZZA2.brownRiceFlour) : 0;
   const water = Math.round(hydration * base);
-  const waterTangzhong = tangzhong
-    ? Math.round(PIZZA2.brownRiceFlour * TANGZHONG_WATER_RATIO * base)
-    : 0;
+  const waterTangzhong = Math.round(cooked * TANGZHONG_WATER_RATIO * base);
   // The flour mix rule: below 10% of the base left for the yeast water, the gel
   // drops to 1:8 so there is enough free water to slurry the yeast.
   const { gel: waterGel, remainder: waterYeast } = psylliumGelWater(
@@ -114,8 +124,6 @@ export function calculatePizza2Ingredients(
     MIN_FREE_WATER_SHARE * base
   );
 
-  // Raw brown rice as the chosen flour takes in the tangzhong's share too.
-  const rawBrownRice = !tangzhong && blend.brownRiceFlourDough;
   const weighed = {
     sorghumUnimix: 0,
     sorghumFlour: 0,
@@ -124,7 +132,7 @@ export function calculatePizza2Ingredients(
     tapiocaStarch: 0,
     potatoStarch: 0,
     ...Object.fromEntries(Object.keys(blend).map((key) => [key, grams(blend[key])])),
-    brownRiceFlour: rawBrownRice ? 0 : grams(PIZZA2.brownRiceFlour),
+    brownRiceFlour: grams(cooked),
     psylliumHusk: grams(psylliumAdded),
     waterTangzhong,
     waterGel,
@@ -134,8 +142,7 @@ export function calculatePizza2Ingredients(
     salt: grams(PIZZA2.salt),
     yeast: grams(PIZZA2.yeast),
   };
-  if (rawBrownRice) {
-    weighed.brownRiceFlourDough = grams(blend.brownRiceFlourDough + PIZZA2.brownRiceFlour);
-  }
+  // The raw rest of the brown rice is weighed with the rice chosen as a main flour.
+  weighed.brownRiceFlourDough = grams((blend.brownRiceFlourDough || 0) + PIZZA2.brownRiceFlour - cooked);
   return { ...weighed, tangzhong, hydrationPercent: Math.round(hydration * 100), ...doughTotals(weighed, numPizzas) };
 }

@@ -6,6 +6,9 @@ import {
   calculatePancakeIngredients,
   calculateCheeseStickIngredients,
   CHEESE_STICK_SPOON_UNITS,
+  TANGZHONG_PERCENT_MIN,
+  TANGZHONG_PERCENT_MAX,
+  TANGZHONG_PERCENT_DEFAULT,
 } from '../utils/calculators';
 
 // The recipe catalog: the single source for the catalog screen, navigation and
@@ -23,7 +26,8 @@ import {
 //                                    choice  { key, type: 'choice', default, labelKey,
 //                                              choices: [{ key, labelKey, hintKey }],
 //                                              multiple } multiple: value is an array of
-//                                              choice keys, never empty
+//                                              choice keys, never empty; a choice may carry
+//                                              a literal `label` such as '2%' instead of labelKey
 //                                  either may have visibleWhen(options); a choice
 //                                  sits in the card of the switch above it
 //   howManyKey, unitLabelKey       the stepper's label and suffix
@@ -140,6 +144,21 @@ export const recipes = [
         labelKey: 'recipes.pizza2.tangzhongLabel',
         onHintKey: 'recipes.pizza2.tangzhongOnHint',
         offHintKey: 'recipes.pizza2.tangzhongOffHint',
+      },
+      {
+        // How much of the base is cooked; the rest of the brown rice stays raw.
+        key: 'tangzhongShare',
+        type: 'choice',
+        default: TANGZHONG_PERCENT_DEFAULT,
+        labelKey: 'recipes.pizza2.tangzhongShareLabel',
+        visibleWhen: (options) => options.tangzhong,
+        choices: Array.from(
+          { length: TANGZHONG_PERCENT_MAX - TANGZHONG_PERCENT_MIN + 1 },
+          (_, index) => {
+            const percent = TANGZHONG_PERCENT_MIN + index;
+            return { key: percent, label: `${percent}%`, hintKey: 'recipes.pizza2.tangzhongShareHint' };
+          }
+        ),
       },
     ],
     summary: PIZZA_DOUGH_SUMMARY,

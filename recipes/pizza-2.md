@@ -8,12 +8,13 @@ Pizzánként 290 g-os tésztagolyó (280–300 g között). A százalékok a lis
 |---|---|---|
 | Cirok unimix | 70,83 | 99 g |
 | Burgonyakeményítő | 26,7 | 37 g |
-| Barna rizsliszt (tangzhong) | 6 | 8 g |
+| Barna rizsliszt, nyersen | 4 | 5,6 g |
+| Barna rizsliszt, tangzhonghoz | 2 | 2,8 g |
 | Útifű maghéj (külön) | 0,96 | 1,3 g |
 | Víz összesen | 90 | 126 g |
-| – tangzhonghoz (1:5) | | 42 g |
+| – tangzhonghoz (1:5) | | 14 g |
 | – útifűgélhez (1:10) | | 13 g |
-| – élesztőhöz | | 71 g |
+| – élesztőhöz | | 99 g |
 | Olaj | 6 | 8 g |
 | Méz | 3 | 4 g |
 | Só | 2,2 | 3 g |
@@ -23,7 +24,7 @@ Pizzánként 290 g-os tésztagolyó (280–300 g között). A százalékok a lis
 - A Miklós Univerzális kb. 80% keményítő (0,99 g fehérje / 100 g) guar-, xantán- és HPMC-gumival, burgonyapehellyel és dextrózzal. A gumikat az útifű pótolja (összesen 4,5%, az unimixével együtt), a burgonyapelyhet a tangzhong.
 - A régi pizza unimixszel kb. 36:64 liszt:keményítő volt; ez 40:60, hogy az állag ne ugorjon nagyot. A burgonya a keményítő 44,5%-a, a 45%-os plafon alatt.
 - A 90% víz kiindulópont. Ha a tészta kezelhetetlen: 85%; ha a perem tömör: 95%.
-- A tangzhong 6%: főzött paszta rizskenyérben a liszt 1,5–6%-ánál javította a térfogatot és puhította a bélzetet (Kim és mtsai, J Texture Stud 2016); 6% fölött nincs mérés. Száraz előcsirizesített rizsliszt ~1%-nál adta a legjobbat (Foods 2021). Gluténmentes tangzhongra kontrollált összehasonlítás nincs, a King Arthur egyetlen próbájában (6% liszt) sem volt különbség.
+- A tangzhong aránya állítható: az alap 1–6%-a, alapérték 2%. A barna rizs összesen 6%, a tangzhongba nem került része nyersen megy a tésztába, így a keverék, a 40:60 és a víz nem változik vele (a táblázat az alapértékkel számol). Gluténmentes kenyérben az egyetlen tiszta mérés (Foods 2021, rizs "batter", HPMC) a liszt 1%-át a víz felében 80 °C-on 2 percig főzve találta a legjobbnak; a 0,5–1,5% azonos volt, a 3–10% szignifikánsan rosszabb térfogatot adott. Kim és mtsai (J Texture Stud 2016, rizs pan bread) "1,5–6% (flour base)" mellett mértek jobb térfogatot, de a cikk zárt: nem tudni, hogy a roux tömegéről vagy a benne lévő lisztről van szó (1:5-nél az előbbi 0,25–1% liszt volna). A King Arthur egyetlen gluténmentes próbájában (6% liszt) nem volt különbség. Gluténmentes tangzhongra kontrollált összehasonlítás nincs.
 - Előcsirizesített liszt rizspizzában ~10%-nál adta a legjobb pórusszerkezetet, 20%-nál összeestek a pórusok (Food Sci Nutr 2026).
 
 ## Tangzhong nélkül
@@ -36,7 +37,7 @@ Kapcsolható. Kikapcsolva az unimix részei külön mennek: a cirokrésze (34%) 
 - Keményítő: mindkettő (alap, 55:45 tápióka:burgonya) / csak burgonya / csak tápióka, mindig a teljes 60%. Burgonya: ropogósabb, omlósabb, hamarabb szikkad. Tápióka: rágósabb, jobban barnul, ragacsos lehet.
 - Víz: a 90% (87%) erre a keverékre van beállítva, ezért a lisztkeverék szabályai csak az eltérésre számítanak. Barna rizs +3, köles −2; csak burgonya 0 (a mai burgonya is >40%, a −3 már benne van), csak tápióka +3 (kiesik a −3).
 - Ha az élesztős vízre az alap 10%-ánál kevesebb jutna, a gél 1:8 (a lisztkeverék szabálya). Kölessel és tangzhonggal ez történik.
-- Tangzhong nélkül és barna rizzsel a két barna rizs egy tételként megy a tésztába.
+- A nyers barna rizs (tangzhong nélkül mind, vele a le nem főzött rész) és a választott barna rizs egy tételként megy a tésztába.
 
 Pizzára közvetlen összehasonlító mérés nincs sem a lisztekre, sem burgonya vs tápióka keményítőre; kenyeres adatokból és a lisztkeverék szabályaiból.
 

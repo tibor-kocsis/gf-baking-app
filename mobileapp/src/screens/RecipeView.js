@@ -86,7 +86,7 @@ export function RecipeView({ recipe, onBack, onStartCooking }) {
 // One choice of a recipe option, e.g. pizza dough 2's flours.
 function OptionChoice({ row, value, onChange }) {
   const { t } = useI18n();
-  const options = row.choices.map((item) => ({ key: item.key, label: t(item.labelKey) }));
+  const options = row.choices.map((item) => ({ key: item.key, label: item.label || t(item.labelKey) }));
   return (
     <View style={styles.choice}>
       <Text style={styles.choiceLabel}>{t(row.labelKey)}</Text>

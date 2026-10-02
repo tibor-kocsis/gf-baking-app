@@ -24,6 +24,7 @@ import { parseCount, roundGrams, roundTenth } from './calculators/scaling';
 import {
   SORGHUM_UNIMIX as UNIMIX,
   TANGZHONG_WATER_RATIO,
+  clampTangzhongPercent,
   MIN_FREE_WATER_SHARE,
   psylliumGelWater,
 } from './calculators/dough';
@@ -105,18 +106,6 @@ const TANGZHONG_SOURCES = [
   'potato',
 ];
 
-// The share is the baker's to set, within what has been measured. A cooked paste
-// at 1.5-6% of the flour raised the volume and softened the crumb of rice pan
-// bread (Kim 2016; 4.5-6% was the tasters' pick, and that bread may not have been
-// gluten-free). A dry pre-gelatinised rice flour peaked near 1% and lost volume
-// from 3% up (Foods 2021), so more is not better. Nothing above 6% was tested,
-// and a loaf baked near 7% came out dense with no oven spring. The only
-// gluten-free test of an actual tangzhong (King Arthur, 6% flour) saw no
-// difference at all, so the benefit is small; no controlled comparison of a
-// flour tangzhong against a starch one exists.
-export const TANGZHONG_PERCENT_MIN = 2;
-export const TANGZHONG_PERCENT_MAX = 6;
-export const TANGZHONG_PERCENT_DEFAULT = 5;
 const MAX_PSYLLIUM_HYDRATION_BUMP = 0.075;
 
 // How far ahead of the other starches corn has to sit to count as the largest
@@ -430,13 +419,7 @@ export function calculateFlourMix(options) {
   const unimixAvailable = !!settings.unimixAvailable;
   const psylliumAvailable = !!settings.psylliumAvailable;
   const wantsTangzhong = !!settings.tangzhong;
-  const tangzhongPercent = Math.min(
-    TANGZHONG_PERCENT_MAX,
-    Math.max(
-      TANGZHONG_PERCENT_MIN,
-      parseInt(settings.tangzhongPercent, 10) || TANGZHONG_PERCENT_DEFAULT
-    )
-  );
+  const tangzhongPercent = clampTangzhongPercent(settings.tangzhongPercent);
   const flours = FLOUR_KEYS.filter((key) => (settings.floursAvailable || []).indexOf(key) !== -1);
   const starches = STARCH_KEYS.filter(
     (key) => (settings.starchesAvailable || []).indexOf(key) !== -1

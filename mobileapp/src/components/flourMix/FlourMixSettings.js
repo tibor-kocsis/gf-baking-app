@@ -6,10 +6,9 @@ import {
   FLOUR_KEYS,
   STARCH_KEYS,
   STYLE_KEYS,
-  TANGZHONG_PERCENT_MIN,
-  TANGZHONG_PERCENT_MAX,
   styleRatioLabel,
 } from '../../utils/flourMixCalculator';
+import { TANGZHONG_PERCENT_MIN, TANGZHONG_PERCENT_MAX } from '../../utils/calculators/dough';
 import { toggleInList } from '../../utils/stepper';
 import { Card } from '../Card';
 import { CategoryTitle, Hint } from '../Typography';
@@ -95,7 +94,7 @@ export function FlourMixSettings({ settings, onChange }) {
               value={settings.tangzhongPercent}
               onChange={(value) => onChange('tangzhongPercent', value)}
             />
-            <Hint>{t('flourMix.tangzhongShareHint', { max: TANGZHONG_PERCENT_MAX })}</Hint>
+            <Hint>{t('flourMix.tangzhongShareHint')}</Hint>
           </View>
         )}
       </Card>

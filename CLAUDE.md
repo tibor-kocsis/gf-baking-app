@@ -42,23 +42,15 @@ recipes/            # source recipes (hu), one per tile
 ## Rules
 
 - **Business logic stays in `src/utils/` as pure functions** (no React, no i18n beyond an injected `t`); screens only call and render.
-- **Offline and in grams.** Everything, including fonts and photos, is bundled. Spoons only where the recipe says so, rounded to ¼.
+- **Offline and in grams.** Everything, including fonts and photos, is bundled.
 - **Storage keys** only from `constants/storage.js`. Renaming a key loses users' saved language/notes — don't, or migrate.
 - **Navigation**: the hardware back handler only changes screen state and returns `true`/`false` — never JSX, never render-only variables (that bug has shipped once). Settings must survive a trip to cooking mode and back.
 - **One cooking-step shape** for every recipe (`utils/cookingPlan.js`); recipes declare their steps in the catalog, the flour mix derives its plan from the solved formula. The recipe screen builds the plan; cooking mode only renders it.
 - **Scaled recipes are data**: a new one is a calculator in `utils/calculators/` + a catalog entry (groups, names, units, summary, options, variants — schema at the top of `data/recipes.js`) + translations. Never branch on a recipe id in a screen.
 - **Platform differences** live in `src/platform/` as `.js` / `.web.js` twins, not `Platform.OS` checks in components. react-native-web's `Alert` is a no-op: use `platform/dialogs`.
 - **Styling**: `StyleSheet.create` at the bottom of each file, no inline style objects. Colours and fonts only from `constants/` — never hardcode. No emoji (boxes on web); icons are SVG, recipe images are bundled photos with credits in `assets/recipes/CREDITS.md`.
-- **Comments** explain the baking reason for a number or rule; keep that density when adding rules.
+- **Comments** explain the baking reason for a number or rule; keep that density when adding rules. Domain rules (flour mix caps, hydration, psyllium, tangzhong, bake numbers) live there, next to the numbers in `utils/`, and in `recipes/*.md` — not in this file.
 - Functional components + hooks; PascalCase components, `handle*` handlers.
-
-## Flour mix solver invariants
-
-- Batch size = flour + starch, the 100% base for every percentage shown.
-- Sorghum unimix is **not a flour**: always decomposed into its parts; only its flour + starch share counts toward the base, and its parts count toward the caps.
-- Caps can contradict; the solver relaxes the least harmful one and **always reports which cap and by how much**. Potato is protected hardest.
-- Tangzhong flour comes only from plain flour, never the unimix; with no plain flour it is dropped with a note.
-- Hydration is style-independent by design.
 
 ## Localization
 

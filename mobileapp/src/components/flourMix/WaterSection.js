@@ -3,6 +3,7 @@ import { colors } from '../../constants/colors';
 import { fonts } from '../../constants/fonts';
 import { useI18n } from '../../context/I18nContext';
 import { formatUnit } from '../../utils/format';
+import { TANGZHONG_WATER_RATIO } from '../../utils/calculators/dough';
 import { ingredientName } from '../../utils/flourMixPresentation';
 import { Section } from '../Section';
 import { Card } from '../Card';
@@ -24,7 +25,8 @@ export function WaterSection({ formula, animatedStyle }) {
       name: t('flourMix.streamTangzhong'),
       hint: t(milk ? 'flourMix.streamTangzhongMilkHint' : 'flourMix.streamTangzhongHint', {
         amount: formula.tangzhong.flourTotal,
-        ingredient: ingredientName(formula.tangzhong.flour[0].key, t),
+        ingredient: formula.tangzhong.flour.map((part) => ingredientName(part.key, t)).join(', '),
+        ratio: `1:${TANGZHONG_WATER_RATIO}`,
       }),
       amount: water.tangzhong,
       unit: liquidUnit,
@@ -70,6 +72,7 @@ export function WaterSection({ formula, animatedStyle }) {
         {streams.map(({ key, ...stream }, index) => (
           <IngredientRow key={key} {...stream} last={index === streams.length - 1} />
         ))}
+        <Hint>{t(formula.tangzhong ? 'flourMix.tuningHintTangzhong' : 'flourMix.tuningHint')}</Hint>
       </Card>
     </Section>
   );

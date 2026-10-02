@@ -95,7 +95,7 @@ export function FlourMixSettings({ settings, onChange }) {
               value={settings.tangzhongPercent}
               onChange={(value) => onChange('tangzhongPercent', value)}
             />
-            <Hint>{t('flourMix.tangzhongShareHint')}</Hint>
+            <Hint>{t('flourMix.tangzhongShareHint', { max: TANGZHONG_PERCENT_MAX })}</Hint>
           </View>
         )}
       </Card>

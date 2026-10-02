@@ -16,10 +16,12 @@ export function ingredientName(key, t) {
   return t(FLOUR_MIX_INGREDIENT_KEYS[key] || key);
 }
 
-// The solver returns notes as keys plus params so they stay translatable.
+// The solver returns notes as keys plus params so they stay translatable. A note
+// names one ingredient (`ingredientKey`) or several (`ingredientKeys`, listed).
 export function noteText(note, t) {
   const params = { ...note.params };
   if (note.ingredientKey) params.ingredient = t(note.ingredientKey);
+  if (note.ingredientKeys) params.ingredient = note.ingredientKeys.map((key) => t(key)).join(', ');
   return t(`flourMix.notes.${note.key}`, params);
 }
 

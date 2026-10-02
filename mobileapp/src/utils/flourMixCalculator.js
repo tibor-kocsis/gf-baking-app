@@ -11,6 +11,14 @@
 // stay at or below 50% - and the two shares have to add up to 100%. One of them
 // must give. The solver therefore picks the least-bad blend and reports every
 // cap it had to relax, rather than silently exceeding one.
+//
+// What holds throughout: the batch size (flour + starch) is the 100% base of every
+// percentage shown; the sorghum unimix is never counted as a flour, only its flour
+// + starch part counts toward the base and its parts count toward the caps; potato
+// is the cap protected hardest; the tangzhong draws on the pantry in the order
+// below, and only a chickpea-only pantry goes without one; hydration has no style
+// term of its own (the style moves the flour:starch split, the psyllium dose and
+// the additions, and the water rules only read the resulting shares).
 
 import { parseCount, roundGrams, roundTenth } from './calculators/scaling';
 import {
@@ -97,11 +105,17 @@ const TANGZHONG_SOURCES = [
   'potato',
 ];
 
-// The share is the baker's to set: one trial of pre-gelatinised flour put the
-// optimum near 1% and found 3-10% cut loaf volume, but it dosed a dry flour
-// rather than a cooked paste, so the range stays open and the default sits low.
-export const TANGZHONG_PERCENT_MIN = 3;
-export const TANGZHONG_PERCENT_MAX = 7;
+// The share is the baker's to set, within what has been measured. A cooked paste
+// at 1.5-6% of the flour raised the volume and softened the crumb of rice pan
+// bread (Kim 2016; 4.5-6% was the tasters' pick, and that bread may not have been
+// gluten-free). A dry pre-gelatinised rice flour peaked near 1% and lost volume
+// from 3% up (Foods 2021), so more is not better. Nothing above 6% was tested,
+// and a loaf baked near 7% came out dense with no oven spring. The only
+// gluten-free test of an actual tangzhong (King Arthur, 6% flour) saw no
+// difference at all, so the benefit is small; no controlled comparison of a
+// flour tangzhong against a starch one exists.
+export const TANGZHONG_PERCENT_MIN = 2;
+export const TANGZHONG_PERCENT_MAX = 6;
 export const TANGZHONG_PERCENT_DEFAULT = 5;
 const MAX_PSYLLIUM_HYDRATION_BUMP = 0.075;
 
@@ -253,7 +267,7 @@ function buildCandidate(ctx, flourShare, unimixWeight) {
   const flourTotal = FLOUR_KEYS.reduce((sum, key) => sum + (flourFill.amounts[key] || 0), 0);
   if (flourTotal <= EPS) return null;
 
-  // Psyllium: 3% target, minus whatever the mix already brought.
+  // Psyllium: the style's target (4.5% husk), minus whatever the mix already brought.
   const psylliumTargetG = base * ctx.psylliumTarget;
   const psylliumOverBand = unimixPsyllium > base * PSYLLIUM_MAX + EPS;
   const psylliumAdded =
@@ -705,7 +719,7 @@ export function calculateFlourMix(options) {
   if (tangzhongActive) {
     notes.push({
       key: enriched ? 'tangzhongSourceMilk' : 'tangzhongSource',
-      ingredientKey: FLOUR_MIX_INGREDIENT_KEYS[tangzhongFlour[0].key],
+      ingredientKeys: tangzhongFlour.map((part) => FLOUR_MIX_INGREDIENT_KEYS[part.key]),
       params: { amount: tangzhongFlourTotal, water: pouredTangzhong },
     });
   }

@@ -38,14 +38,24 @@ export function buildFlourMixPlan(formula, t, nameOf) {
 
   const steps = [];
 
+  // The tangzhong is two steps: a cold soak, then the cook. The soak is a timer
+  // because a whole-grain flour (brown rice leads) hydrates slowly, and a lumpy,
+  // unevenly soaked paste gelatinises unevenly. The cook goes by feel and a weighed
+  // pot rather than by the clock: rice starch begins to gelatinise at 58-64 C and
+  // finishes up to about 72 C, later for a bran-rich flour with big particles, so
+  // the wheat 65 C rule stops too early; ~80 C is the margin. Steam takes water out
+  // of a small pot, and that water belongs to the dough's hydration, so it is
+  // weighed back. The paste must be under 35 C before it meets the yeast.
   if (formula.tangzhong) {
     steps.push({
       title: text('tangzhongTitle'),
       text: text(milk ? 'tangzhongMilk' : 'tangzhongWater'),
+      timerSeconds: 900,
       items: formula.tangzhong.flour
         .map((part) => item(`tangzhong-${part.key}`, part.key, part.amount))
         .concat({ id: 'tangzhong-liquid', name: liquidName, amount: formula.water.tangzhong, unit: liquidUnit }),
     });
+    steps.push({ title: text('tangzhongCookTitle'), text: text('tangzhongCook'), items: [] });
   }
 
   if (formula.psyllium.added > 0) {

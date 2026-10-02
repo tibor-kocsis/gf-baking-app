@@ -174,8 +174,10 @@ export const recipes = [
               [], [], [], []
             ),
           },
+    // The tangzhong is two steps: the cold soak (timed), then the cook.
     cookingSteps: steps(
-      [['brownRiceFlour', 'waterTangzhong']],
+      [['brownRiceFlour', 'waterTangzhong'], 900],
+      [],
       [['psylliumHusk', 'waterGel']],
       [['yeast', 'honey', 'waterYeast']],
       [[...PIZZA2_BLEND, 'salt', 'oil'], 900],

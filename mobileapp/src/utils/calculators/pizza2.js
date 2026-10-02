@@ -9,13 +9,15 @@ import { SORGHUM_UNIMIX, TANGZHONG_WATER_RATIO, MIN_FREE_WATER_SHARE, psylliumGe
 // near the original's ~36:64 at 40:60, since that dough is known to work.
 //
 // Baker's percentages of the flour + starch base. The unimix is decomposed as in
-// the flour mix calculator (48% sorghum, 47% tapioca, 5% psyllium), so 68.75% of
-// it gives 33% sorghum flour; 7% brown rice brings the flour to 40%, and potato
-// (27.7%) sits at the 45% potato cap of the starch fraction.
+// the flour mix calculator (48% sorghum, 47% tapioca, 5% psyllium), so 70.83% of
+// it gives 34% sorghum flour; 6% brown rice brings the flour to 40%, and potato
+// (26.7%) takes the rest of the 60% starch, 44.5% of it, under the 45% potato cap.
+// The brown rice is 6% because a cooked paste has only been measured up to 6% of
+// the flour (rice pan bread, Kim 2016); the earlier 7% was untested.
 const PIZZA2 = {
-  unimix: 0.6875,
-  brownRiceFlour: 0.07, // all of it goes into the tangzhong, or raw into the dough without one
-  potatoStarch: 0.277,
+  unimix: 0.7083,
+  brownRiceFlour: 0.06, // all of it goes into the tangzhong, or raw into the dough without one
+  potatoStarch: 0.267,
   psylliumTotal: 0.045,
   hydration: 0.9, // a starting point: 85% if unmanageable, 95% if the rim stays tight
   hydrationNoTangzhong: 0.87, // the flour mix rule: a tangzhong adds 3 points

@@ -117,7 +117,7 @@ export default {
       totalBatter: 'Batter, about',
       crepeCount: 'Crêpes (24 cm pan)',
       notes: [
-        'The amounts come from a tested gluten-free crêpe recipe converted from cups, so they are approximate: per 100 g of flour + starch 1 egg and 125 ml milk.',
+        'Per 100 g of flour + starch 1.5 eggs and 200 ml milk, as in sorghum crêpe recipes: with less, the batter stays thick and the crêpe dense. If it still does not spread thin, add milk a spoonful at a time.',
         'The chosen flours share the flour part equally, but buckwheat stays at or below 30% of the base for its bitterness, which comes through above that. About 18% of the base is starch: tapioca keeps the crêpe flexible, potato makes it tender. No corn starch: it tastes of cereal and stiffens soonest.',
         'No soda water needed: in a side-by-side test it made no difference.',
       ],

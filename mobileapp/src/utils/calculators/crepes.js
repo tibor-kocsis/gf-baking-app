@@ -2,12 +2,15 @@ import { parseCount, roundGrams, roundTenth, roundWhole } from './scaling';
 
 // Crêpes (Hungarian palacsinta) calculation logic
 // The stepper is the flour + starch weight, and everything else is a share of
-// it. The numbers are a tested gluten-free crêpe recipe (The Daring Gourmet:
-// brown and white rice flour, potato and tapioca starch), converted from cups,
-// so they are approximate; the rice here is all brown, the flour the baker
-// keeps. Per 100 g of flour + starch about 1 egg - the
-// Hungarian "one egg per 100 g of flour" rule too - 125 ml milk, 14 g melted
-// butter or oil, 6 g sugar and a pinch of salt.
+// it. The starch, fat and sugar come from a tested gluten-free crêpe recipe (The
+// Daring Gourmet: brown and white rice flour, potato and tapioca starch); the
+// rice here is all brown, the flour the baker keeps. Its liquid was too little:
+// a brown rice and sorghum batch at 125 ml milk and 1 egg per 100 g came out
+// dense and would not spread thin. Sorghum crêpe recipes run about 200 ml milk
+// and 1.5 eggs per 100 g of flour (Bake with Shivesh: 138 g sorghum, 2 eggs,
+// 284 g milk), and wheat palacsinta 175-240 ml, so the batter takes 200 ml milk
+// and 1.5 eggs per 100 g; the extra egg holds the thinner sheet together. Per
+// 100 g also 14 g melted butter or oil, 6 g sugar and a pinch of salt.
 //
 // About 18% of the base is starch, half tapioca and half potato. Tapioca keeps
 // the thin sheet flexible and slow to stiffen once rolled and cold; potato makes
@@ -20,8 +23,8 @@ const CREPES = {
   flour: 0.82,
   tapiocaStarch: 0.09,
   potatoStarch: 0.09,
-  egg: 0.01, // eggs per gram of base: one per 100 g
-  milk: 1.25, // ml per gram of base
+  egg: 0.015, // eggs per gram of base: 1.5 per 100 g
+  milk: 2, // ml per gram of base
   fat: 0.14,
   sugar: 0.06,
   salt: 0.008,
@@ -32,7 +35,7 @@ const EGG_GRAMS = 50;
 // 100 ml at 28 cm), so a small ladle is about one crêpe.
 const BATTER_PER_CREPE_ML = 60;
 // The batter's volume from each ingredient's density, since the solids make it
-// heavier than water (~1.15 g/ml): flour and starch ~1.5 g/ml, egg and milk ~1.03,
+// heavier than water (~1.1 g/ml): flour and starch ~1.5 g/ml, egg and milk ~1.03,
 // butter 0.91, sugar 1.59. The salt is too little to count.
 const DENSITY = { flourAndStarch: 1.5, egg: 1.03, fat: 0.91, sugar: 1.59 };
 

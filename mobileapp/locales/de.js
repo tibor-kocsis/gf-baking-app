@@ -117,7 +117,7 @@ export default {
       totalBatter: 'Teig, etwa',
       crepeCount: 'Palatschinken (24 cm)',
       notes: [
-        'Die Mengen stammen aus einem erprobten glutenfreien Crêpe-Rezept, aus Tassen umgerechnet, also Richtwerte: auf 100 g Mehl + Stärke 1 Ei und 125 ml Milch.',
+        'Auf 100 g Mehl + Stärke 1,5 Eier und 200 ml Milch, wie in Sorghum-Crêpe-Rezepten: mit weniger bleibt der Teig dick und der Palatschinken kompakt. Verläuft er noch nicht dünn, löffelweise Milch zugeben.',
         'Die gewählten Mehle teilen sich den Mehlanteil zu gleichen Teilen, Buchweizen aber höchstens 30% der Basis, denn darüber kommt seine Bitterkeit durch. Etwa 18% der Basis sind Stärke: Tapioka hält den Teig biegsam, Kartoffel macht ihn zart. Keine Maisstärke: sie schmeckt nach Getreide und wird am schnellsten fest.',
         'Kein Sodawasser nötig: im Vergleichstest machte es keinen Unterschied.',
       ],

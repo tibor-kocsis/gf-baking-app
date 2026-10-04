@@ -5,6 +5,18 @@ import { useI18n } from '../context/I18nContext';
 import { stepUp, stepDown } from '../utils/stepper';
 import { Icon } from './Icon';
 
+// With a unit after it, the number field hugs its digits so "200 g" reads as one
+// value. The display face runs up to ~20 px a digit at 30 px ("200" is 58 px), so
+// a single 56 px field cut the first digit off on Android, which right-aligns and
+// clips; the field widens by a digit's width instead.
+function suffixWidth(value) {
+  const digits = String(value || '').length;
+  if (digits >= 5) return styles.inputWithSuffix5;
+  if (digits === 4) return styles.inputWithSuffix4;
+  if (digits === 3) return styles.inputWithSuffix3;
+  return null;
+}
+
 // The count / batch-size card every calculator opens with. The value stays text
 // so the baker can type; the buttons move it by `step`, never below `step`.
 export function Stepper({ label, value, onChange, step = 1, suffix }) {
@@ -23,7 +35,7 @@ export function Stepper({ label, value, onChange, step = 1, suffix }) {
         </Pressable>
         <View style={styles.valueBox}>
           <TextInput
-            style={[styles.input, !!suffix && styles.inputWithSuffix]}
+            style={[styles.input, !!suffix && styles.inputWithSuffix, !!suffix && suffixWidth(value)]}
             value={value}
             onChangeText={onChange}
             keyboardType="number-pad"
@@ -104,7 +116,9 @@ const styles = StyleSheet.create({
   },
   input: {
     width: 96,
+    // Android pads a TextInput unless told not to, which eats into the digits.
     paddingVertical: 0,
+    paddingHorizontal: 0,
     fontSize: 30,
     fontFamily: fonts.display,
     color: colors.text,
@@ -114,6 +128,15 @@ const styles = StyleSheet.create({
   inputWithSuffix: {
     width: 56,
     textAlign: 'right',
+  },
+  inputWithSuffix3: {
+    width: 64,
+  },
+  inputWithSuffix4: {
+    width: 84,
+  },
+  inputWithSuffix5: {
+    width: 104,
   },
   suffix: {
     fontSize: 16,

@@ -9,8 +9,8 @@ import { recipes } from '../data/recipes';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { Icon } from '../components/Icon';
 
-// The calculators sit in a two-column grid; featured ones (the flour mix, which
-// builds a blend rather than scaling a fixed recipe) get a full-width card under it.
+// The calculators sit in a two-column grid; a recipe marked `featured` gets a
+// full-width card under it instead (none is, at the moment).
 const gridRecipes = recipes.filter((recipe) => !recipe.featured);
 const featuredRecipes = recipes.filter((recipe) => recipe.featured);
 

@@ -65,7 +65,6 @@ const steps = (...list) =>
 
 // The crêpe flours and starches, weighed together in the first step and listed in its card.
 const CREPE_DRY = [
-  'riceFlour',
   'brownRiceFlour',
   'sorghumFlour',
   'milletFlour',
@@ -344,10 +343,10 @@ export const recipes = [
         key: 'flour',
         type: 'choice',
         multiple: true,
-        default: ['rice'],
+        default: ['brownRice'],
         labelKey: 'recipes.crepes.flourLabel',
         choices: [
-          { key: 'rice', labelKey: 'recipes.crepes.flours.rice', hintKey: 'recipes.crepes.flourHints.rice' },
+          { key: 'brownRice', labelKey: 'recipes.crepes.flours.brownRice', hintKey: 'recipes.crepes.flourHints.brownRice' },
           { key: 'sorghum', labelKey: 'recipes.crepes.flours.sorghum', hintKey: 'recipes.crepes.flourHints.sorghum' },
           { key: 'millet', labelKey: 'recipes.crepes.flours.millet', hintKey: 'recipes.crepes.flourHints.millet' },
           { key: 'buckwheat', labelKey: 'recipes.crepes.flours.buckwheat', hintKey: 'recipes.crepes.flourHints.buckwheat' },
@@ -412,7 +411,6 @@ export const recipes = [
     // flours and starches the baker has, so it gets its own screen.
     id: 'flour-mix',
     type: 'flour-mix',
-    featured: true,
     nameKey: 'recipes.flourMix.name',
     image: require('../../assets/recipes/flour-mix.jpg'),
     descriptionKey: 'recipes.flourMix.description',

@@ -4,7 +4,8 @@ import { parseCount, roundGrams, roundTenth, roundWhole } from './scaling';
 // The stepper is the flour + starch weight, and everything else is a share of
 // it. The numbers are a tested gluten-free crêpe recipe (The Daring Gourmet:
 // brown and white rice flour, potato and tapioca starch), converted from cups,
-// so they are approximate: per 100 g of flour + starch about 1 egg - the
+// so they are approximate; the rice here is all brown, the flour the baker
+// keeps. Per 100 g of flour + starch about 1 egg - the
 // Hungarian "one egg per 100 g of flour" rule too - 125 ml milk, 14 g melted
 // butter or oil, 6 g sugar and a pinch of salt.
 //
@@ -35,28 +36,39 @@ const BATTER_PER_CREPE_ML = 60;
 // butter 0.91, sugar 1.59. The salt is too little to count.
 const DENSITY = { flourAndStarch: 1.5, egg: 1.03, fat: 0.91, sugar: 1.59 };
 
-// The chosen flours share the flour part equally; "rice" is half white, half
-// brown rice flour, as in the source recipe.
+// The chosen flours share the flour part equally.
 const FLOUR_LINES = {
-  rice: ['riceFlour', 'brownRiceFlour'],
-  sorghum: ['sorghumFlour'],
-  millet: ['milletFlour'],
-  buckwheat: ['buckwheatFlour'],
+  brownRice: 'brownRiceFlour',
+  sorghum: 'sorghumFlour',
+  millet: 'milletFlour',
+  buckwheat: 'buckwheatFlour',
 };
+// Buckwheat stays at or below 30% of the base for its taste: gluten-free bread
+// scored best at 30% and worst at 50%, a flatbread lost points at 40% for its
+// bitterness and dark colour, and in polenta the bitter notes opened up above
+// 30%. What it cannot take goes to the other chosen flours, or to brown rice
+// when buckwheat is the only one.
+const BUCKWHEAT_CAP = 0.3;
 
-export function calculateCrepeIngredients(grams, { flour = ['rice'] } = {}) {
+export function calculateCrepeIngredients(grams, { flour = ['brownRice'] } = {}) {
   const base = parseCount(grams);
   if (!base) return null;
   const flours = [].concat(flour).filter((key) => FLOUR_LINES[key]);
   if (flours.length === 0) return null;
 
-  const flourShares = { riceFlour: 0, brownRiceFlour: 0, sorghumFlour: 0, milletFlour: 0, buckwheatFlour: 0 };
+  const flourShares = { brownRiceFlour: 0, sorghumFlour: 0, milletFlour: 0, buckwheatFlour: 0 };
   flours.forEach((key) => {
-    const lines = FLOUR_LINES[key];
-    lines.forEach((line) => {
-      flourShares[line] += CREPES.flour / flours.length / lines.length;
-    });
+    flourShares[FLOUR_LINES[key]] = CREPES.flour / flours.length;
   });
+  if (flourShares.buckwheatFlour > BUCKWHEAT_CAP) {
+    const others = flours.filter((key) => key !== 'buckwheat').map((key) => FLOUR_LINES[key]);
+    const takers = others.length > 0 ? others : ['brownRiceFlour'];
+    const excess = flourShares.buckwheatFlour - BUCKWHEAT_CAP;
+    flourShares.buckwheatFlour = BUCKWHEAT_CAP;
+    takers.forEach((line) => {
+      flourShares[line] += excess / takers.length;
+    });
+  }
 
   const lines = {
     ...Object.fromEntries(Object.keys(flourShares).map((key) => [key, roundGrams(flourShares[key] * base)])),

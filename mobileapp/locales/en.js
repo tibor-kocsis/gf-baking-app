@@ -100,6 +100,28 @@ export default {
       unitLabel: 'pancakes',
       howMany: 'How many pancakes (6cm each)?',
     },
+    crepes: {
+      name: 'Crêpes',
+      description: 'Thin gluten-free crêpes (Hungarian palacsinta) to roll and fill, from rice, sorghum, millet or buckwheat flour',
+      unitLabel: 'g',
+      howMany: 'How much flour + starch (g)?',
+      flourLabel: 'Flour',
+      flours: { rice: 'Rice', sorghum: 'Sorghum', millet: 'Millet', buckwheat: 'Buckwheat' },
+      flourHints: {
+        rice: 'Half white, half brown rice flour: a neutral taste. Use a fine grind; a coarse one turns gritty.',
+        sorghum: 'White sorghum tastes neutral, slightly nutty.',
+        millet: 'Fresh millet only: it turns rancid fast and then tastes bitter.',
+        buckwheat: 'A stronger, slightly bitter taste that suits savoury fillings. Use buckwheat flour labelled gluten-free.',
+      },
+      fat: 'Melted butter or oil',
+      totalBatter: 'Batter, about',
+      crepeCount: 'Crêpes (24 cm pan)',
+      notes: [
+        'The amounts come from a tested gluten-free crêpe recipe converted from cups, so they are approximate: per 100 g of flour + starch 1 egg and 125 ml milk.',
+        'The chosen flours share the flour part equally. About 18% of the base is starch: tapioca keeps the crêpe flexible, potato makes it tender. No corn starch: it tastes of cereal and stiffens soonest.',
+        'No soda water needed: in a side-by-side test it made no difference.',
+      ],
+    },
     cheeseSticks: {
       name: 'Cottage cheese sticks',
       description: 'Egg-free, crumbly, golden cottage cheese sticks made with brown rice and sorghum flour and psyllium husk.',
@@ -369,6 +391,13 @@ export default {
       'Heat a lightly buttered pan over medium heat',
       'Pour a ladleful of batter into the pan, tilting it to spread thinly, and cook until golden on both sides',
       'Repeat with the remaining batter, buttering the pan between pancakes as needed',
+    ],
+    crepes: [
+      'Mix the dry ingredients.',
+      'Whisk the eggs with the milk, pour them onto the dry mix and whisk until smooth. Stir in the melted butter or oil last.',
+      'Cover and chill for at least 1 hour: rice flour soaks up the milk slowly, and a well-soaked batter tears less.',
+      'Stir the batter. Heat a 24 cm pan over medium heat, grease it thinly and make a test crêpe from about 60 ml of batter, a small ladle, tilting the pan as you pour. If it does not spread thin, whisk in more milk a spoonful at a time.',
+      'Cook each side for 1–2 minutes until golden and stack them on a plate. Fill with jam, sweet cottage cheese or cocoa, or make them savoury, e.g. Hortobágy pancakes.',
     ],
     cheeseSticks: [
       'Mix the brown rice flour, sorghum flour, tapioca, potato starch, psyllium husk, baking powder and salt.',

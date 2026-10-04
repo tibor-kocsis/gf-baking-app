@@ -100,6 +100,28 @@ export default {
       unitLabel: 'Pancakes',
       howMany: 'Wie viele Pancakes (6cm je Stück)?',
     },
+    crepes: {
+      name: 'Palatschinken',
+      description: 'Dünne glutenfreie Palatschinken zum Rollen und Füllen, aus Reis-, Sorghum-, Hirse- oder Buchweizenmehl',
+      unitLabel: 'g',
+      howMany: 'Wie viel Mehl + Stärke (g)?',
+      flourLabel: 'Mehl',
+      flours: { rice: 'Reis', sorghum: 'Sorghum', millet: 'Hirse', buckwheat: 'Buchweizen' },
+      flourHints: {
+        rice: 'Halb weißes, halb Naturreismehl: neutraler Geschmack. Fein gemahlenes nehmen, grobes wird körnig.',
+        sorghum: 'Weißes Sorghum schmeckt neutral, leicht nussig.',
+        millet: 'Nur frische Hirse: sie wird schnell ranzig und schmeckt dann bitter.',
+        buckwheat: 'Kräftiger, leicht bitterer Geschmack, passt zu herzhaften Füllungen. Als glutenfrei gekennzeichnetes Buchweizenmehl verwenden.',
+      },
+      fat: 'Geschmolzene Butter oder Öl',
+      totalBatter: 'Teig, etwa',
+      crepeCount: 'Palatschinken (24 cm)',
+      notes: [
+        'Die Mengen stammen aus einem erprobten glutenfreien Crêpe-Rezept, aus Tassen umgerechnet, also Richtwerte: auf 100 g Mehl + Stärke 1 Ei und 125 ml Milch.',
+        'Die gewählten Mehle teilen sich den Mehlanteil zu gleichen Teilen. Etwa 18% der Basis sind Stärke: Tapioka hält den Teig biegsam, Kartoffel macht ihn zart. Keine Maisstärke: sie schmeckt nach Getreide und wird am schnellsten fest.',
+        'Kein Sodawasser nötig: im Vergleichstest machte es keinen Unterschied.',
+      ],
+    },
     cheeseSticks: {
       name: 'Quark-Käsestangen',
       description: 'Eifreie, mürbe, goldbraune Quark-Käsestangen aus Naturreis- und Sorghummehl mit Flohsamenschalen.',
@@ -369,6 +391,13 @@ export default {
       'Eine leicht gebutterte Pfanne bei mittlerer Hitze erhitzen',
       'Eine Kelle Teig in die Pfanne geben, dünn verteilen und auf beiden Seiten goldbraun backen',
       'Mit dem restlichen Teig wiederholen, die Pfanne zwischendurch erneut buttern',
+    ],
+    crepes: [
+      'Die trockenen Zutaten mischen.',
+      'Die Eier mit der Milch verquirlen, über die trockene Mischung gießen und glatt rühren. Zuletzt die geschmolzene Butter oder das Öl einrühren.',
+      'Abgedeckt mindestens 1 Stunde kühl stellen: Reismehl nimmt die Milch langsam auf, und gut gequollener Teig reißt weniger.',
+      'Den Teig durchrühren. Eine 24-cm-Pfanne bei mittlerer Hitze erhitzen, dünn einfetten und einen Probe-Palatschinken aus etwa 60 ml Teig (einer kleinen Kelle) backen, dabei die Pfanne beim Eingießen schwenken. Verläuft er nicht dünn, löffelweise Milch einrühren.',
+      'Pro Seite 1–2 Minuten goldbraun backen und auf einem Teller stapeln. Mit Marmelade, Topfen oder Kakao füllen, oder herzhaft, etwa als Hortobágyer Palatschinken.',
     ],
     cheeseSticks: [
       'Naturreismehl, Sorghummehl, Tapioka, Kartoffelstärke, Flohsamenschalen, Backpulver und Salz vermischen.',

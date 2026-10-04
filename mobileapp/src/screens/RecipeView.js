@@ -110,7 +110,7 @@ function RecipeResults({ recipe, ingredients, pulse }) {
       {!!recipe.summary && (
         <SummaryCard
           animatedStyle={pulse}
-          items={recipe.summary.map((item) => ({ label: t(item.labelKey), value: `${ingredients[item.key]}${item.unit || 'g'}` }))}
+          items={recipe.summary.map((item) => ({ label: t(item.labelKey), value: `${ingredients[item.key]}${formatUnit(item.unit, t)}` }))}
         />
       )}
 

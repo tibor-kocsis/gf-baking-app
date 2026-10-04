@@ -4,6 +4,7 @@ import {
   calculatePizza3Ingredients,
   calculateWaffleIngredients,
   calculatePancakeIngredients,
+  calculateCrepeIngredients,
   calculateCheeseStickIngredients,
   CHEESE_STICK_SPOON_UNITS,
   TANGZHONG_PERCENT_MIN,
@@ -31,7 +32,8 @@ import {
 //                                  either may have visibleWhen(options); a choice
 //                                  sits in the card of the switch above it
 //   howManyKey, unitLabelKey       the stepper's label and suffix
-//   summary                        dark summary card: [{ labelKey, key, unit }], unit default grams
+//   summary                        dark summary card: [{ labelKey, key, unit }], unit a token
+//                                  from utils/format.js, default grams
 //   metaKey                        one line of times under the ingredients title
 //   ingredientGroups               [{ key, titleKey, items: [ingredient keys] }]
 //   ingredientNamesKey             namespace for names (default 'ingredients')
@@ -60,6 +62,19 @@ const steps = (...list) =>
     ingredients,
     ...(timerSeconds && { timerSeconds }),
   }));
+
+// The crêpe flours and starches, weighed together in the first step and listed in its card.
+const CREPE_DRY = [
+  'riceFlour',
+  'brownRiceFlour',
+  'sorghumFlour',
+  'milletFlour',
+  'buckwheatFlour',
+  'tapiocaStarch',
+  'potatoStarch',
+  'sugar',
+  'salt',
+];
 
 // Pizza dough 3's blend, weighed together in the dough step and listed in its card.
 const PIZZA3_BLEND = ['buckwheatFlour', 'sorghumFlour', 'cornStarch', 'potatoStarch', 'tapiocaStarch'];
@@ -308,6 +323,52 @@ export const recipes = [
       [['butter', 'milk']],
       [['riceFlour', 'bakingPowder']],
       [], [], [], []
+    ),
+  },
+  {
+    // Thin Hungarian palacsinta; the stepper is the flour + starch weight.
+    id: 'crepes',
+    type: 'scaled',
+    nameKey: 'recipes.crepes.name',
+    image: require('../../assets/recipes/crepes.jpg'),
+    descriptionKey: 'recipes.crepes.description',
+    unitLabelKey: 'recipes.crepes.unitLabel',
+    howManyKey: 'recipes.crepes.howMany',
+    instructionsKey: 'instructions.crepes',
+    notesKey: 'recipes.crepes.notes',
+    initialValue: 200,
+    stepSize: 50,
+    calculate: (grams, options) => calculateCrepeIngredients(grams, options),
+    options: [
+      {
+        key: 'flour',
+        type: 'choice',
+        multiple: true,
+        default: ['rice'],
+        labelKey: 'recipes.crepes.flourLabel',
+        choices: [
+          { key: 'rice', labelKey: 'recipes.crepes.flours.rice', hintKey: 'recipes.crepes.flourHints.rice' },
+          { key: 'sorghum', labelKey: 'recipes.crepes.flours.sorghum', hintKey: 'recipes.crepes.flourHints.sorghum' },
+          { key: 'millet', labelKey: 'recipes.crepes.flours.millet', hintKey: 'recipes.crepes.flourHints.millet' },
+          { key: 'buckwheat', labelKey: 'recipes.crepes.flours.buckwheat', hintKey: 'recipes.crepes.flourHints.buckwheat' },
+        ],
+      },
+    ],
+    summary: [
+      { labelKey: 'recipes.crepes.totalBatter', key: 'totalBatter', unit: 'ml' },
+      { labelKey: 'recipes.crepes.crepeCount', key: 'crepeCount', unit: 'pcs' },
+    ],
+    units: { egg: 'count', milk: 'ml' },
+    ingredientNames: { fat: 'recipes.crepes.fat' },
+    ingredientGroups: [
+      { key: 'dry', titleKey: 'common.dryIngredients', items: CREPE_DRY },
+      { key: 'wet', titleKey: 'common.wetIngredients', items: ['egg', 'milk', 'fat'] },
+    ],
+    cookingSteps: steps(
+      [CREPE_DRY],
+      [['egg', 'milk', 'fat']],
+      [[], 3600],
+      [], []
     ),
   },
   {

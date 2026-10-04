@@ -100,6 +100,28 @@ export default {
       unitLabel: 'palacsinta',
       howMany: 'Hány palacsintát szeretnél (6 cm-eset)?',
     },
+    crepes: {
+      name: 'Palacsinta',
+      description: 'Vékony, tekerhető gluténmentes palacsinta rizs-, cirok-, köles- vagy hajdinalisztből',
+      unitLabel: 'g',
+      howMany: 'Mennyi liszt + keményítő legyen (g)?',
+      flourLabel: 'Liszt',
+      flours: { rice: 'Rizs', sorghum: 'Cirok', millet: 'Köles', buckwheat: 'Hajdina' },
+      flourHints: {
+        rice: 'Fele fehér, fele barna rizsliszt: semleges íz. Finom őrlésűt válassz, a durva szemcsés lesz.',
+        sorghum: 'A fehér cirok semleges, enyhén diós ízű.',
+        millet: 'Csak friss kölesből: gyorsan avasodik, és akkor keserű.',
+        buckwheat: 'Erősebb, kissé kesernyés íz, sós töltelékhez illik. Gluténmentesnek jelölt hajdinalisztet használj.',
+      },
+      fat: 'Olvasztott vaj vagy olaj',
+      totalBatter: 'Tészta összesen, kb.',
+      crepeCount: 'Palacsinta (24 cm)',
+      notes: [
+        'A mennyiségek egy kipróbált gluténmentes palacsintareceptből jönnek, csészéből átszámolva, ezért kb.-értékek: 100 g liszt + keményítőre 1 tojás és 125 ml tej.',
+        'A választott lisztek egyenlő arányban osztoznak a lisztrészen. Az alap kb. 18%-a keményítő: a tápióka hajlékonyan tartja a palacsintát, a burgonya puhítja. Kukoricakeményítő nincs benne: gabonás mellékízű, és a leghamarabb megkeményedik.',
+        'Szódavíz nem kell: egy összehasonlító teszten nem okozott különbséget.',
+      ],
+    },
     cheeseSticks: {
       name: 'Túrós sajtos rúd',
       description: 'Tojás nélküli, omlós, aranybarna túrós sajtos rúd barna rizslisztből és ciroklisztből, útifűmaghéjjal.',
@@ -369,6 +391,13 @@ export default {
       'Melegíts fel egy enyhén kivajazott serpenyőt közepes lángon',
       'Önts egy merőkanálnyi tésztát a serpenyőbe, döntsd meg, hogy vékonyan elterüljön, és süsd mindkét oldalát aranybarnára',
       'Ismételd a maradék tésztával, szükség szerint vajazva a serpenyőt palacsinták között',
+    ],
+    crepes: [
+      'Keverd össze a száraz hozzávalókat.',
+      'A tojásokat verd fel a tejjel, öntsd a száraz keverékhez, és keverd csomómentesre. Végül keverd bele az olvasztott vajat vagy olajat.',
+      'Letakarva tedd hűtőbe legalább 1 órára: a rizsliszt lassan szívja magába a tejet, és a jól átázott tészta kevésbé szakad.',
+      'Keverd át a tésztát. Közepes lángon melegíts egy 24 cm-es serpenyőt, kend ki vékonyan, és süss egy próbapalacsintát kb. 60 ml tésztából (egy kis merőkanálnyi), öntés közben döntsd körbe a serpenyőt. Ha nem terül el vékonyan, kanalanként keverj bele még tejet.',
+      'Oldalanként 1–2 perc alatt süsd aranybarnára, és tányéron rakd egymásra. Töltsd lekvárral, túróval vagy kakaóval, sósan például hortobágyinak.',
     ],
     cheeseSticks: [
       'Keverd össze a barna rizslisztet, a ciroklisztet, a tápiókát, a burgonyakeményítőt, az útifűmaghéjat, a sütőport és a sót.',

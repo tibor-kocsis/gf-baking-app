@@ -8,9 +8,11 @@ import { parseCount, roundGrams, roundTenth, roundWhole } from './scaling';
 // a brown rice and sorghum batch at 125 ml milk and 1 egg per 100 g came out
 // dense and would not spread thin. Sorghum crêpe recipes run about 200 ml milk
 // and 1.5 eggs per 100 g of flour (Bake with Shivesh: 138 g sorghum, 2 eggs,
-// 284 g milk), and wheat palacsinta 175-240 ml, so the batter takes 200 ml milk
-// and 1.5 eggs per 100 g; the extra egg holds the thinner sheet together. Per
-// 100 g also 14 g melted butter or oil, 6 g sugar and a pinch of salt.
+// 284 g milk), a gluten-free crêpe with a starch blend about 228 ml (America's
+// Test Kitchen: 156 g blend, 1.5 cups milk), and wheat palacsinta 175-300 ml, so
+// the batter takes 210 ml milk and 1.5 eggs per 100 g; the extra egg holds the
+// thinner sheet together. Per 100 g also 14 g melted butter or oil, 6 g sugar
+// and a pinch of salt.
 //
 // About 18% of the base is starch, half tapioca and half potato. Tapioca keeps
 // the thin sheet flexible and slow to stiffen once rolled and cold; potato makes
@@ -24,7 +26,7 @@ const CREPES = {
   tapiocaStarch: 0.09,
   potatoStarch: 0.09,
   egg: 0.015, // eggs per gram of base: 1.5 per 100 g
-  milk: 2, // ml per gram of base
+  milk: 2.1, // ml per gram of base
   fat: 0.14,
   sugar: 0.06,
   salt: 0.008,

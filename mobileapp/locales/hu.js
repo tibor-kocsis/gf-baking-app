@@ -117,7 +117,7 @@ export default {
       totalBatter: 'Tészta összesen, kb.',
       crepeCount: 'Palacsinta (24 cm)',
       notes: [
-        '100 g liszt + keményítőre 1,5 tojás és 200 ml tej, ahogy a ciroklisztes palacsintareceptekben: kevesebbel sűrű marad a tészta, és tömör lesz a palacsinta. Ha még így sem terül el vékonyan, kanalanként adj hozzá tejet.',
+        '100 g liszt + keményítőre 1,5 tojás és 210 ml tej, a ciroklisztes (kb. 200 ml) és a keményítős gluténmentes (kb. 230 ml) palacsintareceptek között: kevesebbel sűrű marad a tészta, és tömör lesz a palacsinta. Ha még így sem terül el vékonyan, kanalanként adj hozzá tejet.',
         'A választott lisztek egyenlő arányban osztoznak a lisztrészen, de a hajdina legfeljebb az alap 30%-a, mert efölött kijön a keserűsége. Az alap kb. 18%-a keményítő: a tápióka hajlékonyan tartja a palacsintát, a burgonya puhítja. Kukoricakeményítő nincs benne: gabonás mellékízű, és a leghamarabb megkeményedik.',
         'Szódavíz nem kell: egy összehasonlító teszten nem okozott különbséget.',
       ],

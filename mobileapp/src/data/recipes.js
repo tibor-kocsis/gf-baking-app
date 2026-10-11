@@ -314,13 +314,13 @@ export const recipes = [
     calculate: (count) => calculatePancakeIngredients(count),
     units: { egg: 'count', milk: 'ml' },
     ingredientGroups: [
-      { key: 'dry', titleKey: 'common.dryIngredients', items: ['riceFlour', 'sugar', 'bakingPowder', 'salt'] },
+      { key: 'dry', titleKey: 'common.dryIngredients', items: ['riceFlour', 'potatoStarch', 'tapiocaStarch', 'sugar', 'bakingPowder', 'salt'] },
       { key: 'wet', titleKey: 'common.wetIngredients', items: ['egg', 'butter', 'milk'] },
     ],
     cookingSteps: steps(
       [['egg', 'sugar', 'salt']],
       [['butter', 'milk']],
-      [['riceFlour', 'bakingPowder']],
+      [['riceFlour', 'potatoStarch', 'tapiocaStarch', 'bakingPowder']],
       [], [], [], []
     ),
   },

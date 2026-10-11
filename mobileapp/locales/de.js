@@ -386,7 +386,7 @@ export default {
     pancakes: [
       'Die Eier mit dem Zucker und einer Prise Salz verquirlen',
       'Die geschmolzene Butter und die warme Milch unterrühren',
-      'Das Reismehl und das Backpulver hinzufügen und zu einem glatten, klumpenfreien Teig verrühren',
+      'Das Reismehl, die Stärken und das Backpulver hinzufügen und zu einem glatten, klumpenfreien Teig verrühren',
       'Den Teig 10 Minuten ruhen lassen',
       'Eine leicht gebutterte Pfanne bei mittlerer Hitze erhitzen',
       'Eine Kelle Teig in die Pfanne geben, dünn verteilen und auf beiden Seiten goldbraun backen',

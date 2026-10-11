@@ -386,7 +386,7 @@ export default {
     pancakes: [
       'Verd fel a tojásokat a cukorral és egy csipet sóval',
       'Keverd bele az olvasztott vajat és a langyos tejet',
-      'Add hozzá a rizslisztet és a sütőport, és keverd csomómentes, sima tésztává',
+      'Add hozzá a rizslisztet, a keményítőket és a sütőport, és keverd csomómentes, sima tésztává',
       'Hagyd pihenni a tésztát 10 percig',
       'Melegíts fel egy enyhén kivajazott serpenyőt közepes lángon',
       'Önts egy merőkanálnyi tésztát a serpenyőbe, döntsd meg, hogy vékonyan elterüljön, és süsd mindkét oldalát aranybarnára',

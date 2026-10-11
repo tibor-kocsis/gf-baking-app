@@ -386,7 +386,7 @@ export default {
     pancakes: [
       'Whisk the eggs together with the sugar and a pinch of salt',
       'Stir in the melted butter and warm milk',
-      'Add the rice flour and baking powder, and mix until you have a smooth, lump-free batter',
+      'Add the rice flour, the starches and the baking powder, and mix until you have a smooth, lump-free batter',
       'Let the batter rest for 10 minutes',
       'Heat a lightly buttered pan over medium heat',
       'Pour a ladleful of batter into the pan, tilting it to spread thinly, and cook until golden on both sides',

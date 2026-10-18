@@ -215,6 +215,23 @@ function fillFraction(target, keys, caps, weights, absorbOrder, capsActive, prep
   return { amounts, plain, shortfall };
 }
 
+// The starch fraction filled as the solver fills it, for a recipe that keeps to
+// the flour mix's starch rules (pizza dough 2): `target` spread over `starches`
+// around the tapioca the unimix already brought, under the caps once the starch
+// comes from two sources or more. Returns the plain starch to weigh out per key.
+export function fillStarch(target, starches, unimixTapioca) {
+  const fromUnimix = unimixTapioca > EPS;
+  return fillFraction(
+    target,
+    starches,
+    STARCH_CAPS,
+    STARCH_WEIGHTS,
+    STARCH_ABSORB_ORDER,
+    distinctCount(starches, fromUnimix ? 'tapioca' : null) >= 2,
+    fromUnimix ? { tapioca: unimixTapioca } : {}
+  ).plain;
+}
+
 // Builds one candidate blend for a given flour:starch split and unimix weight.
 function buildCandidate(ctx, flourShare, unimixWeight) {
   const { base, flours, starches, psylliumAvailable, styleFlourShare } = ctx;

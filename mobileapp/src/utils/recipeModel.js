@@ -36,8 +36,8 @@ export function optionCardsFor(recipe, options) {
   return cards;
 }
 
-// The recipe with its variant for these options applied, e.g. pizza dough 2
-// without its tangzhong.
+// The recipe with its variant for these options applied (variantFor in
+// data/recipes.js).
 export function resolveRecipe(recipe, options) {
   return recipe.variantFor ? { ...recipe, ...recipe.variantFor(options) } : recipe;
 }
@@ -51,7 +51,7 @@ export function ingredientUnit(recipe, key) {
   return (recipe.units && recipe.units[key]) || 'g';
 }
 
-// The ingredient cards, leaving out lines the options zeroed (the tangzhong water).
+// The ingredient cards, leaving out lines the options zeroed (the starches not chosen).
 export function ingredientGroupsFor(recipe, ingredients) {
   return (recipe.ingredientGroups || []).map((group) => ({
     key: group.key,

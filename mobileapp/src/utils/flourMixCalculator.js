@@ -15,8 +15,8 @@
 // What holds throughout: the batch size (flour + starch) is the 100% base of every
 // percentage shown; the sorghum unimix is never counted as a flour, only its flour
 // + starch part counts toward the base and its parts count toward the caps; potato
-// is the cap protected hardest; the tangzhong draws on the pantry in the order
-// below, and only a chickpea-only pantry goes without one; hydration has no style
+// is the cap protected hardest; a tangzhong, when picked, draws on the pantry in
+// the order below, and only a chickpea-only pantry goes without one; hydration has no style
 // term of its own (the style moves the flour:starch split, the psyllium dose and
 // the additions, and the water rules only read the resulting shares).
 
@@ -24,6 +24,7 @@ import { parseCount, roundGrams, roundTenth } from './calculators/scaling';
 import {
   SORGHUM_UNIMIX as UNIMIX,
   TANGZHONG_WATER_RATIO,
+  BAMBOO_FIBER_WATER_RATIO,
   clampTangzhongPercent,
   MIN_FREE_WATER_SHARE,
   psylliumGelWater,
@@ -32,6 +33,14 @@ import {
 export const FLOUR_KEYS = ['sorghum', 'millet', 'brownRice', 'chickpea'];
 export const STARCH_KEYS = ['potato', 'tapioca', 'corn'];
 export const STYLE_KEYS = ['sandwich', 'rustic', 'softRoll', 'enrichedBun'];
+
+// What holds extra water in the crumb: a tangzhong, bamboo fibre, or neither.
+// The baker picks one; both together have not been baked.
+export const WATER_HOLD_KEYS = ['tangzhong', 'bamboo', 'none'];
+
+// Bamboo fibre at 2% of the base, the dose the baker has baked this bread with,
+// weighed dry with the flours. Its water (dough.js) goes in with the mixing liquid.
+const BAMBOO_FIBER = 0.02;
 
 // The sorghum unimix (calculators/dough.js) is NOT a flour: every gram is
 // decomposed into the flour, starch and psyllium totals, and only the flour +
@@ -213,6 +222,23 @@ function fillFraction(target, keys, caps, weights, absorbOrder, capsActive, prep
   }
 
   return { amounts, plain, shortfall };
+}
+
+// The starch fraction filled as the solver fills it, for a recipe that keeps to
+// the flour mix's starch rules (pizza dough 2): `target` spread over `starches`
+// around the tapioca the unimix already brought, under the caps once the starch
+// comes from two sources or more. Returns the plain starch to weigh out per key.
+export function fillStarch(target, starches, unimixTapioca) {
+  const fromUnimix = unimixTapioca > EPS;
+  return fillFraction(
+    target,
+    starches,
+    STARCH_CAPS,
+    STARCH_WEIGHTS,
+    STARCH_ABSORB_ORDER,
+    distinctCount(starches, fromUnimix ? 'tapioca' : null) >= 2,
+    fromUnimix ? { tapioca: unimixTapioca } : {}
+  ).plain;
 }
 
 // Builds one candidate blend for a given flour:starch split and unimix weight.
@@ -418,7 +444,8 @@ export function calculateFlourMix(options) {
   const base = parseCount(settings.batchSizeG) || 0;
   const unimixAvailable = !!settings.unimixAvailable;
   const psylliumAvailable = !!settings.psylliumAvailable;
-  const wantsTangzhong = !!settings.tangzhong;
+  const waterHold = WATER_HOLD_KEYS.indexOf(settings.waterHold) !== -1 ? settings.waterHold : 'none';
+  const wantsTangzhong = waterHold === 'tangzhong';
   const tangzhongPercent = clampTangzhongPercent(settings.tangzhongPercent);
   const flours = FLOUR_KEYS.filter((key) => (settings.floursAvailable || []).indexOf(key) !== -1);
   const starches = STARCH_KEYS.filter(
@@ -563,6 +590,9 @@ export function calculateFlourMix(options) {
   if (chickpeaShare > 0.1) hydration += 0.02;
   if (potatoShare > 0.4) hydration -= 0.03;
   if (tangzhongActive) hydration += 0.03;
+  const bambooFiber = waterHold === 'bamboo' ? roundGrams(BAMBOO_FIBER * baseTotal) : 0;
+  const bambooWater = BAMBOO_FIBER * BAMBOO_FIBER_WATER_RATIO;
+  if (bambooFiber > 0) hydration += bambooWater;
   if (psylliumShare > PSYLLIUM_TARGET) {
     // +5% for each 0.5% above target, capped at the band's own headroom: past
     // 5.25% the psyllium is already flagged and more water stops helping.
@@ -706,6 +736,12 @@ export function calculateFlourMix(options) {
       params: { amount: tangzhongFlourTotal, water: pouredTangzhong },
     });
   }
+  if (bambooFiber > 0) {
+    notes.push({
+      key: 'bambooWater',
+      params: { amount: bambooFiber, points: Math.round(bambooWater * 100) },
+    });
+  }
 
   // One line per ingredient, biggest first. The lead ingredient (sorghum, tapioca)
   // adds up its plain and unimix parts and says how much came from the mix.
@@ -746,6 +782,9 @@ export function calculateFlourMix(options) {
       amount: psylliumAdded,
       percent: pct(psylliumAdded, baseTotal),
     });
+  }
+  if (bambooFiber > 0) {
+    weighed.push({ key: 'bambooFiber', group: 'addition', amount: bambooFiber, percent: pct(bambooFiber, baseTotal) });
   }
   if (enriched) {
     const gelWater = amountOf(waterStreams, 'psylliumGel');
@@ -815,6 +854,7 @@ export function calculateFlourMix(options) {
           percent: tangzhongPercent,
         }
       : null,
+    bambooFiber,
     additions,
     relaxedCaps,
     flags: {
@@ -850,6 +890,7 @@ export const FLOUR_MIX_INGREDIENT_KEYS = {
   tapioca: STARCH_INGREDIENT_KEYS.tapioca,
   corn: STARCH_INGREDIENT_KEYS.corn,
   psylliumHusk: 'ingredients.psylliumHusk',
+  bambooFiber: 'ingredients.bambooFiber',
   water: 'ingredients.water',
   milk: 'ingredients.milk',
   egg: 'ingredients.egg',

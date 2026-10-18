@@ -7,9 +7,6 @@ import {
   calculateCrepeIngredients,
   calculateCheeseStickIngredients,
   CHEESE_STICK_SPOON_UNITS,
-  TANGZHONG_PERCENT_MIN,
-  TANGZHONG_PERCENT_MAX,
-  TANGZHONG_PERCENT_DEFAULT,
 } from '../utils/calculators';
 
 // The recipe catalog: the single source for the catalog screen, navigation and
@@ -48,10 +45,11 @@ import {
 const PIZZA2_BLEND = [
   'sorghumUnimix',
   'sorghumFlour',
-  'brownRiceFlourDough',
+  'brownRiceFlour',
   'milletFlour',
   'tapiocaStarch',
   'potatoStarch',
+  'cornStarch',
 ];
 
 // Cooking steps in instruction order, the index implied by position. Each is
@@ -142,78 +140,36 @@ export const recipes = [
         ],
       },
       {
+        // Any of the three; the flour mix's caps split them (calculators/pizza2.js).
         key: 'starch',
         type: 'choice',
-        default: 'both',
+        multiple: true,
+        default: ['tapioca', 'potato'],
         labelKey: 'recipes.pizza2.starchLabel',
         choices: [
-          { key: 'potato', labelKey: 'recipes.pizza2.starches.potato', hintKey: 'recipes.pizza2.starchHints.potato' },
           { key: 'tapioca', labelKey: 'recipes.pizza2.starches.tapioca', hintKey: 'recipes.pizza2.starchHints.tapioca' },
-          { key: 'both', labelKey: 'recipes.pizza2.starches.both', hintKey: 'recipes.pizza2.starchHints.both' },
+          { key: 'potato', labelKey: 'recipes.pizza2.starches.potato', hintKey: 'recipes.pizza2.starchHints.potato' },
+          { key: 'corn', labelKey: 'recipes.pizza2.starches.corn', hintKey: 'recipes.pizza2.starchHints.corn' },
         ],
       },
       {
-        key: 'tangzhong',
-        default: true,
-        labelKey: 'recipes.pizza2.tangzhongLabel',
-        onHintKey: 'recipes.pizza2.tangzhongOnHint',
-        offHintKey: 'recipes.pizza2.tangzhongOffHint',
-      },
-      {
-        // How much of the base is cooked; the rest of the brown rice stays raw.
-        key: 'tangzhongShare',
-        type: 'choice',
-        default: TANGZHONG_PERCENT_DEFAULT,
-        labelKey: 'recipes.pizza2.tangzhongShareLabel',
-        visibleWhen: (options) => options.tangzhong,
-        choices: Array.from(
-          { length: TANGZHONG_PERCENT_MAX - TANGZHONG_PERCENT_MIN + 1 },
-          (_, index) => {
-            const percent = TANGZHONG_PERCENT_MIN + index;
-            return { key: percent, label: `${percent}%`, hintKey: 'recipes.pizza2.tangzhongShareHint' };
-          }
-        ),
+        key: 'bamboo',
+        default: false,
+        labelKey: 'recipes.pizza2.bambooLabel',
+        onHintKey: 'recipes.pizza2.bambooOnHint',
+        offHintKey: 'recipes.pizza2.bambooOffHint',
       },
     ],
     summary: PIZZA_DOUGH_SUMMARY,
-    // brownRiceFlourDough is brown rice chosen as the main flour, apart from the
-    // tangzhong's; without a tangzhong the two are weighed as one.
-    ingredientNames: { brownRiceFlourDough: 'ingredients.brownRiceFlour' },
     ingredientGroups: [
-      { key: 'flour', titleKey: 'common.flour', items: [...PIZZA2_BLEND, 'brownRiceFlour', 'psylliumHusk'] },
-      {
-        key: 'wet',
-        titleKey: 'common.wetIngredients',
-        items: ['waterTangzhong', 'waterGel', 'waterYeast', 'oil', 'honey'],
-      },
-      { key: 'dry', titleKey: 'common.dryIngredients', items: ['salt', 'yeast'] },
+      { key: 'flour', titleKey: 'common.flour', items: [...PIZZA2_BLEND, 'psylliumHusk', 'bambooFiber'] },
+      { key: 'wet', titleKey: 'common.wetIngredients', items: ['waterGel', 'waterYeast', 'oil', 'honey'] },
+      { key: 'dry', titleKey: 'common.dryIngredients', items: ['salt', 'freshYeast'] },
     ],
-    // Without the tangzhong the first step drops out and the brown rice goes into
-    // the dough with the rest of the blend.
-    variantFor: (options) =>
-      options.tangzhong
-        ? {
-            ingredientNames: {
-              brownRiceFlour: 'ingredients.brownRiceFlourTangzhong',
-              brownRiceFlourDough: 'ingredients.brownRiceFlour',
-            },
-          }
-        : {
-            instructionsKey: 'instructions.pizza2NoTangzhong',
-            cookingSteps: steps(
-              [['psylliumHusk', 'waterGel']],
-              [['yeast', 'honey', 'waterYeast']],
-              [[...PIZZA2_BLEND, 'brownRiceFlour', 'salt', 'oil'], 900],
-              [], [], [], []
-            ),
-          },
-    // The tangzhong is two steps: the cold soak (timed), then the cook.
     cookingSteps: steps(
-      [['brownRiceFlour', 'waterTangzhong'], 900],
-      [],
       [['psylliumHusk', 'waterGel']],
-      [['yeast', 'honey', 'waterYeast']],
-      [[...PIZZA2_BLEND, 'salt', 'oil'], 900],
+      [['freshYeast', 'honey', 'waterYeast']],
+      [[...PIZZA2_BLEND, 'bambooFiber', 'salt', 'oil'], 900],
       [], [], [], []
     ),
   },

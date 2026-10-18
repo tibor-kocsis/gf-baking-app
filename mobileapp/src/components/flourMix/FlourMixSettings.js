@@ -6,6 +6,7 @@ import {
   FLOUR_KEYS,
   STARCH_KEYS,
   STYLE_KEYS,
+  WATER_HOLD_KEYS,
   styleRatioLabel,
 } from '../../utils/flourMixCalculator';
 import { TANGZHONG_PERCENT_MIN, TANGZHONG_PERCENT_MAX } from '../../utils/calculators/dough';
@@ -76,17 +77,20 @@ export function FlourMixSettings({ settings, onChange }) {
             hint={t('flourMix.psylliumHint')}
             value={settings.psyllium}
             onValueChange={(value) => onChange('psyllium', value)}
-            divider
-          />
-          <SwitchRow
-            label={t('flourMix.tangzhongLabel')}
-            hint={t('flourMix.tangzhongHint')}
-            value={settings.tangzhong}
-            onValueChange={(value) => onChange('tangzhong', value)}
           />
         </View>
 
-        {settings.tangzhong && (
+        <View style={styles.group}>
+          <Text style={styles.groupLabel}>{t('flourMix.waterHoldLabel')}</Text>
+          <SegmentedControl
+            options={WATER_HOLD_KEYS.map((key) => ({ key, label: t(`flourMix.waterHolds.${key}`) }))}
+            value={settings.waterHold}
+            onChange={(value) => onChange('waterHold', value)}
+          />
+          <Hint>{t(`flourMix.waterHoldHints.${settings.waterHold}`)}</Hint>
+        </View>
+
+        {settings.waterHold === 'tangzhong' && (
           <View style={styles.group}>
             <Text style={styles.groupLabel}>{t('flourMix.tangzhongShareLabel')}</Text>
             <SegmentedControl

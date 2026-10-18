@@ -1,8 +1,8 @@
 // Cooking steps for a solved flour mix
 //
 // The flour mix has no fixed recipe, so its steps are built from the formula:
-// a tangzhong and a psyllium gel only when the formula has them, milk and egg
-// for the hot dog bun, and shaping and baking by style. The method is the
+// a tangzhong, a psyllium gel and bamboo fibre only when the formula has them,
+// milk and egg for the hot dog bun, and shaping and baking by style. The method is the
 // baker's own from their sandwich bread and baguette: rest 15 minutes, fold a
 // few times, score, proof to 120-150%, bake to 96-98 C inside.
 
@@ -86,6 +86,7 @@ export function buildFlourMixPlan(formula, t, nameOf) {
     .filter((row) => row.group === 'flour' || row.group === 'starch')
     .map((row) => item(row.key, row.key, row.amount - (tangzhongTake[row.key] || 0)))
     .filter((row) => row.amount > 0);
+  if (formula.bambooFiber > 0) dry.push(item('bambooFiber', 'bambooFiber', formula.bambooFiber));
   const mixItems = dry.concat(item('salt', 'salt', formula.additions.salt));
   if (formula.water.eggCount > 0) {
     mixItems.push({ id: 'egg', name: nameOf('egg'), amount: formula.water.eggCount, unit: 'pcs' });

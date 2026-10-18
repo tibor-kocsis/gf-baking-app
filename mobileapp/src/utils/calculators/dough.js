@@ -27,6 +27,15 @@ export const TANGZHONG_PERCENT_MIN = 1;
 export const TANGZHONG_PERCENT_MAX = 6;
 export const TANGZHONG_PERCENT_DEFAULT = 2;
 
+// Bamboo fibre is an insoluble fibre (cellulose, hemicellulose, lignin): it does
+// not gel the way psyllium does, it only holds water, so it is a filler that keeps
+// the crumb moist rather than a binder. The baker gives it five times its weight
+// in water, added to the dough's water (suppliers quote 2.5-5x). In the one
+// gluten-free bread trial 4-6% raised the volume ~3% and more lowered it, and
+// the authors keep it at or under 4% (Processes 2025). The doses are the
+// baker's: 1.5% in pizza dough 2, 2% in the bread, where it has been baked.
+export const BAMBOO_FIBER_WATER_RATIO = 5;
+
 // A share from a stored setting or a stepper, held to the measured range.
 export function clampTangzhongPercent(value) {
   const percent = parseInt(value, 10) || TANGZHONG_PERCENT_DEFAULT;

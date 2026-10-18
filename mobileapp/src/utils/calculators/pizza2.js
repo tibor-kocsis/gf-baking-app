@@ -1,5 +1,5 @@
 import { parseCount, roundGrams, sumOf, doughTotals } from './scaling';
-import { SORGHUM_UNIMIX, MIN_FREE_WATER_SHARE, psylliumGelWater } from './dough';
+import { SORGHUM_UNIMIX, BAMBOO_FIBER_WATER_RATIO, MIN_FREE_WATER_SHARE, psylliumGelWater } from './dough';
 import { fillStarch } from '../flourMixCalculator';
 
 // Pizza dough 2 calculation logic
@@ -22,6 +22,7 @@ const PIZZA2 = {
   brownRiceFlour: 0.06,
   potatoStarch: 0.267,
   psylliumTotal: 0.045,
+  bambooFiber: 0.015, // the baker's option, weighed dry with the flours (dough.js)
   hydration: 0.87, // a starting point: 85% if unmanageable, 95% if the rim stays tight
   honey: 0.03,
   oil: 0.06,
@@ -79,20 +80,28 @@ function blendFor(flours, starches) {
   };
 }
 
-export function calculatePizza2Ingredients(count, { flour = ['unimix'], starch = ['tapioca', 'potato'] } = {}) {
+// The bamboo fibre brings five times its weight in water on top of the dough's
+// own; that water goes in with the yeast water, so the gel stays as it is.
+export function calculatePizza2Ingredients(
+  count,
+  { flour = ['unimix'], starch = ['tapioca', 'potato'], bamboo = false } = {}
+) {
   const numPizzas = parseCount(count);
   if (!numPizzas) return null;
   const flours = [].concat(flour);
   const { blend, psylliumInBlend, potatoShare } = blendFor(flours, [].concat(starch));
+  const bambooFiber = bamboo ? PIZZA2.bambooFiber : 0;
   // Each flour's water adjustment counts in proportion to its share of the main flour.
   const flourWater = flours.reduce((sum, item) => sum + FLOUR_WATER[item], 0) / flours.length;
   const starchWater = potatoShare > POTATO_WATER_SHARE ? 0 : POTATO_WATER;
-  const hydration = PIZZA2.hydration + flourWater + starchWater;
+  const hydration =
+    PIZZA2.hydration + flourWater + starchWater + bambooFiber * BAMBOO_FIBER_WATER_RATIO;
 
   const psylliumAdded = PIZZA2.psylliumTotal - psylliumInBlend;
   const doughPerBase = sumOf({
     ...blend,
     psylliumHusk: psylliumAdded,
+    bambooFiber,
     water: hydration,
     honey: PIZZA2.honey,
     oil: PIZZA2.oil,
@@ -122,6 +131,7 @@ export function calculatePizza2Ingredients(count, { flour = ['unimix'], starch =
     cornStarch: 0,
     ...Object.fromEntries(Object.keys(blend).map((key) => [key, grams(blend[key])])),
     psylliumHusk: grams(psylliumAdded),
+    bambooFiber: grams(bambooFiber),
     waterGel,
     waterYeast,
     oil: grams(PIZZA2.oil),

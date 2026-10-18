@@ -30,6 +30,12 @@ A tangzhong kikerült (korábban kapcsolható volt, az alap 1–6%-a, alapérté
 - Előcsirizesített liszt rizspizzában ~10%-nál adta a legjobb pórusszerkezetet, 20%-nál összeestek a pórusok (Food Sci Nutr 2026) — ez nem tangzhong, csak azt mutatja, hogy a főzött rész sem "minél több, annál jobb".
 - A lisztkeverékben a tangzhong megmarad.
 
+## Bambuszrost
+Kapcsolható, alapból ki. Az alap 1,5%-a bambuszrost, szárazon a lisztekkel; a tömege ötszörösét kapja vízből (+7,5 pont, unimixszel 94,5%), ami az élesztős vízzel megy bele, a gél nem változik. A golyó marad 290 g.
+- Oldhatatlan rost (cellulóz, hemicellulóz, lignin): nem gélesedik, mint az útifű, csak vizet tart, így nem kötőanyag, hanem töltőanyag. A beszállítók 2,5–5-szörös vízkötést adnak meg; az 5× a pék száma.
+- Egyetlen gluténmentes kenyérkísérlet (Processes 2025): 4–6% kb. 3%-kal növelte a térfogatot, több csökkentette, 6%-nál keményebb lett a bél 48 óra után; a szerzők legfeljebb 4%-ot javasolnak. Pizzára nincs mérés.
+- A gyári keverékekben (Schär Pizza Mix, Mix B) útifűvel együtt szerepel; azok 80–95%-ban keményítők.
+
 ## Unimix nélkül
 Kapcsolható. Kikapcsolva az unimix részei külön mennek: a cirokrésze (34%) helyett a választott liszt, a tápiókarésze (33,3%) helyett a választott keményítő(k), az útifű pedig mind (4,5%) gélnek.
 
@@ -48,7 +54,7 @@ Pizzára közvetlen összehasonlító mérés nincs sem a lisztekre, sem a kemé
 ## Elkészítés
 1. Útifű + gélvíz, 10 perc.
 2. Friss élesztő + méz a langyos vízben.
-3. Lisztek, keményítők, só; hozzá a gél, az élesztős víz, végül az olaj. 15 perc pihenő.
+3. Lisztek, keményítők, bambuszrost (ha van), só; hozzá a gél, az élesztős víz, végül az olaj. 15 perc pihenő.
 4. 290 g-os golyók, sütőpapíron olajos ujjal 30 cm-re, középen vékony, 1,5–2 cm-es perem.
 5. 60–90 perc kelesztés; a sütő 250 °C-ra, legalább 45 percig, kővel vagy acéllappal.
 6. Közepét megszurkálni, 6–8 perc elősütés feltét nélkül.

@@ -152,17 +152,24 @@ export const recipes = [
           { key: 'corn', labelKey: 'recipes.pizza2.starches.corn', hintKey: 'recipes.pizza2.starchHints.corn' },
         ],
       },
+      {
+        key: 'bamboo',
+        default: false,
+        labelKey: 'recipes.pizza2.bambooLabel',
+        onHintKey: 'recipes.pizza2.bambooOnHint',
+        offHintKey: 'recipes.pizza2.bambooOffHint',
+      },
     ],
     summary: PIZZA_DOUGH_SUMMARY,
     ingredientGroups: [
-      { key: 'flour', titleKey: 'common.flour', items: [...PIZZA2_BLEND, 'psylliumHusk'] },
+      { key: 'flour', titleKey: 'common.flour', items: [...PIZZA2_BLEND, 'psylliumHusk', 'bambooFiber'] },
       { key: 'wet', titleKey: 'common.wetIngredients', items: ['waterGel', 'waterYeast', 'oil', 'honey'] },
       { key: 'dry', titleKey: 'common.dryIngredients', items: ['salt', 'freshYeast'] },
     ],
     cookingSteps: steps(
       [['psylliumHusk', 'waterGel']],
       [['freshYeast', 'honey', 'waterYeast']],
-      [[...PIZZA2_BLEND, 'salt', 'oil'], 900],
+      [[...PIZZA2_BLEND, 'bambooFiber', 'salt', 'oil'], 900],
       [], [], [], []
     ),
   },

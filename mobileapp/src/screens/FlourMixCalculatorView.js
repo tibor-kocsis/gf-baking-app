@@ -25,7 +25,7 @@ const defaultSettings = (recipe) => ({
   flours: ['brownRice'],
   starches: ['potato', 'tapioca'],
   psyllium: true,
-  tangzhong: true,
+  waterHold: 'none',
   tangzhongPercent: TANGZHONG_PERCENT_DEFAULT,
 });
 
@@ -42,7 +42,7 @@ export function FlourMixCalculatorView({ recipe, onBack, onStartCooking }) {
         floursAvailable: settings.flours,
         starchesAvailable: settings.starches,
         psylliumAvailable: settings.psyllium,
-        tangzhong: settings.tangzhong,
+        waterHold: settings.waterHold,
         tangzhongPercent: settings.tangzhongPercent,
         targetStyle: settings.style,
       }),

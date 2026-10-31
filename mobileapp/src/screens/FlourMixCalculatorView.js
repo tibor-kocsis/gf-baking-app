@@ -76,6 +76,7 @@ export function FlourMixCalculatorView({ recipe, onBack, onStartCooking }) {
             items={[
               { label: t('flourMix.summaryRatio'), value: `${formula.flourPercent}:${formula.starchPercent}` },
               { label: t('flourMix.summaryHydration'), value: `${Math.round(formula.hydration)}%` },
+              { label: t('common.totalDough'), value: `${formula.totalDough} g` },
             ]}
           />
           <FormulaSection formula={formula} animatedStyle={pulse} />

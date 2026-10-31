@@ -810,9 +810,16 @@ export function calculateFlourMix(options) {
       weighed.push({ key, group: 'addition', amount: additions[key], percent: Math.round(additionRates[key] * 1000) / 10 });
     });
 
+  // Raw dough as it leaves the bowl: every weighed line, eggs by their weight out
+  // of the shell, fresh yeast as listed. The egg wash is not part of it.
+  const totalDough = Math.round(
+    weighed.reduce((sum, line) => sum + (line.key === 'egg' ? egg : line.amount), 0)
+  );
+
   return {
     base: baseTotal,
     requestedBase: base,
+    totalDough,
     style,
     flourTotal,
     starchTotal,

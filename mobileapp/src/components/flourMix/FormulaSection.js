@@ -28,7 +28,11 @@ export function FormulaSection({ formula, animatedStyle }) {
           }))}
         >
           {group.key === 'liquid' && formula.water.egg > 0 && (
-            <Hint>{t('flourMix.eggHint', { amount: formula.water.egg })}</Hint>
+            <Hint>
+              {t(formula.water.liquid === 'milk' ? 'flourMix.eggHint' : 'flourMix.eggHintLean', {
+                amount: formula.water.egg,
+              })}
+            </Hint>
           )}
           {group.key === 'addition' && <Hint>{t('flourMix.dryYeastHint', { amount: formula.dryYeast })}</Hint>}
         </IngredientCard>

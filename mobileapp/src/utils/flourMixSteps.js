@@ -2,9 +2,12 @@
 //
 // The flour mix has no fixed recipe, so its steps are built from the formula:
 // a tangzhong, a psyllium gel and bamboo fibre only when the formula has them,
-// milk and egg for the hot dog bun, and shaping and baking by style. The method is the
-// baker's own from their sandwich bread and baguette: rest 15 minutes, fold a
-// few times, score, proof to 120-150%, bake to 96-98 C inside.
+// milk and egg for the hot dog bun, an egg for a lean dough when picked, and shaping
+// and baking by style. The method is the baker's own from their sandwich bread and
+// baguette: rest 15 minutes, fold a few times, score, proof to 120-150%, bake to
+// 96-98 C inside. The pan loaf skips the rest and the fold, as the baker bakes it:
+// straight into the tin after mixing and proofed to 1.5-2x, the tin holding the
+// sides up.
 
 const STYLE_SHAPE = {
   sandwich: 'shapeSandwich',
@@ -95,14 +98,17 @@ export function buildFlourMixPlan(formula, t, nameOf) {
   mixItems.push(item('oil', 'oil', formula.additions.oil));
   steps.push({
     title: text('mixTitle'),
-    text: text(formula.water.eggCount > 0 ? 'mixEnriched' : 'mix'),
+    text: text(milk ? 'mixEnriched' : formula.water.eggCount > 0 ? 'mixEgg' : 'mix'),
     items: mixItems,
   });
 
-  steps.push({ title: text('restTitle'), text: text('rest'), timerSeconds: 900, items: [] });
-  steps.push({ title: text('foldTitle'), text: text('fold'), items: [] });
+  const panLoaf = formula.style === 'sandwich';
+  if (!panLoaf) {
+    steps.push({ title: text('restTitle'), text: text('rest'), timerSeconds: 900, items: [] });
+    steps.push({ title: text('foldTitle'), text: text('fold'), items: [] });
+  }
   steps.push({ title: text('shapeTitle'), text: text(STYLE_SHAPE[formula.style]), items: [] });
-  steps.push({ title: text('proofTitle'), text: text('proof'), items: [] });
+  steps.push({ title: text('proofTitle'), text: text(panLoaf ? 'proofSandwich' : 'proof'), items: [] });
   steps.push({ title: text('bakeTitle'), text: text(STYLE_BAKE[formula.style]), items: [] });
   steps.push({ title: text('coolTitle'), text: text('cool'), items: [] });
 

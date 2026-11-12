@@ -138,6 +138,17 @@ const WHOLE_EGG = 0.25;
 // about 50 g out of the shell, and the milk takes up whatever the rounding moved.
 const EGG_GRAMS = 50;
 
+// The lean styles can take an egg too, one per 400 g of base, as the baker bakes
+// the sandwich loaf: the egg white sets into the same film round the gas cells.
+// Its water comes off the mixing water, so the hydration stays where it was.
+const LEAN_EGG = 0.125;
+
+// With bamboo fibre the lean dough still came out stiff at the computed water:
+// a 400 g loaf without egg wanted another 30-40 ml (35 here), while one egg on
+// top of the computed water was right. So the egg's water is that extra, and
+// without an egg the same extra comes as water.
+const BAMBOO_EXTRA_WATER = 0.0875;
+
 // Egg and milk are counted by the water they carry, so hydration stays one
 // water-equivalent figure whichever liquid delivers it. The psyllium gel stays
 // water; the tangzhong and the mixing liquid become milk.
@@ -447,6 +458,7 @@ export function calculateFlourMix(options) {
   const waterHold = WATER_HOLD_KEYS.indexOf(settings.waterHold) !== -1 ? settings.waterHold : 'none';
   const wantsTangzhong = waterHold === 'tangzhong';
   const tangzhongPercent = clampTangzhongPercent(settings.tangzhongPercent);
+  const wantsEgg = !!settings.egg;
   const flours = FLOUR_KEYS.filter((key) => (settings.floursAvailable || []).indexOf(key) !== -1);
   const starches = STARCH_KEYS.filter(
     (key) => (settings.starchesAvailable || []).indexOf(key) !== -1
@@ -593,6 +605,15 @@ export function calculateFlourMix(options) {
   const bambooFiber = waterHold === 'bamboo' ? roundGrams(BAMBOO_FIBER * baseTotal) : 0;
   const bambooWater = BAMBOO_FIBER * BAMBOO_FIBER_WATER_RATIO;
   if (bambooFiber > 0) hydration += bambooWater;
+  const enriched = style === 'enrichedBun';
+  const leanEgg = !enriched && wantsEgg;
+  let eggCount = 0;
+  if (enriched) eggCount = Math.max(1, Math.round((baseTotal * WHOLE_EGG) / EGG_GRAMS));
+  else if (leanEgg) eggCount = Math.max(1, Math.round((baseTotal * LEAN_EGG) / EGG_GRAMS));
+  const egg = eggCount * EGG_GRAMS;
+  const eggWater = Math.round(egg * EGG_WATER);
+  const bambooExtra = bambooFiber > 0 && !enriched ? (leanEgg ? eggWater / baseTotal : BAMBOO_EXTRA_WATER) : 0;
+  hydration += bambooExtra;
   if (psylliumShare > PSYLLIUM_TARGET) {
     // +5% for each 0.5% above target, capped at the band's own headroom: past
     // 5.25% the psyllium is already flagged and more water stops helping.
@@ -609,10 +630,6 @@ export function calculateFlourMix(options) {
 
   // The 1:5 tangzhong ratio is a liquid ratio, so a milk tangzhong keeps it and
   // simply brings less water than a water one.
-  const enriched = style === 'enrichedBun';
-  const eggCount = enriched ? Math.max(1, Math.round((baseTotal * WHOLE_EGG) / EGG_GRAMS)) : 0;
-  const egg = eggCount * EGG_GRAMS;
-  const eggWater = Math.round(egg * EGG_WATER);
   const tangzhongLiquid = Math.round(tangzhongFlourTotal * TANGZHONG_WATER_RATIO);
   const tangzhongWater = enriched ? Math.round(tangzhongLiquid * MILK_WATER) : tangzhongLiquid;
   const fixedWater = tangzhongWater + eggWater;
@@ -741,6 +758,12 @@ export function calculateFlourMix(options) {
       key: 'bambooWater',
       params: { amount: bambooFiber, points: Math.round(bambooWater * 100) },
     });
+    if (bambooExtra > 0) {
+      notes.push({
+        key: leanEgg ? 'bambooEggWater' : 'bambooExtraWater',
+        params: { amount: Math.round(bambooExtra * baseTotal) },
+      });
+    }
   }
 
   // One line per ingredient, biggest first. The lead ingredient (sorghum, tapioca)
@@ -794,7 +817,12 @@ export function calculateFlourMix(options) {
       weighed.push({ key: 'water', group: 'liquid', amount: gelWater, percent: pct(gelWater, baseTotal), unit: 'ml' });
     }
   } else {
-    weighed.push({ key: 'water', group: 'liquid', amount: waterTotal, percent: pct(waterTotal, baseTotal), unit: 'ml' });
+    // With an egg the water line is what is poured: the egg brings the rest.
+    const poured = waterTotal - amountOf(waterStreams, 'egg');
+    weighed.push({ key: 'water', group: 'liquid', amount: poured, percent: pct(poured, baseTotal), unit: 'ml' });
+    if (leanEgg) {
+      weighed.push({ key: 'egg', group: 'liquid', amount: eggCount, percent: pct(egg, baseTotal), unit: 'pcs' });
+    }
   }
 
   const additionRates = enriched ? ENRICHED_ADDITIONS : ADDITIONS;

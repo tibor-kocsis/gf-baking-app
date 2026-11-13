@@ -11,7 +11,7 @@ import { Hint } from '../Typography';
 import { IngredientRow } from '../IngredientRow';
 
 // The total hydration and the streams it is poured in. For the enriched bun the
-// liquid is milk, weighed in grams.
+// liquid is milk, weighed in grams; a lean dough with an egg stays on water.
 export function WaterSection({ formula, animatedStyle }) {
   const { t } = useI18n();
   const { water } = formula;
@@ -36,7 +36,7 @@ export function WaterSection({ formula, animatedStyle }) {
     streams.push({
       key: 'egg',
       name: t('flourMix.streamEgg'),
-      hint: t('flourMix.streamEggHint'),
+      hint: t(milk ? 'flourMix.streamEggHint' : 'flourMix.streamEggWaterHint'),
       amount: water.eggCount,
       unit: formatUnit('pcs', t),
     });
@@ -69,6 +69,7 @@ export function WaterSection({ formula, animatedStyle }) {
           </View>
         </View>
         {milk && <Hint>{t('flourMix.waterEquivalentHint')}</Hint>}
+        {!milk && water.egg > 0 && <Hint>{t('flourMix.waterEquivalentEggHint')}</Hint>}
         {streams.map(({ key, ...stream }, index) => (
           <IngredientRow key={key} {...stream} last={index === streams.length - 1} />
         ))}

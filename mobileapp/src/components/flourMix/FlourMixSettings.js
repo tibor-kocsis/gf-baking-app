@@ -78,6 +78,14 @@ export function FlourMixSettings({ settings, onChange }) {
             value={settings.psyllium}
             onValueChange={(value) => onChange('psyllium', value)}
           />
+          {settings.style !== 'enrichedBun' && (
+            <SwitchRow
+              label={t('flourMix.eggLabel')}
+              hint={t('flourMix.eggOptionHint')}
+              value={!!settings.egg}
+              onValueChange={(value) => onChange('egg', value)}
+            />
+          )}
         </View>
 
         <View style={styles.group}>
